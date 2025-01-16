@@ -1,0 +1,215 @@
+﻿<local:LoginPageAbstract x:Class="OpenEmail.Views.LoginPage"
+                         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                         xmlns:local="using:OpenEmail.Views"
+                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                         mc:Ignorable="d"
+                         RequestedTheme="Light"
+                         Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid Padding="36" RowSpacing="6">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Image Source="ms-appx:///Assets/openemail_logo.png"
+               HorizontalAlignment="Left"
+               Height="40"
+               Margin="-5,0,0,20" />
+
+        <!--  Welcome screen  -->
+        <Grid Grid.Row="1" Visibility="{x:Bind ViewModel.IsLoginSectionVisible, Mode=OneWay}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <TextBlock Text="Email of the future, today"
+                       Grid.Row="0"
+                       FontSize="16"
+                       FontWeight="SemiBold" />
+
+            <TextBlock Text="Spam-free, phishing-free, private &amp; secure by design"
+                       Grid.Row="1"
+                       TextWrapping="Wrap" />
+
+            <TextBox Header="Email"
+                     Margin="0,12"
+                     Text="{x:Bind ViewModel.LoggingInAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     PlaceholderText="email@open.email"
+                     Grid.Row="2" />
+
+            <Button Content="Log in"
+                    Command="{x:Bind ViewModel.LoginCommand}"
+                    Grid.Row="3"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Stretch">
+                <Button.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="Enter" />
+                </Button.KeyboardAccelerators>
+            </Button>
+
+            <StackPanel Grid.Row="4" VerticalAlignment="Bottom">
+                <TextBlock HorizontalTextAlignment="Center"
+                           HorizontalAlignment="Center"
+                           Text="Don't have an open.email address yet?" />
+                <HyperlinkButton Content="Create one for free"
+                                 Command="{x:Bind ViewModel.GoCreateAccountCommand}"
+                                 HorizontalAlignment="Center" />
+            </StackPanel>
+        </Grid>
+
+        <!--  Authentication screen  -->
+        <Grid Grid.Row="1"
+              RowSpacing="6"
+              Visibility="{x:Bind ViewModel.IsAuthenticateSectionVisible, Mode=OneWay}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="{x:Bind ViewModel.LoggingInAddress, Mode=OneWay}"
+                       FontSize="20"
+                       FontWeight="SemiBold" />
+
+            <TextBlock Text="Enter your private keys"
+                       Grid.Row="1"
+                       FontSize="14" />
+
+            <TextBox Header="Private Encryption Key"
+                     Grid.Row="2"
+                     Text="{x:Bind ViewModel.PrivateEncryptionKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     Margin="0,12" />
+            <TextBox Header="Private Signing Key"
+                     Grid.Row="3"
+                     Text="{x:Bind ViewModel.PrivateSigningKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     Margin="0,12" />
+
+            <StackPanel Grid.Row="4"
+                        Spacing="6"
+                        VerticalAlignment="Bottom">
+                <TextBlock Foreground="{ThemeResource SystemControlErrorTextForegroundBrush}"
+                           HorizontalTextAlignment="Center"
+                           Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
+                           TextWrapping="WrapWholeWords"
+                           Visibility="{x:Bind ViewModel.HasError, Mode=OneWay}" />
+                <Button Content="Authenticate"
+                        HorizontalAlignment="Stretch"
+                        Command="{x:Bind ViewModel.AuthenticateCommand}" />
+                <Button Content="Back"
+                        HorizontalAlignment="Stretch"
+                        Command="{x:Bind ViewModel.BackCommand}" />
+            </StackPanel>
+        </Grid>
+
+        <!--  Create account  -->
+        <Grid Grid.Row="1"
+              Visibility="{x:Bind ViewModel.IsCreateAccountSectionVisible, Mode=OneWay}"
+              RowSpacing="6">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="1"
+                       HorizontalAlignment="Left"
+                       FontSize="19"
+                       FontWeight="SemiBold"
+                       Text="Up and Running in Seconds" />
+
+            <TextBlock Grid.Row="2"
+                       HorizontalAlignment="Left"
+                       Text="Get a free email address on one of our domains:" />
+
+            <Grid Grid.Row="3"
+                  ColumnSpacing="6"
+                  Margin="0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBox x:Name="LocalPartTextBox"
+                         HorizontalAlignment="Stretch"
+                         PlaceholderText="username"
+                         Text="{x:Bind ViewModel.LocalPart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBlock Grid.Column="1"
+                           VerticalAlignment="Center"
+                           Text="@" />
+
+                <ComboBox Grid.Column="2"
+                          HorizontalAlignment="Stretch"
+                          DisplayMemberPath="HostPart"
+                          ItemsSource="{x:Bind ViewModel.AvailableHosts}"
+                          PlaceholderText="ping.works"
+                          SelectedItem="{x:Bind ViewModel.SelectedHost, Mode=TwoWay}" />
+            </Grid>
+
+            <TextBox x:Name="FullNameTextBox"
+                     Grid.Row="4"
+                     Header="Full Name"
+                     PlaceholderText="Enter your full name"
+                     Text="{x:Bind ViewModel.FullName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+            <TextBlock Grid.Row="5"
+                       Foreground="{ThemeResource SystemControlErrorTextForegroundBrush}"
+                       HorizontalTextAlignment="Center"
+                       Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
+                       TextWrapping="WrapWholeWords"
+                       Visibility="{x:Bind ViewModel.HasError, Mode=OneWay}" />
+
+            <TextBlock Grid.Row="6"
+                       HorizontalAlignment="Left"
+                       FontSize="12"
+                       FontWeight="Light"
+                       Text="* You can complete your profile later." />
+
+            <StackPanel Grid.Row="7"
+                        Margin="0,12,0,0"
+                        VerticalAlignment="Top"
+                        Spacing="6">
+                <TextBlock HorizontalAlignment="Left"
+                           FontSize="13"
+                           FontWeight="SemiBold"
+                           Text="By continuing you agree to the Terms of Service" />
+
+                <TextBlock HorizontalAlignment="Left"
+                           FontSize="12"
+                           Text="Users are prohibited from engaging in abusive behavior or any illegal activities while using our service, because while we're all for freedom, we draw the line at breaking the law or being a jerk."
+                           TextWrapping="WrapWholeWords" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="8"
+                        VerticalAlignment="Bottom"
+                        Spacing="12">
+                <Button Command="{x:Bind ViewModel.CreateAccountCommand}"
+                        MinHeight="45"
+                        Style="{StaticResource AccentButtonStyle}"
+                        Content="Create"
+                        HorizontalAlignment="Stretch" />
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock Text="Already have an open.email address?" VerticalAlignment="Center" />
+                    <HyperlinkButton Command="{x:Bind ViewModel.BackCommand}"
+                                     Content="Log In"
+                                     FontWeight="SemiBold" />
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</local:LoginPageAbstract>

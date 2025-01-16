@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "OpenEmail (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "OpenEmail (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
