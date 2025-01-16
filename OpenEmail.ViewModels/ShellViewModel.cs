@@ -49,15 +49,19 @@ namespace OpenEmail.ViewModels
         public string HeaderText => CurrentProfile?.Address ?? string.Empty;
         public string TitleText => CurrentProfile?.DisplayName ?? string.Empty;
         public string ProfileImageUrl => $"{ApplicationStateService.ActiveProfile?.Address}.png";
-        public string RemainingSyncText => $"Next sync in {PreferencesService.SyncIntervalInMinutes} minutes";
 
-        private CancellationTokenSource _contactInfoLoadCancellationTokenSource;
-        private System.Timers.Timer _syncIntervalTimer;
+        [ObservableProperty]
+        public string synchronizationButtonText;
 
         public IApplicationStateService ApplicationStateService { get; }
         public IPreferencesService PreferencesService { get; }
         public IMessageUploader MessageUploader { get; }
 
+        private CancellationTokenSource _contactInfoLoadCancellationTokenSource;
+        private int remainingSyncIntervalMinutes;
+        private DateTime? latestSynchronizationTime;
+
+        private readonly System.Timers.Timer _syncIntervalTimer;
         private readonly IAttachmentManager _attachmentManager;
         private readonly ILoginService _loginService;
         private readonly IContactService _contactService;
@@ -79,6 +83,7 @@ namespace OpenEmail.ViewModels
         {
             ApplicationStateService = applicationStateService;
             PreferencesService = preferencesService;
+            PreferencesService.PropertyChanged += PreferencesUpdated;
 
             _attachmentManager = attachmentManager;
             _loginService = loginService;
@@ -88,20 +93,59 @@ namespace OpenEmail.ViewModels
             _profileDataService = profileDataService;
             _synchronizationService = synchronizationService;
 
+            remainingSyncIntervalMinutes = preferencesService.SyncIntervalInMinutes;
+
             MessageUploader = messageUploader;
             MessageUploader.MessageUploadQueue.CollectionChanged += UploadQueueChanged;
 
-            var syncIntervalMinutes = PreferencesService.SyncIntervalInMinutes;
-
-            _syncIntervalTimer = new System.Timers.Timer(syncIntervalMinutes * 60 * 1000);
+            _syncIntervalTimer = new System.Timers.Timer(1 * 60 * 1000); // Check every minute.
             _syncIntervalTimer.Elapsed += SyncIntervalTick;
+            _syncIntervalTimer.Start();
+        }
+
+        private void PreferencesUpdated(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            // We must update the new sync interval as well.
+            if (e.PropertyName == nameof(IPreferencesService.SyncIntervalInMinutes))
+            {
+                remainingSyncIntervalMinutes = PreferencesService.SyncIntervalInMinutes;
+
+                if (!SynchronizeCommand.IsRunning)
+                {
+                    UpdateSynchronizationIntervalText();
+                }
+            }
+        }
+
+        protected override void OnDispatcherAssigned()
+        {
+            base.OnDispatcherAssigned();
+
+            UpdateSynchronizationIntervalText();
         }
 
         private void SyncIntervalTick(object sender, System.Timers.ElapsedEventArgs e)
         {
-            // Update the test to show the next sync time.
+            // Update the remaining time for synchronization.
 
-            SynchronizeCommand.Execute(null);
+            remainingSyncIntervalMinutes--;
+
+            if (remainingSyncIntervalMinutes <= 0)
+            {
+                ExecuteUIThread(() => { SynchronizeCommand.Execute(null); });
+            }
+            else
+            {
+                UpdateSynchronizationIntervalText();
+            }
+        }
+
+        private void UpdateSynchronizationIntervalText()
+        {
+            ExecuteUIThread(() =>
+            {
+                SynchronizationButtonText = $"Next sync in {remainingSyncIntervalMinutes} minutes.";
+            });
         }
 
         private void UploadQueueChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -139,6 +183,13 @@ namespace OpenEmail.ViewModels
         {
             try
             {
+                _syncIntervalTimer.Stop();
+
+                ExecuteUIThread(() =>
+                {
+                    SynchronizationButtonText = "Synchronizing...";
+                });
+
                 await _synchronizationService.SynchronizeAsync(CurrentProfile);
 
                 // TODO: Remove this line. Listen for synchronization complete event.
@@ -147,6 +198,14 @@ namespace OpenEmail.ViewModels
             catch (Exception ex)
             {
 
+            }
+            finally
+            {
+                latestSynchronizationTime = DateTime.Now;
+                remainingSyncIntervalMinutes = PreferencesService.SyncIntervalInMinutes;
+                UpdateSynchronizationIntervalText();
+
+                _syncIntervalTimer.Start();
             }
         }
 

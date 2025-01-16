@@ -1,6 +1,8 @@
-﻿namespace OpenEmail.Contracts.Application
+﻿using System.ComponentModel;
+
+namespace OpenEmail.Contracts.Application
 {
-    public interface IPreferencesService
+    public interface IPreferencesService : INotifyPropertyChanged
     {
         /// <summary>
         /// Gets or sets the maximum size of an attachment that can be downloaded automatically in megabytes.
