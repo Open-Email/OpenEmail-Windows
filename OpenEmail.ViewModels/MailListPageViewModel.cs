@@ -45,6 +45,7 @@ namespace OpenEmail.ViewModels
         public bool ShouldDisplayReplyAll => HasMultipleReaders && IsNotDraftMessage;
 
         public ObservableCollection<MessageViewModel> Messages { get; set; } = [];
+        public IPreferencesService PreferencesService { get; }
 
         private readonly IMessagesService _messagesService;
         private readonly IMessagePreperationService _messagePreperationService;
@@ -52,11 +53,14 @@ namespace OpenEmail.ViewModels
 
         // When draft is created, it's the message id to be selected for new composer window.
         private Guid? messageToComposeId;
+
         public MailListPageViewModel(IFileService fileService,
                                      IApplicationStateService applicationStateService,
+                                     IPreferencesService preferencesService,
                                      IMessagesService messagesService,
                                      IMessagePreperationService messagePreperationService) : base(fileService, applicationStateService)
         {
+            PreferencesService = preferencesService;
             _messagesService = messagesService;
             _messagePreperationService = messagePreperationService;
         }

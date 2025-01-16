@@ -45,5 +45,11 @@ namespace OpenEmail.Core.Services
             get => JsonSerializer.Deserialize<List<string>>(_configurationService.Get(nameof(TrustedDomains), "[]"));
             set => SetPropertyAndSave(nameof(TrustedDomains), JsonSerializer.Serialize(value));
         }
+
+        public double MessageListingPaneWidth
+        {
+            get => _configurationService.Get(nameof(MessageListingPaneWidth), 350.0d);
+            set => SetPropertyAndSave(nameof(MessageListingPaneWidth), value);
+        }
     }
 }
