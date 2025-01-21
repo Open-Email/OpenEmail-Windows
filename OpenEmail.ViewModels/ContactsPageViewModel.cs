@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using OpenEmail.Contracts.Application;
 using OpenEmail.Contracts.Services;
 using OpenEmail.Domain.Models.Accounts;
+using OpenEmail.Domain.Models.Mail;
 using OpenEmail.Domain.Models.Navigation;
 using OpenEmail.Domain.PubSubMessages;
 using OpenEmail.ViewModels.Data;
@@ -102,9 +103,10 @@ namespace OpenEmail.ViewModels
 
 
         [RelayCommand]
-        private async Task CreateMessageAsync()
+        private void CreateMessage()
         {
-
+            var args = new ComposeWindowArgs(MailActionType.New, DefaultRecipientContact: SelectedContactViewModel.Contact);
+            Messenger.Send(new NewComposeRequested(args));
         }
 
         [RelayCommand]

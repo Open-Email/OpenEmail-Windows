@@ -141,7 +141,7 @@ namespace OpenEmail.ViewModels
 
             if (draftMessageViewModel != null)
             {
-                Messenger.Send(new DraftComposeArgs(composingArgs.Type, draftMessageViewModel));
+                Messenger.Send(new DraftComposeArgs(composingArgs.Type, draftMessageViewModel, composingArgs.DefaultRecipientContact));
             }
         }
 
@@ -193,6 +193,13 @@ namespace OpenEmail.ViewModels
 
                 // Save the message.
                 messageToComposeId = message.Id;
+
+                // Add the default recipient if any.
+
+                if (args.DefaultRecipientContact != null)
+                {
+                    message.Readers = args.DefaultRecipientContact.Address;
+                }
 
                 await _messagesService.UpdateMessageAsync(message);
             }
@@ -322,6 +329,7 @@ namespace OpenEmail.ViewModels
             {
                 Messages.Add(messageViewModel);
 
+                // If this is the new created draft.
                 if (messageToComposeId != null)
                 {
                     SelectedMessage = Messages.FirstOrDefault(m => m.Message.Id == messageToComposeId);

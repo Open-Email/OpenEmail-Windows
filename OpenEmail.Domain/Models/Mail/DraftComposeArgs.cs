@@ -8,7 +8,7 @@ namespace OpenEmail.Domain.Models.Mail
     /// </summary>
     public record DraftComposeArgs : ComposeWindowArgs
     {
-        public DraftComposeArgs(MailActionType Type, IMessage ReferencingMessage) : base(Type, ReferencingMessage)
+        public DraftComposeArgs(MailActionType Type, IMessage ReferencingMessage = null, AccountContact DefaultRecipientContact = null) : base(Type, ReferencingMessage, DefaultRecipientContact)
         {
         }
     }
