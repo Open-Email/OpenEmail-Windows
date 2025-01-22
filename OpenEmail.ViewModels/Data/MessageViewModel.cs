@@ -2,10 +2,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using OpenEmail.Domain.Entities;
 using OpenEmail.Domain.Models.Messages;
+using OpenEmail.ViewModels.Interfaces;
 
 namespace OpenEmail.ViewModels.Data
 {
-    public partial class MessageViewModel : ObservableObject, IMessage
+    public partial class MessageViewModel : ObservableObject, IMessage, IMessageViewModel
     {
         [ObservableProperty]
         public Message _message;
@@ -178,5 +179,7 @@ namespace OpenEmail.ViewModels.Data
                 }
             }
         }
+
+        public bool SubjectIdMatches(string subjectId) => SubjectId == subjectId;
     }
 }

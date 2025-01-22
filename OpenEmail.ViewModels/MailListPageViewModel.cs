@@ -44,7 +44,7 @@ namespace OpenEmail.ViewModels
         public bool HasMultipleReaders => SelectedMessage == null ? false : SelectedMessage.ReaderViewModels.Count > 1;
         public bool ShouldDisplayReplyAll => HasMultipleReaders && IsNotDraftMessage;
 
-        public ObservableCollection<MessageViewModel> Messages { get; set; } = [];
+        public ObservableCollection<IMessageViewModel> Messages { get; set; } = [];
         public IPreferencesService PreferencesService { get; }
 
         private readonly IMessagesService _messagesService;
@@ -115,6 +115,29 @@ namespace OpenEmail.ViewModels
         [RelayCommand]
         public void DisplaySender(AccountContact contact)
             => Messenger.Send(new ProfileDisplayRequested(contact));
+
+        [RelayCommand]
+        private async Task Test()
+        {
+            var testMessage = new Message()
+            {
+                Author = "buraktest@open.email",
+                ReceivedAt = DateTimeOffset.Now,
+                Subject = "Test",
+                Readers = "",
+                IsRead = true,
+                Id = Guid.NewGuid(),
+                SubjectId = "testSubjectId",
+                CreatedAt = DateTimeOffset.Now,
+            };
+
+            testMessage.Body = testMessage.Id.ToString();
+
+            var vm = await _messagePreperationService.PrepareViewModelAsync(testMessage, Dispatcher);
+
+            AddMessage(vm);
+            // var t = new MessageViewModel(testMessage,)
+        }
 
         public override async void OnNavigatedTo(FrameNavigationMode navigationMode, object parameter)
         {
@@ -200,7 +223,7 @@ namespace OpenEmail.ViewModels
             // Find the message to edit.
             if (args.ReferencingMessage != null)
             {
-                return Messages.FirstOrDefault(m => m.Message.Id == args.ReferencingMessage.Id);
+                return Messages.FirstOrDefault(m => m.Message.Id == args.ReferencingMessage.Id) as MessageViewModel;
             }
 
             return null;
@@ -230,7 +253,7 @@ namespace OpenEmail.ViewModels
             {
                 var messageViewModel = await _messagePreperationService.PrepareViewModelAsync(message, Dispatcher, cancellationToken);
 
-                Messages.Add(messageViewModel);
+                AddMessage(messageViewModel);
             }
         }
 
@@ -320,11 +343,11 @@ namespace OpenEmail.ViewModels
 
             ExecuteUIThread(() =>
             {
-                Messages.Add(messageViewModel);
+                AddMessage(messageViewModel);
 
                 if (messageToComposeId != null)
                 {
-                    SelectedMessage = Messages.FirstOrDefault(m => m.Message.Id == messageToComposeId);
+                    SelectedMessage = Messages.FirstOrDefault(m => m.Message.Id == messageToComposeId) as MessageViewModel;
 
                     if (SelectedMessage != null)
                     {
@@ -334,6 +357,45 @@ namespace OpenEmail.ViewModels
                     messageToComposeId = null;
                 }
             });
+        }
+
+        private void AddMessage(MessageViewModel messageViewModel)
+        {
+            // Check if this message should be threaded.
+            var matchingItem = Messages.FirstOrDefault(a => a.SubjectId == messageViewModel.SubjectId);
+
+            if (matchingItem is MessageThreadViewModel messageThreadViewModel)
+            {
+                // Add it to the thread.
+                messageThreadViewModel.AddMessage(messageViewModel);
+            }
+            else if (matchingItem is MessageViewModel matchingMessageViewModel)
+            {
+                // Item should be converted to thread.
+
+                // 1. Remove the existing message.
+                // 2. Create a new thread.
+
+                Messages.Remove(matchingMessageViewModel);
+
+                var thread = new MessageThreadViewModel(messageViewModel.SubjectId);
+                thread.AddMessage(matchingMessageViewModel);
+                thread.AddMessage(messageViewModel);
+
+                // TODO: Add sorted.
+                Messages.Add(thread);
+            }
+            else
+            {
+                // Just add it.
+                // TODO: Add sorted.
+                Messages.Add(messageViewModel);
+            }
+        }
+
+        private void RemoveMessage(Guid messageId)
+        {
+
         }
 
         public async void Receive(ComposeWindowArgs message)

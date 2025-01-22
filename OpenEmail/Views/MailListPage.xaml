@@ -9,8 +9,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:data="using:OpenEmail.ViewModels.Data"
     xmlns:helpers="using:OpenEmail.Helpers"
+    xmlns:interfaces="using:OpenEmail.ViewModels.Interfaces"
     xmlns:local="using:OpenEmail.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:selectors="using:OpenEmail.Selectors"
     x:Name="root"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
@@ -23,7 +25,7 @@
             <Setter Property="BorderThickness" Value="1.5" />
         </Style>
 
-        <DataTemplate x:Key="MessageTemplate" x:DataType="data:MessageViewModel">
+        <DataTemplate x:Key="MessageTemplate" x:DataType="interfaces:IMessageViewModel">
             <Grid Padding="2,12" ColumnSpacing="10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="48" />
@@ -102,6 +104,21 @@
             </Grid>
         </DataTemplate>
 
+        <DataTemplate x:Key="ThreadMessageTemplate" x:DataType="data:MessageThreadViewModel">
+            <Expander
+                Padding="0,12"
+                BorderThickness="0"
+                Header="{x:Bind Subject, Mode=OneWay}"
+                IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}">
+                <ItemsControl ItemTemplate="{StaticResource MessageTemplate}" ItemsSource="{x:Bind Messages, Mode=OneWay}" />
+            </Expander>
+        </DataTemplate>
+
+        <selectors:MessageTemplateSelector
+            x:Key="MessageTemplateSelector"
+            MessageTemplate="{StaticResource MessageTemplate}"
+            ThreadMessageTemplate="{StaticResource ThreadMessageTemplate}" />
+
         <DataTemplate x:Key="ReaderTemplate" x:DataType="data:ContactViewModel">
             <Button
                 Margin="4,0"
@@ -132,14 +149,19 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <AutoSuggestBox
+            <Button
+                HorizontalAlignment="Stretch"
+                Command="{x:Bind ViewModel.TestCommand}"
+                Content="Add" />
+
+            <!--<AutoSuggestBox
                 Margin="8"
                 BorderThickness="0"
-                PlaceholderText="search" />
+                PlaceholderText="search" />-->
             <ListView
                 Grid.Row="1"
                 Padding="8,0"
-                ItemTemplate="{StaticResource MessageTemplate}"
+                ItemTemplateSelector="{StaticResource MessageTemplateSelector}"
                 ItemsSource="{x:Bind ViewModel.Messages}"
                 SelectedItem="{x:Bind ViewModel.SelectedMessage, Mode=TwoWay}" />
         </Grid>
