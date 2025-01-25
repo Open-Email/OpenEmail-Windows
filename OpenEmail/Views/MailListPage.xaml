@@ -106,7 +106,9 @@
 
         <DataTemplate x:Key="ThreadMessageTemplate" x:DataType="data:MessageThreadViewModel">
             <Expander
-                Padding="0,12"
+                Padding="2,10"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
                 BorderThickness="0"
                 Header="{x:Bind Subject, Mode=OneWay}"
                 IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}">

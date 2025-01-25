@@ -33,7 +33,7 @@ namespace OpenEmail.ViewModels
         [NotifyPropertyChangedFor(nameof(HasNoSelectedMessage))]
         [NotifyPropertyChangedFor(nameof(IsDraftMessage))]
         [NotifyPropertyChangedFor(nameof(IsNotDraftMessage))]
-        private MessageViewModel _selectedMessage;
+        private IMessageViewModel _selectedMessage;
 
         public bool IsDraftMessage => SelectedMessage?.Message.IsDraft ?? false;
         public bool IsNotDraftMessage => !IsDraftMessage;
@@ -70,7 +70,7 @@ namespace OpenEmail.ViewModels
         {
             if (SelectedMessage?.Message == null) return;
 
-            Messenger.Send(new NewComposeRequested(new ComposeWindowArgs(MailActionType.Forward, SelectedMessage)));
+            Messenger.Send(new NewComposeRequested(new ComposeWindowArgs(MailActionType.Forward, (MessageViewModel)SelectedMessage)));
         }
 
         [RelayCommand]
@@ -78,7 +78,7 @@ namespace OpenEmail.ViewModels
         {
             if (SelectedMessage?.Message == null) return;
 
-            Messenger.Send(new NewComposeRequested(new ComposeWindowArgs(MailActionType.Reply, SelectedMessage)));
+            Messenger.Send(new NewComposeRequested(new ComposeWindowArgs(MailActionType.Reply, (MessageViewModel)SelectedMessage)));
         }
 
         [RelayCommand]
@@ -86,7 +86,7 @@ namespace OpenEmail.ViewModels
         {
             if (SelectedMessage?.Message == null) return;
 
-            Messenger.Send(new NewComposeRequested(new ComposeWindowArgs(MailActionType.ReplyAll, SelectedMessage)));
+            Messenger.Send(new NewComposeRequested(new ComposeWindowArgs(MailActionType.ReplyAll, (MessageViewModel)SelectedMessage)));
         }
 
         [RelayCommand]
@@ -109,7 +109,7 @@ namespace OpenEmail.ViewModels
         {
             if (SelectedMessage?.Message == null) return;
 
-            Messenger.Send(new NewComposeRequested(new ComposeWindowArgs(MailActionType.EditDraft, SelectedMessage)));
+            Messenger.Send(new NewComposeRequested(new ComposeWindowArgs(MailActionType.EditDraft, (MessageViewModel)SelectedMessage)));
         }
 
         [RelayCommand]
@@ -257,11 +257,15 @@ namespace OpenEmail.ViewModels
             }
         }
 
-        partial void OnSelectedMessageChanged(MessageViewModel value)
+        partial void OnSelectedMessageChanged(IMessageViewModel value)
         {
             if (value == null) return;
 
-            if (!value.IsRead)
+            if (value is MessageThreadViewModel messageThreadViewModel)
+            {
+                messageThreadViewModel.IsExpanded = !messageThreadViewModel.IsExpanded;
+            }
+            else if (!value.IsRead)
             {
                 _messagesService.MarkMessageReadAsync(value.Message.Id).ConfigureAwait(false);
 
@@ -307,6 +311,8 @@ namespace OpenEmail.ViewModels
             }
         }
 
+
+
         public override void DetachAttachmentProgresses()
         {
             var attachments = Messages.SelectMany(m => m.AttachmentViewModels);
@@ -351,7 +357,7 @@ namespace OpenEmail.ViewModels
 
                     if (SelectedMessage != null)
                     {
-                        Messenger.Send(new DraftComposeArgs(MailActionType.New, SelectedMessage));
+                        Messenger.Send(new DraftComposeArgs(MailActionType.New, (MessageViewModel)SelectedMessage));
                     }
 
                     messageToComposeId = null;

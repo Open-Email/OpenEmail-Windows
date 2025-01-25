@@ -91,6 +91,11 @@ namespace OpenEmail.ViewModels.Data
             return Messages.Count; // Insert at the end if no earlier message is found
         }
 
+        public bool HasAttachmentGroupId(Guid attachmentGroupId)
+        {
+            return ((IMessageViewModel)VisibleMessage).HasAttachmentGroupId(attachmentGroupId);
+        }
+
         #endregion
     }
 }

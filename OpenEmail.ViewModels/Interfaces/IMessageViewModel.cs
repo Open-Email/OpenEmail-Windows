@@ -18,6 +18,8 @@ namespace OpenEmail.ViewModels.Interfaces
         bool IsBroadcast { get; }
         string Subject { get; set; }
         string SubjectId { get; set; }
+
+        bool HasAttachmentGroupId(Guid attachmentGroupId);
         bool SubjectIdMatches(string subjectId);
     }
 }
