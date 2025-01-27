@@ -16,6 +16,9 @@ namespace OpenEmail.ViewModels.Data
         [ObservableProperty]
         private bool _isExpanded;
 
+        [ObservableProperty]
+        private bool _isSelected;
+
         #region IMessageViewModel implementation
 
         public ObservableCollection<ContactViewModel> ReaderViewModels => ((IMessageViewModel)VisibleMessage).ReaderViewModels;

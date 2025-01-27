@@ -4,7 +4,7 @@ using OpenEmail.ViewModels.Data;
 
 namespace OpenEmail.ViewModels.Interfaces
 {
-    public interface IMessageViewModel
+    public interface IMessageViewModel : ISelectableItem
     {
         ObservableCollection<ContactViewModel> ReaderViewModels { get; }
         ObservableCollection<AttachmentViewModel> AttachmentViewModels { get; }

@@ -11,6 +11,9 @@ namespace OpenEmail.ViewModels.Data
         [ObservableProperty]
         public Message _message;
 
+        [ObservableProperty]
+        private bool _isSelected;
+
         public ContactViewModel ContactViewModel { get; }
         public ObservableCollection<ContactViewModel> ReaderViewModels { get; } = [];
         public ObservableCollection<AttachmentViewModel> AttachmentViewModels { get; } = [];

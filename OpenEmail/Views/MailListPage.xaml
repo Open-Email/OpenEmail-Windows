@@ -160,12 +160,19 @@
                 Margin="8"
                 BorderThickness="0"
                 PlaceholderText="search" />-->
-            <ListView
+            <controls1:MailListView
                 Grid.Row="1"
                 Padding="8,0"
                 ItemTemplateSelector="{StaticResource MessageTemplateSelector}"
                 ItemsSource="{x:Bind ViewModel.Messages}"
-                SelectedItem="{x:Bind ViewModel.SelectedMessage, Mode=TwoWay}" />
+                SelectedItem="{x:Bind ViewModel.SelectedMessage, Mode=TwoWay}">
+                <controls1:MailListView.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="BorderBrush" Value="Red" />
+                        <Setter Property="BorderThickness" Value="2" />
+                    </Style>
+                </controls1:MailListView.ItemContainerStyle>
+            </controls1:MailListView>
         </Grid>
 
         <controls:GridSplitter
