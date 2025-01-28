@@ -11,5 +11,9 @@ namespace OpenEmail.Core.API.Refit
         [Head("/home/{address}")]
         [QueryUriFormat(UriFormat.Unescaped)]
         Task<HttpResponseMessage> TryAuthenticationAsync(UserAddress address);
+
+        [Head("/account/{address}")]
+        [QueryUriFormat(UriFormat.Unescaped)]
+        Task<HttpResponseMessage> IsUsernameAvailableAsync(UserAddress address);
     }
 }

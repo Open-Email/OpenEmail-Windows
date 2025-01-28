@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EmailValidation;
 using OpenEmail.Contracts.Services;
@@ -18,6 +19,7 @@ namespace OpenEmail.ViewModels
         private readonly ILoginService _loginService;
         private readonly IWindowService _windowService;
         private readonly IProfileDataService _profileDataService;
+
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(CanAuthenticate))]
         [NotifyCanExecuteChangedFor(nameof(AuthenticateCommand))]
@@ -46,10 +48,18 @@ namespace OpenEmail.ViewModels
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsValidAddress))]
         [NotifyCanExecuteChangedFor(nameof(LoginCommand))]
-        private string _loggingInAddress = "burakwindows@open.email";
+        private string _loggingInAddress;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsNameValidationVisible))]
+        private bool _isCheckingNameAvailability;
+
+        [ObservableProperty]
+        private bool _isNameAvailable;
+
+        public bool IsNameValidationVisible => !IsCheckingNameAvailability && !string.IsNullOrEmpty(LocalPart);
 
         public bool IsValidAddress => !string.IsNullOrWhiteSpace(LoggingInAddress) && EmailValidator.Validate(LoggingInAddress);
-
         public bool IsLoginSectionVisible => !IsCreateAccountSectionVisible && !IsAuthenticateSectionVisible;
         public bool IsAuthenticateSectionVisible => !IsCreateAccountSectionVisible && IsValidAddress && _isLoginInitiated;
         public bool IsCreateAccountSectionVisible => _isCreatingAccount;
@@ -61,13 +71,17 @@ namespace OpenEmail.ViewModels
         [NotifyPropertyChangedFor(nameof(IsInvalidFullName))]
         private string _fullName;
 
+        public string FullAddress => $"{LocalPart}@{SelectedHost?.HostPart ?? string.Empty}";
+
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(CreateAccountCommand))]
         [NotifyPropertyChangedFor(nameof(IsInvalidLocalPart))]
+        [NotifyPropertyChangedFor(nameof(FullAddress))]
         private string _localPart;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(CreateAccountCommand))]
+        [NotifyPropertyChangedFor(nameof(FullAddress))]
         private DiscoveryHost _selectedHost;
 
         [ObservableProperty]
@@ -93,6 +107,7 @@ namespace OpenEmail.ViewModels
 
         private bool _isLoginInitiated = false;
         private bool _isCreatingAccount = false;
+        private CancellationTokenSource _nameExistenceCancellationTokenSource;
 
         public LoginPageViewModel(IAccountService accountService,
                                   IDiscoveryService discoveryService,
@@ -211,6 +226,41 @@ namespace OpenEmail.ViewModels
             {
                 // Catch format exceptions if input is not valid Base64
                 return false;
+            }
+        }
+
+        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+
+            if (e.PropertyName == nameof(LocalPart) && SelectedHost != null)
+            {
+                _nameExistenceCancellationTokenSource?.Cancel();
+                _nameExistenceCancellationTokenSource = new CancellationTokenSource();
+
+                _ = CheckNameAvailability(_nameExistenceCancellationTokenSource.Token);
+            }
+        }
+
+        private async Task CheckNameAvailability(CancellationToken cancellationToken)
+        {
+            try
+            {
+                ExecuteUIThread(() => IsCheckingNameAvailability = true);
+
+                var isAvailable = await _loginService.IsUsernameAvailableAsync("", new UserAddress(LocalPart, SelectedHost.HostPart), cancellationToken).ConfigureAwait(false);
+
+                if (cancellationToken.IsCancellationRequested) return;
+
+                ExecuteUIThread(() => IsNameAvailable = isAvailable);
+            }
+            catch (Exception)
+            {
+                // Ignore errors.
+            }
+            finally
+            {
+                ExecuteUIThread(() => IsCheckingNameAvailability = false);
             }
         }
     }

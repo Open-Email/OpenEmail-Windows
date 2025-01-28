@@ -9,5 +9,7 @@ namespace OpenEmail.Contracts.Services
         Task<Account> AuthenticateAsync(UserAddress address, string privateEncryptionKey, string privateSigningKey);
 
         Task LogoutAsync(AccountProfile profile);
+
+        Task<bool> IsUsernameAvailableAsync(string hostName, UserAddress address, CancellationToken cancellationToken = default);
     }
 }
