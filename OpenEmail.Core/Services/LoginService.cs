@@ -66,6 +66,14 @@ namespace OpenEmail.Core.Services
             return await _accountService.SaveAccountAsync(localUser, host).ConfigureAwait(false);
         }
 
+        public async Task<bool> IsUsernameAvailableAsync(string hostName, UserAddress address, CancellationToken cancellationToken = default)
+        {
+            var host = await _discoveryService.GetDiscoveryHostAsync(address.HostPart);
+            var loginClient = _clientFactory.CreateClient<ILoginClient>($"https://{host.AgentUrl}");
+
+            return (await loginClient.IsUsernameAvailableAsync(address)).StatusCode == System.Net.HttpStatusCode.OK;
+        }
+
         public async Task LogoutAsync(AccountProfile profile)
         {
             // Remove account data.
