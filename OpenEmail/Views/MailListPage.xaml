@@ -77,7 +77,8 @@
                     <TextBlock
                         Grid.Row="1"
                         FontWeight="{x:Bind helpers:XamlHelpers.IsReadConverter(Message.IsRead), Mode=OneWay}"
-                        Text="{x:Bind Subject, Mode=OneWay}" />
+                        Text="{x:Bind Subject, Mode=OneWay}"
+                        TextTrimming="CharacterEllipsis" />
 
                     <!--  Message  -->
                     <Grid Grid.Row="2">
