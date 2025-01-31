@@ -30,7 +30,7 @@ namespace OpenEmail.Core.DataServices
             res.EnsureSuccessStatusCode();
             var content = await res.Content.ReadAsStringAsync();
 
-            var splittedNotifications = content.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+            var splittedNotifications = content.Split("\n", StringSplitOptions.RemoveEmptyEntries);
 
             // Compare remote notifications with local notifications and return only new ones.
             foreach (var notification in splittedNotifications)
