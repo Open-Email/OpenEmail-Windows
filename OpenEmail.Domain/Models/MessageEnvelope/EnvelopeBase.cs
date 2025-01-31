@@ -1,4 +1,5 @@
-﻿using OpenEmail.Domain.Models.Accounts;
+﻿using System.Text;
+using OpenEmail.Domain.Models.Accounts;
 using OpenEmail.Domain.Models.Cryptography;
 using OpenEmail.Domain.Models.Profile;
 
@@ -24,6 +25,8 @@ namespace OpenEmail.Domain.Models.MessageEnvelope
         public KeyValueDataStore EnvelopeHeaderStore { get; }
 
         public byte[] AccessKey { get; }
+
+        public bool IsBroadcastEnvelope => AccessLinks.Count == 0;
 
         private EnvelopeHeaders _evelopeHeaders;
 
@@ -51,15 +54,25 @@ namespace OpenEmail.Domain.Models.MessageEnvelope
             // Do validations
             ValidateAuthenticity();
 
-            var base64AccessLinkValue = AccessLinks.FirstOrDefault(a => a.Link == link.Link).Value;
-
-            var decryptedPrivateEncryptionKey = CryptoUtils.Base64Decode(profile.PrivateEncryptionKeyBase64);
-            var decryptedPublicEncryptionKey = CryptoUtils.Base64Decode(profile.Account.PublicEncryptionKey);
-
-            AccessKey = CryptoUtils.DecryptAnonymous(base64AccessLinkValue, decryptedPrivateEncryptionKey, decryptedPublicEncryptionKey);
-
+            string headerContent = string.Empty;
             var decodedHeaders = CryptoUtils.Base64Decode(_evelopeHeaders.Value);
-            var headerContent = CryptoUtils.DecryptSymmetricAsString(decodedHeaders, AccessKey);
+
+            if (!IsBroadcastEnvelope)
+            {
+                var base64AccessLinkValue = AccessLinks.FirstOrDefault(a => a.Link == link.Link).Value;
+
+                var decryptedPrivateEncryptionKey = CryptoUtils.Base64Decode(profile.PrivateEncryptionKeyBase64);
+                var decryptedPublicEncryptionKey = CryptoUtils.Base64Decode(profile.Account.PublicEncryptionKey);
+
+                AccessKey = CryptoUtils.DecryptAnonymous(base64AccessLinkValue, decryptedPrivateEncryptionKey, decryptedPublicEncryptionKey);
+
+                headerContent = CryptoUtils.DecryptSymmetricAsString(decodedHeaders, AccessKey);
+            }
+            else
+            {
+                // Broadcasts have their headers encoded in base64 without any access key.
+                headerContent = Encoding.UTF8.GetString(decodedHeaders);
+            }
 
             EnvelopeHeaderStore = new KeyValueDataStore(headerContent);
         }

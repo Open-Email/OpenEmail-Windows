@@ -1,4 +1,5 @@
-﻿using OpenEmail.Domain.Entities;
+﻿using System.Text;
+using OpenEmail.Domain.Entities;
 using OpenEmail.Domain.Models.MessageEnvelope;
 
 namespace OpenEmail.Domain.Models.Messages
@@ -18,7 +19,16 @@ namespace OpenEmail.Domain.Models.Messages
         protected MessageEnvelope(EnvelopeBase envelope, byte[] messageResponseContent)
         {
             Envelope = envelope;
-            Content = CryptoUtils.DecryptSymmetricAsString(messageResponseContent, Envelope.AccessKey);
+
+            if (envelope.IsBroadcastEnvelope)
+            {
+                // Broadcasts evenlopes have their content unencrypted.
+                Content = Encoding.UTF8.GetString(messageResponseContent);
+            }
+            else
+            {
+                Content = CryptoUtils.DecryptSymmetricAsString(messageResponseContent, Envelope.AccessKey);
+            }
 
             // Parse Files header if any.
 
@@ -63,7 +73,7 @@ namespace OpenEmail.Domain.Models.Messages
                 Category = Envelope.EnvelopeHeaderStore.GetData<string>("category"),
                 IsRead = false,
                 Readers = Envelope.EnvelopeHeaderStore.GetData<string>("readers"),
-                AccessKey = Convert.ToBase64String(Envelope.AccessKey),
+                AccessKey = Envelope.AccessKey != null ? Convert.ToBase64String(Envelope.AccessKey) : string.Empty,
                 DeletedAt = null,
                 ReceivedAt = Envelope.EnvelopeHeaderStore.GetData<DateTimeOffset>("date"),
                 EnvelopeId = Envelope.Id,

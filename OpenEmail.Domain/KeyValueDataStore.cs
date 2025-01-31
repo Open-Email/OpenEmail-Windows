@@ -58,6 +58,8 @@ namespace OpenEmail.Domain
         /// <param name="header">Header line to parse attributes for.</param>
         public static Dictionary<string, string> ParseAttributes(string header)
         {
+            if (string.IsNullOrEmpty(header)) return new Dictionary<string, string>();
+
             var result = new Dictionary<string, string>();
             var attributes = header.Split(';');
 
