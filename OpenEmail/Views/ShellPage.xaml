@@ -13,6 +13,7 @@
     xmlns:messages="using:OpenEmail.Domain.Models.Messages"
     xmlns:navigation="using:OpenEmail.Domain.Models.Navigation"
     xmlns:selectors="using:OpenEmail.Selectors"
+    xmlns:tb="using:H.NotifyIcon"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
 
@@ -395,5 +396,21 @@
                     IsClosable="False" />
             </Grid>
         </controls1:CustomNavigationView>
+
+        <tb:TaskbarIcon
+            x:Name="TrayIcon"
+            x:FieldModifier="public"
+            ContextMenuMode="SecondWindow"
+            IconSource="/Assets/appicon.ico"
+            NoLeftClickDelay="True"
+            ToolTipText="Open Email">
+            <tb:TaskbarIcon.ContextFlyout>
+                <MenuFlyout AreOpenCloseAnimationsEnabled="False">
+                    <MenuFlyoutItem Click="LaunchClicked" Text="Launch" />
+                    <MenuFlyoutSeparator />
+                    <MenuFlyoutItem Click="ExitClicked" Text="Exit" />
+                </MenuFlyout>
+            </tb:TaskbarIcon.ContextFlyout>
+        </tb:TaskbarIcon>
     </Grid>
 </local:ShellPageAbstract>

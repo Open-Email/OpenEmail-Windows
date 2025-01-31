@@ -194,5 +194,17 @@ namespace OpenEmail.Views
                 });
             });
         }
+
+        private void ExitClicked(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        {
+            App.Current.TerminateApplication();
+        }
+
+        private void LaunchClicked(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        {
+            if (App.MainWindow == null) return;
+
+            App.MainWindow.Activate();
+        }
     }
 }
