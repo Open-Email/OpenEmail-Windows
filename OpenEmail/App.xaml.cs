@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using OpenEmail.Contracts.Application;
@@ -18,9 +20,11 @@ namespace OpenEmail
 {
     public partial class App : Application
     {
-
         public IServiceProvider Services { get; }
         public new static App Current => (App)Application.Current;
+
+        public static Window MainWindow { get; set; }
+        public static bool HandleClosedEvents { get; set; } = true;
 
         public App()
         {
@@ -74,37 +78,68 @@ namespace OpenEmail
 
         private void CreateWindow(bool isProfileLoaded)
         {
-            var newWindow = WindowHelper.CreateWindow();
+            if (MainWindow != null)
+            {
+                MainWindow.AppWindow.Closing -= AppWindowClosing;
+                MainWindow.Close();
+                MainWindow = null;
+            }
 
-            newWindow.Title = "Open Email";
+            MainWindow = WindowHelper.CreateWindow();
+            MainWindow.AppWindow.Closing += AppWindowClosing;
 
-            WindowingFunctions.SetWindowIcon("Assets/appicon.ico", newWindow);
+            MainWindow.Title = "Open Email";
+
+            WindowingFunctions.SetWindowIcon("Assets/appicon.ico", MainWindow);
 
             if (isProfileLoaded)
             {
-                SetupMainWindow(newWindow);
-                (newWindow.Content as Frame).Navigate(typeof(ShellPage));
+                SetupMainWindow(MainWindow);
+                (MainWindow.Content as Frame).Navigate(typeof(ShellPage));
             }
             else
             {
-                SetupLoginWindow(newWindow);
-                (newWindow.Content as Frame).Navigate(typeof(LoginPage));
+                SetupLoginWindow(MainWindow);
+                (MainWindow.Content as Frame).Navigate(typeof(LoginPage));
             }
 
-            newWindow.Activate();
+            MainWindow.Activate();
 
-            var otherWindows = WindowHelper.ActiveWindows.Where(a => a != newWindow).ToList();
+            var otherWindows = WindowHelper.ActiveWindows.Where(a => a != MainWindow).ToList();
 
+            Debug.WriteLine("Going through windows.");
             foreach (var item in otherWindows)
             {
                 item.Close();
             }
+            Debug.WriteLine("Went with windows.");
+        }
+
+        private void AppWindowClosing(AppWindow sender, AppWindowClosingEventArgs args)
+        {
+            args.Cancel = true;
+
+            sender.Hide();
         }
 
         private void SetupMainWindow(Window window)
         {
             // Configure title bar.
             window.AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+        }
+
+        public void TerminateApplication()
+        {
+            HandleClosedEvents = false;
+
+            foreach (var window in WindowHelper.ActiveWindows)
+            {
+                if (window == MainWindow) continue;
+
+                window.Close();
+            }
+
+            Current.Exit();
         }
     }
 }
