@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -30,8 +30,6 @@ namespace OpenEmail
         {
             InitializeComponent();
             Services = ConfigureServices();
-
-
         }
 
         private ServiceProvider ConfigureServices()
@@ -80,13 +78,15 @@ namespace OpenEmail
 
         private void CreateWindow(bool isProfileLoaded)
         {
+            if (MainWindow != null)
+            {
+                MainWindow.AppWindow.Closing -= AppWindowClosing;
+                MainWindow.Close();
+                MainWindow = null;
+            }
+
             MainWindow = WindowHelper.CreateWindow();
-
-            var hwnd = global::WinRT.Interop.WindowNative.GetWindowHandle(MainWindow);
-            var windowId = Win32Interop.GetWindowIdFromWindow(hwnd);
-            var appWindow = AppWindow.GetFromWindowId(windowId);
-
-            appWindow.Closing += AppWindowClosing;
+            MainWindow.AppWindow.Closing += AppWindowClosing;
 
             MainWindow.Title = "Open Email";
 
@@ -107,10 +107,12 @@ namespace OpenEmail
 
             var otherWindows = WindowHelper.ActiveWindows.Where(a => a != MainWindow).ToList();
 
+            Debug.WriteLine("Going through windows.");
             foreach (var item in otherWindows)
             {
                 item.Close();
             }
+            Debug.WriteLine("Went with windows.");
         }
 
         private void AppWindowClosing(AppWindow sender, AppWindowClosingEventArgs args)

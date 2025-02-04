@@ -22,7 +22,6 @@ namespace OpenEmail.Helpers
                 };
             }
 
-
             TrackWindow(createdWindow);
 
             return createdWindow;
@@ -43,36 +42,6 @@ namespace OpenEmail.Helpers
             IntPtr hWnd = WindowNative.GetWindowHandle(window);
             WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
             return AppWindow.GetFromWindowId(wndId);
-        }
-
-        static public Window GetWindowForElement(UIElement element)
-        {
-            if (element.XamlRoot != null)
-            {
-                foreach (Window window in _activeWindows)
-                {
-                    if (element.XamlRoot == window.Content.XamlRoot)
-                    {
-                        return window;
-                    }
-                }
-            }
-            return null;
-        }
-
-        static public double GetRasterizationScaleForElement(UIElement element)
-        {
-            if (element.XamlRoot != null)
-            {
-                foreach (Window window in _activeWindows)
-                {
-                    if (element.XamlRoot == window.Content.XamlRoot)
-                    {
-                        return element.XamlRoot.RasterizationScale;
-                    }
-                }
-            }
-            return 0.0;
         }
 
         static public List<Window> ActiveWindows { get { return _activeWindows; } }
