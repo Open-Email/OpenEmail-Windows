@@ -21,7 +21,11 @@ namespace OpenEmail.Views
         public ShellPage()
         {
             InitializeComponent();
+
+            ViewModel.NotifyIconDoubleClicked += NotifyIconClicked;
         }
+
+        private void NotifyIconClicked(object sender, EventArgs e) => LaunchClicked(null, null);
 
         private void PaneButtonClicked(TitleBar sender, object args)
         {
@@ -32,6 +36,7 @@ namespace OpenEmail.Views
         {
             base.OnDisposeRequested();
 
+            ViewModel.NotifyIconDoubleClicked -= NotifyIconClicked;
             WeakReferenceMessenger.Default.UnregisterAll(this);
         }
 
@@ -55,9 +60,6 @@ namespace OpenEmail.Views
 
             if (isMailListPageRequested && isMailListPageCurrent)
             {
-                // TODO
-                // Raise message for mail list page to change the type of listing.
-
                 if (additionalArgs is ComposeWindowArgs composeWindowArgs)
                 {
                     WeakReferenceMessenger.Default.Send(composeWindowArgs);

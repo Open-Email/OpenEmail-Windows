@@ -20,6 +20,8 @@ namespace OpenEmail.ViewModels
         IRecipient<SendMessage>,
         IRecipient<TriggerSynchronizationMessage>
     {
+        public event EventHandler NotifyIconDoubleClicked;
+
         public AccountProfile CurrentProfile => ApplicationStateService.ActiveProfile;
 
         [ObservableProperty]
@@ -102,6 +104,9 @@ namespace OpenEmail.ViewModels
             _syncIntervalTimer.Elapsed += SyncIntervalTick;
             _syncIntervalTimer.Start();
         }
+
+        [RelayCommand]
+        private void DoubleClicked() => NotifyIconDoubleClicked?.Invoke(this, EventArgs.Empty);
 
         private void PreferencesUpdated(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {

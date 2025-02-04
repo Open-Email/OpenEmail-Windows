@@ -401,6 +401,7 @@
             x:Name="TrayIcon"
             x:FieldModifier="public"
             ContextMenuMode="SecondWindow"
+            DoubleClickCommand="{x:Bind ViewModel.DoubleClickedCommand}"
             IconSource="/Assets/appicon.ico"
             NoLeftClickDelay="True"
             ToolTipText="Open Email">
