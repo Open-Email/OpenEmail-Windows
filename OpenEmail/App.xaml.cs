@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -107,12 +106,11 @@ namespace OpenEmail
 
             var otherWindows = WindowHelper.ActiveWindows.Where(a => a != MainWindow).ToList();
 
-            Debug.WriteLine("Going through windows.");
             foreach (var item in otherWindows)
             {
                 item.Close();
             }
-            Debug.WriteLine("Went with windows.");
+
         }
 
         private void AppWindowClosing(AppWindow sender, AppWindowClosingEventArgs args)

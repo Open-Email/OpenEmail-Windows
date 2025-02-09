@@ -10,7 +10,8 @@
             <SolidColorBrush x:Key="GeneralSeperatorBrush" Color="#282c34" />
             <SolidColorBrush x:Key="AlternateBackgroundBrush" Color="#fcfdfe" />
             <SolidColorBrush x:Key="SaveProfileButtonBackgroundBrush" Color="#fcfdfe" />
-            <SolidColorBrush x:Key="AttachmentDropBackgroundBrush" Color="#f4f6fa" />
+            <SolidColorBrush x:Key="LogoutButtonBackgroundBrush" Color="#fcfdfe" />
+            <SolidColorBrush x:Key="AttachmentDropBackgroundBrush" Color="#c23616" />
             <SolidColorBrush x:Key="BroadcastTagForegroundBrush" Color="#f6b93b" />
             <SolidColorBrush x:Key="DetailForegroundBrush" Color="#576574" />
             <ImageSource x:Key="LogoImageSource">/Assets/openemail_logo.light.png</ImageSource>
@@ -20,7 +21,8 @@
             <SolidColorBrush x:Key="InfoMessagePanelBackground" Color="#2c2c2c" />
             <SolidColorBrush x:Key="GeneralSeperatorBrush" Color="#4d4d4d" />
             <SolidColorBrush x:Key="AlternateBackgroundBrush" Color="#2f3640" />
-            <SolidColorBrush x:Key="SaveProfileButtonBackgroundBrush" Color="#222f3e" />
+            <SolidColorBrush x:Key="SaveProfileButtonBackgroundBrush" Color="#2f3640" />
+            <SolidColorBrush x:Key="LogoutButtonBackgroundBrush" Color="#eb4d4b" />
             <SolidColorBrush x:Key="AttachmentDropBackgroundBrush" Color="#323232" />
             <SolidColorBrush x:Key="BroadcastTagForegroundBrush" Color="#f6b93b" />
             <SolidColorBrush x:Key="DetailForegroundBrush" Color="#c8d6e5" />

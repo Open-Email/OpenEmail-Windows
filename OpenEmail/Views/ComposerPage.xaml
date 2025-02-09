@@ -17,7 +17,7 @@
 
         <!--  Picked Contact Template  -->
         <DataTemplate x:Key="PickedReaderTemplate" x:DataType="data:ContactViewModel">
-            <Grid Margin="0,6" ColumnSpacing="8">
+            <Grid Height="20" ColumnSpacing="8">
                 <ToolTipService.ToolTip>
                     <ToolTip Content="{x:Bind Contact.Address}" />
                 </ToolTipService.ToolTip>
@@ -25,11 +25,10 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <PersonPicture
-                    Width="24"
-                    Height="24"
-                    DisplayName="{x:Bind ContactDisplayName}"
-                    ProfilePicture="{x:Bind ProfileThumbnailUrl}" />
+
+                <Viewbox>
+                    <PersonPicture DisplayName="{x:Bind ContactDisplayName}" ProfilePicture="{x:Bind ProfileThumbnailUrl}" />
+                </Viewbox>
 
                 <TextBlock
                     Grid.Column="1"
@@ -62,7 +61,7 @@
         </DataTemplate>
     </Page.Resources>
 
-    <Grid Padding="24" RowSpacing="6">
+    <Grid Padding="24,24,12,24" RowSpacing="6">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -87,133 +86,120 @@
             </CommandBar.Content>
         </CommandBar>
 
-        <Grid Grid.Row="1" RowSpacing="6">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="1" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="1" />
-                <RowDefinition Height="*" MinHeight="200" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-
-            <!--  Readers  -->
-            <Grid
-                Grid.Row="1"
-                ColumnSpacing="12"
-                Visibility="{x:Bind helpers:XamlHelpers.ReverseBooleanToVisibility(ViewModel.DraftMessageViewModel.IsBroadcast), Mode=OneWay}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="50" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
+        <ScrollView Grid.Row="1" Padding="0,0,16,0">
+            <Grid RowSpacing="6">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="1" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="1" />
+                    <RowDefinition Height="*" MinHeight="75" />
+                    <RowDefinition Height="Auto" MinHeight="20" />
                 </Grid.RowDefinitions>
 
-                <TextBlock
+                <!--  Readers  -->
+                <Grid
                     Grid.Row="1"
-                    VerticalAlignment="Center"
-                    Text="Readers" />
+                    ColumnSpacing="12"
+                    Visibility="{x:Bind helpers:XamlHelpers.ReverseBooleanToVisibility(ViewModel.DraftMessageViewModel.IsBroadcast), Mode=OneWay}">
 
-                <controls:TokenizingTextBox
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    VerticalAlignment="Center"
-                    LostFocus="ReaderLostFocus"
-                    ItemsSource="{x:Bind ViewModel.DraftMessageViewModel.ReaderViewModels, Mode=OneWay}"
-                    PlaceholderText="add readers"
-                    SuggestedItemTemplate="{StaticResource ReaderSuggestionContentTemplate}"
-                    SuggestedItemsSource="{x:Bind ViewModel.ContactViewModels}"
-                    TokenDelimiter=","
-                    TokenItemAdding="ReaderBeingAdded"
-                    TokenItemTemplate="{StaticResource PickedReaderTemplate}" />
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
 
-                <InfoBar
-                    Title="Invalid Addresses"
-                    Grid.Row="0"
-                    Grid.ColumnSpan="2"
-                    IsClosable="True"
-                    IsOpen="{x:Bind ViewModel.IsErrorMessageVisible, Mode=OneWay}"
-                    Message="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
-                    Severity="Error" />
+                    <controls:TokenizingTextBox
+                        Grid.Row="1"
+                        VerticalAlignment="Center"
+                        BorderThickness="0"
+                        ItemsSource="{x:Bind ViewModel.DraftMessageViewModel.ReaderViewModels, Mode=OneWay}"
+                        LostFocus="ReaderLostFocus"
+                        PlaceholderText="add readers"
+                        SuggestedItemTemplate="{StaticResource ReaderSuggestionContentTemplate}"
+                        SuggestedItemsSource="{x:Bind ViewModel.ContactViewModels}"
+                        TokenDelimiter=","
+                        TokenItemAdding="ReaderBeingAdded"
+                        TokenItemTemplate="{StaticResource PickedReaderTemplate}" />
 
-            </Grid>
+                    <InfoBar
+                        Title="Invalid Addresses"
+                        Grid.Row="0"
+                        IsClosable="True"
+                        IsOpen="{x:Bind ViewModel.IsErrorMessageVisible, Mode=OneWay}"
+                        Message="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
+                        Severity="Error" />
 
-            <Border
-                Grid.Row="2"
-                VerticalAlignment="Stretch"
-                BorderBrush="{ThemeResource GeneralSeperatorBrush}" />
+                </Grid>
 
-            <!--  Subject  -->
-            <Grid Grid.Row="3" ColumnSpacing="12">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="50" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <TextBlock VerticalAlignment="Center" Text="Subject" />
+                <Border
+                    Grid.Row="2"
+                    VerticalAlignment="Stretch"
+                    BorderBrush="{ThemeResource GeneralSeperatorBrush}" />
 
+                <!--  Subject  -->
                 <TextBox
+                    Grid.Row="3"
                     Grid.Column="1"
                     VerticalAlignment="Center"
+                    BorderThickness="0"
                     PlaceholderText="add subject"
                     Text="{x:Bind ViewModel.DraftMessageViewModel.Subject, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            </Grid>
 
-            <Border
-                Grid.Row="4"
-                VerticalAlignment="Stretch"
-                BorderBrush="{ThemeResource GeneralSeperatorBrush}" />
+                <Border
+                    Grid.Row="4"
+                    VerticalAlignment="Stretch"
+                    BorderBrush="{ThemeResource GeneralSeperatorBrush}" />
 
-            <!--  Message  -->
-            <TextBox
-                Grid.Row="5"
-                Margin="0,0,0,20"
-                AcceptsReturn="True"
-                PlaceholderText="write your message here"
-                Text="{x:Bind ViewModel.DraftMessageViewModel.Body, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <!--  Message  -->
+                <TextBox
+                    Grid.Row="5"
+                    Margin="0,0,0,20"
+                    AcceptsReturn="True"
+                    BorderThickness="0"
+                    PlaceholderText="write your message here"
+                    Text="{x:Bind ViewModel.DraftMessageViewModel.Body, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-            <!--  Attachments  -->
-            <Grid
-                Grid.Row="6"
-                MinHeight="75"
-                AllowDrop="True"
-                Background="{ThemeResource AttachmentDropBackgroundBrush}"
-                CornerRadius="8"
-                DragEnter="AttachmentDragEnter"
-                Drop="AttachmentDropped"
-                RowSpacing="12">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <StackPanel
-                    Margin="0,24,0,0"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Spacing="8">
-                    <PathIcon
+                <!--  Attachments  -->
+                <Grid
+                    Grid.Row="6"
+                    AllowDrop="True"
+                    Background="{ThemeResource AttachmentDropBackgroundBrush}"
+                    CornerRadius="8"
+                    DragEnter="AttachmentDragEnter"
+                    Drop="AttachmentDropped"
+                    RowSpacing="12">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <StackPanel
+                        Margin="0,24,0,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Data="F1 M 3.056641 18.75 C 2.646484 18.75 2.255859 18.666992 1.884766 18.500977 C 1.513672 18.334961 1.189779 18.113607 0.913086 17.836914 C 0.636393 17.560221 0.415039 17.236328 0.249023 16.865234 C 0.083008 16.494141 0 16.103516 0 15.693359 L 0 4.306641 C 0 3.896484 0.083008 3.505859 0.249023 3.134766 C 0.415039 2.763672 0.636393 2.439779 0.913086 2.163086 C 1.189779 1.886395 1.513672 1.665039 1.884766 1.499023 C 2.255859 1.333008 2.646484 1.25 3.056641 1.25 L 6.875 1.25 C 7.324219 1.25 7.709961 1.319988 8.032227 1.459961 C 8.354492 1.599936 8.644205 1.785482 8.901367 2.016602 C 9.158528 2.247723 9.397786 2.513021 9.619141 2.8125 C 9.840494 3.11198 10.071614 3.42448 10.3125 3.75 L 16.943359 3.75 C 17.353516 3.75 17.744141 3.833008 18.115234 3.999023 C 18.486328 4.165039 18.810221 4.386394 19.086914 4.663086 C 19.363605 4.939779 19.584961 5.263672 19.750977 5.634766 C 19.916992 6.005859 20 6.396484 20 6.806641 L 20 9.902344 C 19.817707 9.674479 19.622395 9.456381 19.414062 9.248047 C 19.205729 9.039714 18.984375 8.847656 18.75 8.671875 L 18.75 6.875 C 18.75 6.621095 18.701172 6.380209 18.603516 6.152344 C 18.505859 5.924479 18.370768 5.724284 18.198242 5.551758 C 18.025715 5.379232 17.82552 5.244142 17.597656 5.146484 C 17.369791 5.048829 17.128906 5.000001 16.875 5 L 10.185547 5 C 9.957682 5.156251 9.736328 5.309246 9.521484 5.458984 C 9.306641 5.608725 9.088541 5.742188 8.867188 5.859375 C 8.645833 5.976562 8.413086 6.070964 8.168945 6.142578 C 7.924805 6.214193 7.65625 6.25 7.363281 6.25 L 1.25 6.25 L 1.25 15.625 C 1.25 15.878906 1.298828 16.119791 1.396484 16.347656 C 1.494141 16.575521 1.629232 16.775717 1.801758 16.948242 C 1.974284 17.120768 2.174479 17.255859 2.402344 17.353516 C 2.630208 17.451172 2.871094 17.5 3.125 17.5 L 7.900391 17.5 C 8.011067 17.721354 8.129883 17.936197 8.256836 18.144531 C 8.383789 18.352865 8.522135 18.554688 8.671875 18.75 Z M 7.363281 5 C 7.539062 5.000001 7.70345 4.977215 7.856445 4.931641 C 8.009439 4.886068 8.154297 4.825847 8.291016 4.750977 C 8.427734 4.676107 8.562825 4.5931 8.696289 4.501953 C 8.829752 4.410808 8.964844 4.316406 9.101562 4.21875 C 8.951822 4.016928 8.805338 3.813477 8.662109 3.608398 C 8.51888 3.40332 8.36263 3.219402 8.193359 3.056641 C 8.024088 2.893881 7.833658 2.760418 7.62207 2.65625 C 7.410481 2.552084 7.161458 2.5 6.875 2.5 L 3.125 2.5 C 2.871094 2.5 2.630208 2.548828 2.402344 2.646484 C 2.174479 2.744141 1.974284 2.879232 1.801758 3.051758 C 1.629232 3.224285 1.494141 3.42448 1.396484 3.652344 C 1.298828 3.880209 1.25 4.121094 1.25 4.375 L 1.25 5 Z M 8.75 14.375 C 8.75 13.600261 8.898111 12.871094 9.194336 12.1875 C 9.49056 11.503906 9.892578 10.908203 10.400391 10.400391 C 10.908203 9.892578 11.503906 9.490561 12.1875 9.194336 C 12.871093 8.898112 13.60026 8.75 14.375 8.75 C 14.889322 8.75 15.385741 8.816732 15.864258 8.950195 C 16.342773 9.083659 16.790363 9.272461 17.207031 9.516602 C 17.623697 9.760742 18.004557 10.055339 18.349609 10.400391 C 18.69466 10.745443 18.989258 11.126303 19.233398 11.542969 C 19.477539 11.959636 19.66634 12.407227 19.799805 12.885742 C 19.933268 13.364258 20 13.860678 20 14.375 C 20 15.14974 19.851887 15.878906 19.555664 16.5625 C 19.259439 17.246094 18.857422 17.841797 18.349609 18.349609 C 17.841797 18.857422 17.246094 19.259439 16.5625 19.555664 C 15.878906 19.851889 15.149739 20 14.375 20 C 13.59375 20 12.861328 19.853516 12.177734 19.560547 C 11.494141 19.267578 10.898438 18.867188 10.390625 18.359375 C 9.882812 17.851562 9.482422 17.255859 9.189453 16.572266 C 8.896484 15.888672 8.75 15.15625 8.75 14.375 Z M 15 15 L 16.875 15 C 17.04427 15 17.190754 14.938151 17.314453 14.814453 C 17.43815 14.690756 17.5 14.544271 17.5 14.375 C 17.5 14.205729 17.43815 14.059245 17.314453 13.935547 C 17.190754 13.81185 17.04427 13.75 16.875 13.75 L 15 13.75 L 15 11.875 C 14.999999 11.705729 14.93815 11.559245 14.814453 11.435547 C 14.690755 11.31185 14.544271 11.25 14.375 11.25 C 14.205729 11.25 14.059244 11.31185 13.935547 11.435547 C 13.811849 11.559245 13.75 11.705729 13.75 11.875 L 13.75 13.75 L 11.875 13.75 C 11.705729 13.75 11.559244 13.81185 11.435547 13.935547 C 11.311849 14.059245 11.25 14.205729 11.25 14.375 C 11.25 14.544271 11.311849 14.690756 11.435547 14.814453 C 11.559244 14.938151 11.705729 15 11.875 15 L 13.75 15 L 13.75 16.875 C 13.75 17.044271 13.811849 17.190756 13.935547 17.314453 C 14.059244 17.43815 14.205729 17.5 14.375 17.5 C 14.544271 17.5 14.690755 17.43815 14.814453 17.314453 C 14.93815 17.190756 14.999999 17.044271 15 16.875 Z " />
-                    <StackPanel Orientation="Horizontal" Spacing="12">
-                        <TextBlock VerticalAlignment="Center" Text="Drag and drop files, or " />
-                        <HyperlinkButton
-                            Margin="-12,0,0,0"
-                            Padding="4,0,4,0"
-                            Command="{x:Bind ViewModel.BrowseCommand}"
-                            Content="Browse" />
+                        Spacing="8">
+                        <PathIcon
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Data="F1 M 3.056641 18.75 C 2.646484 18.75 2.255859 18.666992 1.884766 18.500977 C 1.513672 18.334961 1.189779 18.113607 0.913086 17.836914 C 0.636393 17.560221 0.415039 17.236328 0.249023 16.865234 C 0.083008 16.494141 0 16.103516 0 15.693359 L 0 4.306641 C 0 3.896484 0.083008 3.505859 0.249023 3.134766 C 0.415039 2.763672 0.636393 2.439779 0.913086 2.163086 C 1.189779 1.886395 1.513672 1.665039 1.884766 1.499023 C 2.255859 1.333008 2.646484 1.25 3.056641 1.25 L 6.875 1.25 C 7.324219 1.25 7.709961 1.319988 8.032227 1.459961 C 8.354492 1.599936 8.644205 1.785482 8.901367 2.016602 C 9.158528 2.247723 9.397786 2.513021 9.619141 2.8125 C 9.840494 3.11198 10.071614 3.42448 10.3125 3.75 L 16.943359 3.75 C 17.353516 3.75 17.744141 3.833008 18.115234 3.999023 C 18.486328 4.165039 18.810221 4.386394 19.086914 4.663086 C 19.363605 4.939779 19.584961 5.263672 19.750977 5.634766 C 19.916992 6.005859 20 6.396484 20 6.806641 L 20 9.902344 C 19.817707 9.674479 19.622395 9.456381 19.414062 9.248047 C 19.205729 9.039714 18.984375 8.847656 18.75 8.671875 L 18.75 6.875 C 18.75 6.621095 18.701172 6.380209 18.603516 6.152344 C 18.505859 5.924479 18.370768 5.724284 18.198242 5.551758 C 18.025715 5.379232 17.82552 5.244142 17.597656 5.146484 C 17.369791 5.048829 17.128906 5.000001 16.875 5 L 10.185547 5 C 9.957682 5.156251 9.736328 5.309246 9.521484 5.458984 C 9.306641 5.608725 9.088541 5.742188 8.867188 5.859375 C 8.645833 5.976562 8.413086 6.070964 8.168945 6.142578 C 7.924805 6.214193 7.65625 6.25 7.363281 6.25 L 1.25 6.25 L 1.25 15.625 C 1.25 15.878906 1.298828 16.119791 1.396484 16.347656 C 1.494141 16.575521 1.629232 16.775717 1.801758 16.948242 C 1.974284 17.120768 2.174479 17.255859 2.402344 17.353516 C 2.630208 17.451172 2.871094 17.5 3.125 17.5 L 7.900391 17.5 C 8.011067 17.721354 8.129883 17.936197 8.256836 18.144531 C 8.383789 18.352865 8.522135 18.554688 8.671875 18.75 Z M 7.363281 5 C 7.539062 5.000001 7.70345 4.977215 7.856445 4.931641 C 8.009439 4.886068 8.154297 4.825847 8.291016 4.750977 C 8.427734 4.676107 8.562825 4.5931 8.696289 4.501953 C 8.829752 4.410808 8.964844 4.316406 9.101562 4.21875 C 8.951822 4.016928 8.805338 3.813477 8.662109 3.608398 C 8.51888 3.40332 8.36263 3.219402 8.193359 3.056641 C 8.024088 2.893881 7.833658 2.760418 7.62207 2.65625 C 7.410481 2.552084 7.161458 2.5 6.875 2.5 L 3.125 2.5 C 2.871094 2.5 2.630208 2.548828 2.402344 2.646484 C 2.174479 2.744141 1.974284 2.879232 1.801758 3.051758 C 1.629232 3.224285 1.494141 3.42448 1.396484 3.652344 C 1.298828 3.880209 1.25 4.121094 1.25 4.375 L 1.25 5 Z M 8.75 14.375 C 8.75 13.600261 8.898111 12.871094 9.194336 12.1875 C 9.49056 11.503906 9.892578 10.908203 10.400391 10.400391 C 10.908203 9.892578 11.503906 9.490561 12.1875 9.194336 C 12.871093 8.898112 13.60026 8.75 14.375 8.75 C 14.889322 8.75 15.385741 8.816732 15.864258 8.950195 C 16.342773 9.083659 16.790363 9.272461 17.207031 9.516602 C 17.623697 9.760742 18.004557 10.055339 18.349609 10.400391 C 18.69466 10.745443 18.989258 11.126303 19.233398 11.542969 C 19.477539 11.959636 19.66634 12.407227 19.799805 12.885742 C 19.933268 13.364258 20 13.860678 20 14.375 C 20 15.14974 19.851887 15.878906 19.555664 16.5625 C 19.259439 17.246094 18.857422 17.841797 18.349609 18.349609 C 17.841797 18.857422 17.246094 19.259439 16.5625 19.555664 C 15.878906 19.851889 15.149739 20 14.375 20 C 13.59375 20 12.861328 19.853516 12.177734 19.560547 C 11.494141 19.267578 10.898438 18.867188 10.390625 18.359375 C 9.882812 17.851562 9.482422 17.255859 9.189453 16.572266 C 8.896484 15.888672 8.75 15.15625 8.75 14.375 Z M 15 15 L 16.875 15 C 17.04427 15 17.190754 14.938151 17.314453 14.814453 C 17.43815 14.690756 17.5 14.544271 17.5 14.375 C 17.5 14.205729 17.43815 14.059245 17.314453 13.935547 C 17.190754 13.81185 17.04427 13.75 16.875 13.75 L 15 13.75 L 15 11.875 C 14.999999 11.705729 14.93815 11.559245 14.814453 11.435547 C 14.690755 11.31185 14.544271 11.25 14.375 11.25 C 14.205729 11.25 14.059244 11.31185 13.935547 11.435547 C 13.811849 11.559245 13.75 11.705729 13.75 11.875 L 13.75 13.75 L 11.875 13.75 C 11.705729 13.75 11.559244 13.81185 11.435547 13.935547 C 11.311849 14.059245 11.25 14.205729 11.25 14.375 C 11.25 14.544271 11.311849 14.690756 11.435547 14.814453 C 11.559244 14.938151 11.705729 15 11.875 15 L 13.75 15 L 13.75 16.875 C 13.75 17.044271 13.811849 17.190756 13.935547 17.314453 C 14.059244 17.43815 14.205729 17.5 14.375 17.5 C 14.544271 17.5 14.690755 17.43815 14.814453 17.314453 C 14.93815 17.190756 14.999999 17.044271 15 16.875 Z " />
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <TextBlock VerticalAlignment="Center" Text="Drag and drop files, or " />
+                            <HyperlinkButton
+                                Margin="-12,0,0,0"
+                                Padding="4,0,4,0"
+                                Command="{x:Bind ViewModel.BrowseCommand}"
+                                Content="Browse" />
+                        </StackPanel>
                     </StackPanel>
-                </StackPanel>
 
-                <ItemsControl
-                    Grid.Row="1"
-                    Margin="24"
-                    ItemTemplate="{StaticResource ComposerAttachmentTemplate}"
-                    ItemsSource="{x:Bind ViewModel.DraftMessageViewModel.AttachmentViewModels, Mode=OneWay}" />
+                    <ItemsControl
+                        Grid.Row="1"
+                        Margin="24"
+                        ItemTemplate="{StaticResource ComposerAttachmentTemplate}"
+                        ItemsSource="{x:Bind ViewModel.DraftMessageViewModel.AttachmentViewModels, Mode=OneWay}" />
+                </Grid>
             </Grid>
-        </Grid>
+        </ScrollView>
+
     </Grid>
 </local:ComposerPageAbstract>

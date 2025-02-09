@@ -214,17 +214,7 @@ namespace OpenEmail.ViewModels
             }
         }
 
-        [RelayCommand]
-        private async Task LogoutAsync()
-        {
-            await _loginService.LogoutAsync(ApplicationStateService.ActiveProfile);
 
-            // TODO: Cancel existing synchronizations.
-
-            WeakReferenceMessenger.Default.Send(new DisposeViewModels());
-
-            await _windowService.RestartApplicationAsync();
-        }
 
         [RelayCommand]
         private async Task BroadcastStateChangedAsync(bool isBroadcastOn)

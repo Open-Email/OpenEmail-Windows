@@ -178,17 +178,41 @@ namespace OpenEmail.ViewModels
         private readonly IProfileDataService _profileDataService;
         private readonly IApplicationStateService _applicationStateService;
         private readonly IDialogService _dialogService;
+        private readonly ILoginService _loginService;
+        private readonly IWindowService _windowService;
         private readonly IProfileDataManager _profileDataManager;
 
         public ProfileEditPageViewModel(IProfileDataService profileDataService,
                                      IApplicationStateService applicationStateService,
                                      IDialogService dialogService,
+                                     ILoginService loginService,
+                                     IWindowService windowService,
                                      IProfileDataManager profileDataManager)
         {
             _profileDataService = profileDataService;
             _applicationStateService = applicationStateService;
             _dialogService = dialogService;
+            _loginService = loginService;
+            _windowService = windowService;
             _profileDataManager = profileDataManager;
+        }
+
+        [RelayCommand]
+        private async Task LogoutAsync()
+        {
+            // Confirm the logout request.
+
+            var isConfirmed = await _dialogService.ShowConfirmationDialogAsync("Logout", "Are you sure you want to logout?");
+
+            if (!isConfirmed) return;
+
+            await _loginService.LogoutAsync(_applicationStateService.ActiveProfile);
+
+            // TODO: Cancel existing synchronizations.
+
+            WeakReferenceMessenger.Default.Send(new DisposeViewModels());
+
+            await _windowService.RestartApplicationAsync();
         }
 
         // General
@@ -309,8 +333,8 @@ namespace OpenEmail.ViewModels
             }
             catch (Exception ex)
             {
-                // TODO: Display error message.
                 canSaveImage = false;
+                await _dialogService.ShowMessageAsync("Error", ex.Message);
             }
 
             if (canSaveImage)

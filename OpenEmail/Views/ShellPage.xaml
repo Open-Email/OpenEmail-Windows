@@ -114,7 +114,7 @@
                     VerticalAlignment="Center"
                     Orientation="Horizontal"
                     Spacing="6">
-                    <SplitButton Command="{x:Bind ViewModel.NewMessageCommand}">
+                    <SplitButton BorderThickness="0" Command="{x:Bind ViewModel.NewMessageCommand}">
                         <SplitButton.Flyout>
                             <MenuFlyout>
                                 <MenuFlyoutItem Command="{x:Bind ViewModel.NewBroadcastCommand}" Text="New broadcast" />
@@ -133,6 +133,7 @@
                     <Button
                         Grid.Column="1"
                         VerticalAlignment="Center"
+                        BorderThickness="0"
                         Command="{x:Bind ViewModel.SynchronizeCommand}">
                         <StackPanel Orientation="Horizontal" Spacing="12">
                             <PathIcon
@@ -228,7 +229,7 @@
                                         </StackPanel>
                                     </Button>
 
-                                    <Button
+                                    <!--<Button
                                         Grid.Row="2"
                                         Grid.ColumnSpan="2"
                                         HorizontalAlignment="Stretch"
@@ -240,7 +241,7 @@
                                                 Data="F1 M 1.25 16.787109 L 1.25 3.212891 C 1.25 3.056641 1.298828 2.921551 1.396484 2.807617 C 1.494141 2.693686 1.621094 2.623699 1.777344 2.597656 L 10.527344 1.259766 C 10.553385 1.253256 10.589192 1.25 10.634766 1.25 C 10.810547 1.25 10.957031 1.310223 11.074219 1.430664 C 11.191406 1.551107 11.25 1.699219 11.25 1.875 L 11.25 8.75 L 17.714844 8.75 L 16.464844 7.65625 C 16.321613 7.532553 16.25 7.376303 16.25 7.1875 C 16.25 7.01823 16.311848 6.871746 16.435547 6.748047 C 16.559244 6.62435 16.705729 6.5625 16.875 6.5625 C 17.03125 6.5625 17.171223 6.614584 17.294922 6.71875 L 19.785156 8.90625 C 19.928385 9.036459 20 9.192709 20 9.375 C 20 9.563803 19.928385 9.720053 19.785156 9.84375 L 17.294922 12.03125 C 17.171223 12.135417 17.03125 12.1875 16.875 12.1875 C 16.705729 12.1875 16.559244 12.125651 16.435547 12.001953 C 16.311848 11.878256 16.25 11.731771 16.25 11.5625 C 16.25 11.380209 16.321613 11.223959 16.464844 11.09375 L 17.714844 10 L 11.25 10 L 11.25 18.125 C 11.25 18.294271 11.193033 18.440756 11.079102 18.564453 C 10.965169 18.68815 10.820312 18.75 10.644531 18.75 C 10.592447 18.75 10.553385 18.746744 10.527344 18.740234 L 1.777344 17.402344 C 1.621094 17.376303 1.494141 17.306314 1.396484 17.192383 C 1.298828 17.078451 1.25 16.943359 1.25 16.787109 Z M 12.5 7.5 L 12.5 2.5 L 13.125 2.5 C 13.294271 2.5 13.440755 2.56185 13.564453 2.685547 C 13.68815 2.809246 13.75 2.95573 13.75 3.125 L 13.75 7.5 Z M 2.5 16.25 L 10 17.402344 L 10 2.607422 L 2.5 3.75 Z M 7.1875 10.625 C 7.1875 10.364584 7.278646 10.143229 7.460938 9.960938 C 7.643229 9.778646 7.864583 9.6875 8.125 9.6875 C 8.385416 9.6875 8.606771 9.778646 8.789062 9.960938 C 8.971354 10.143229 9.0625 10.364584 9.0625 10.625 C 9.0625 10.885417 8.971354 11.106771 8.789062 11.289062 C 8.606771 11.471354 8.385416 11.5625 8.125 11.5625 C 7.864583 11.5625 7.643229 11.471354 7.460938 11.289062 C 7.278646 11.106771 7.1875 10.885417 7.1875 10.625 Z M 12.5 17.5 L 12.5 11.25 L 13.75 11.25 L 13.75 16.875 C 13.75 17.044271 13.68815 17.190756 13.564453 17.314453 C 13.440755 17.43815 13.294271 17.5 13.125 17.5 Z " />
                                             <TextBlock Text="Sign Out" />
                                         </StackPanel>
-                                    </Button>
+                                    </Button>-->
                                 </Grid>
                             </Flyout>
                         </Button.Flyout>
@@ -259,6 +260,7 @@
             IsBackButtonVisible="Collapsed"
             IsPaneToggleButtonVisible="False"
             IsTitleBarAutoPaddingEnabled="True"
+            OpenPaneLength="250"
             SelectedIndex="{x:Bind ViewModel.SelectedMenuItemIndex, Mode=TwoWay}"
             SelectionChanged="NavigationSelectionChanged">
             <NavigationView.MenuItems>
@@ -324,10 +326,10 @@
 
             <!--  Navigation content  -->
             <Grid>
-                <Grid.ColumnDefinitions>
+                <!--<Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+                </Grid.ColumnDefinitions>-->
 
                 <!--  Nav Frame  -->
                 <Frame
@@ -351,7 +353,7 @@
                     Margin="0"
                     Padding="6,12"
                     HorizontalAlignment="Right"
-                    Background="Transparent"
+                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                     BorderBrush="{ThemeResource GeneralSeperatorBrush}"
                     BorderThickness="1,1,0,1"
                     Visibility="{x:Bind ViewModel.IsProfileLoadMenuVisible, Mode=OneWay}">
@@ -367,22 +369,27 @@
                             Duration="0:0:0.5" />
                     </animations:Implicit.ShowAnimations>
 
-
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+
                     </Grid.RowDefinitions>
 
                     <controls1:ContactProfileControl
-                        Grid.Row="1"
+                        Grid.Row="0"
                         HorizontalAlignment="Stretch"
                         BroadcastStateChangedCommand="{x:Bind ViewModel.BroadcastStateChangedCommand}"
                         Contact="{x:Bind ViewModel.DisplayingContactInformation, Mode=OneWay}" />
 
                     <Button
+                        Grid.Row="1"
+                        MinWidth="100"
+                        Margin="0,0,12,12"
                         HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
                         Command="{x:Bind ViewModel.CloseProfileInformationCommand}"
-                        Content="X" />
+                        Content="Close"
+                        Style="{ThemeResource AccentButtonStyle}" />
                 </Grid>
 
                 <!--  Info bar message  -->
