@@ -14,6 +14,7 @@ using OpenEmail.ViewModels;
 using OpenEmail.Views;
 using OpenEmail.WinRT;
 using SQLite;
+using WinUIEx;
 
 namespace OpenEmail
 {
@@ -22,7 +23,7 @@ namespace OpenEmail
         public IServiceProvider Services { get; }
         public new static App Current => (App)Application.Current;
 
-        public static Window MainWindow { get; set; }
+        public static WindowEx MainWindow { get; set; }
         public static bool HandleClosedEvents { get; set; } = true;
 
         public App()
@@ -124,6 +125,12 @@ namespace OpenEmail
         {
             // Configure title bar.
             window.AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+
+            if (window is WindowEx windowEx)
+            {
+                windowEx.MinWidth = 600;
+                windowEx.MinHeight = 400;
+            }
         }
 
         public void TerminateApplication()
