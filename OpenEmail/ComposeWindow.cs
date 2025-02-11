@@ -38,13 +38,23 @@ namespace OpenEmail
             if (AppWindow?.Presenter is not OverlappedPresenter presenter) return;
 
             presenter.SetBorderAndTitleBar(hasBorder: true, hasTitleBar: false);
-            ExtendsContentIntoTitleBar = true;
 
             if (_frame.Content is ComposerPage composerPage)
             {
+                ExtendsContentIntoTitleBar = true;
+
                 var titleBar = composerPage.GetTitleBar();
                 SetTitleBar(titleBar);
+
+                composerPage.MinimizeWindowRequested += WindowMinimizeRequested;
+                composerPage.CloseWindowRequested += DismissWindowRequested;
             }
+        }
+
+        private void WindowMinimizeRequested(object sender, System.EventArgs e)
+        {
+            if (AppWindow?.Presenter is not OverlappedPresenter presenter) return;
+            presenter.Minimize();
         }
 
         private void DismissWindowRequested(object sender, System.EventArgs e) => Close();
@@ -58,6 +68,10 @@ namespace OpenEmail
             if (_frame.Content is ComposerPage composerPage)
             {
                 // Make sure to dispose eveerything.
+
+                composerPage.MinimizeWindowRequested -= WindowMinimizeRequested;
+                composerPage.CloseWindowRequested -= DismissWindowRequested;
+
                 composerPage.DisposePage();
             }
         }

@@ -79,17 +79,19 @@
         </Grid.RowDefinitions>
 
         <!--  Title bar  -->
-        <Grid x:Name="ComposeTitleBar">
+        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <Image
-                Height="24"
-                Margin="24,12"
-                HorizontalAlignment="Left"
-                Source="/Assets/appicon.ico" />
+            <Grid x:Name="ComposeTitleBar" Background="Transparent">
+                <Image
+                    Height="24"
+                    Margin="24,12"
+                    HorizontalAlignment="Left"
+                    Source="/Assets/appicon.ico" />
+            </Grid>
 
             <TextBlock
                 Grid.ColumnSpan="2"
@@ -99,7 +101,6 @@
                 Style="{StaticResource BodyStrongTextBlockStyle}"
                 Text="Draft" />
 
-
             <StackPanel
                 Grid.Column="1"
                 Margin="0,0,12,0"
@@ -107,7 +108,7 @@
                 Spacing="4">
 
                 <!--  Minimize  -->
-                <Button Style="{StaticResource TitleBarButtonStyle}">
+                <Button Click="MinimizeClicked" Style="{StaticResource TitleBarButtonStyle}">
                     <Viewbox Width="10" Height="10">
                         <PathIcon
                             HorizontalAlignment="Center"
@@ -118,7 +119,7 @@
                 </Button>
 
                 <!--  Close  -->
-                <Button Style="{StaticResource TitleBarButtonStyle}">
+                <Button Click="CloseClicked" Style="{StaticResource TitleBarButtonStyle}">
                     <Viewbox Width="10" Height="10">
                         <PathIcon
                             HorizontalAlignment="Center"
