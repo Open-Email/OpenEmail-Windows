@@ -241,8 +241,10 @@
                 Grid.Row="1"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
+                HorizontalTextAlignment="Center"
                 Style="{StaticResource SubtitleTextBlockStyle}"
                 Text="Select a message on the left"
+                TextWrapping="WrapWholeWords"
                 Visibility="{x:Bind ViewModel.HasNoSelectedMessage, Mode=OneWay}" />
 
             <!--  Message details  -->

@@ -67,6 +67,7 @@
                     <!--  General  -->
                     <Grid
                         MaxWidth="800"
+                        Padding="6,0"
                         RowSpacing="6"
                         Visibility="{x:Bind ViewModel.IsGeneralSectionVisible, Mode=OneWay}">
                         <Grid.RowDefinitions>
@@ -140,6 +141,7 @@
                     <!--  Trusted Domains  -->
                     <Grid
                         MaxWidth="800"
+                        Padding="6,0"
                         HorizontalAlignment="Center"
                         RowSpacing="6"
                         Visibility="{x:Bind ViewModel.IsTrustedDomainsSectionVisible, Mode=OneWay}">
@@ -153,7 +155,10 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <TextBox PlaceholderText="enter domain (eg. open.email.com)" Text="{x:Bind ViewModel.AddDomainQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBox
+                                MaxWidth="250"
+                                PlaceholderText="enter domain (eg. open.email.com)"
+                                Text="{x:Bind ViewModel.AddDomainQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             <Button Grid.Column="1" Command="{x:Bind ViewModel.AddTrustedDomainCommand}">
                                 <StackPanel Orientation="Horizontal" Spacing="12">
                                     <PathIcon
@@ -171,7 +176,7 @@
                             <ItemsControl ItemsSource="{x:Bind ViewModel.TrustedDomains}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate x:DataType="x:String">
-                                        <Grid Margin="0,6">
+                                        <Grid Margin="0,6" ColumnSpacing="12">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="Auto" />
@@ -206,6 +211,7 @@
                     <!--  Keys  -->
                     <Grid
                         MaxWidth="800"
+                        Padding="6,0"
                         RowSpacing="8"
                         Visibility="{x:Bind ViewModel.IsKeysSectionVisible, Mode=OneWay}">
                         <!--  QR  -->

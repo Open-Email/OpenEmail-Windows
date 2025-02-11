@@ -110,7 +110,7 @@
             Visibility="{x:Bind ViewModel.IsGeneralSettingsVisible, Mode=OneWay}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" MaxWidth="400" />
-                <ColumnDefinition Width="6*" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
@@ -160,8 +160,11 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <TextBox Text="{x:Bind ViewModel.Name, Mode=TwoWay}" />
-                <TextBlock Grid.Row="1" Text="{x:Bind ViewModel.FullAddress}" />
+                <TextBox Text="{x:Bind ViewModel.Name, Mode=TwoWay}" TextWrapping="Wrap" />
+                <TextBlock
+                    Grid.Row="1"
+                    Text="{x:Bind ViewModel.FullAddress}"
+                    TextWrapping="Wrap" />
                 <ToggleSwitch
                     Grid.Row="2"
                     IsOn="{x:Bind ViewModel.IsAway, Mode=TwoWay}"
@@ -172,7 +175,8 @@
                     AcceptsReturn="True"
                     IsEnabled="{x:Bind ViewModel.IsAwayMessageAvailable, Mode=OneWay}"
                     PlaceholderText="Enter a message here to display contacts when you are away"
-                    Text="{x:Bind ViewModel.AwayMessage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    Text="{x:Bind ViewModel.AwayMessage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    TextWrapping="Wrap" />
             </Grid>
 
             <Border
@@ -201,7 +205,8 @@
                     Header="About"
                     MaxLength="100"
                     PlaceholderText="Message"
-                    Text="{x:Bind ViewModel.About, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    Text="{x:Bind ViewModel.About, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    TextWrapping="Wrap" />
 
                 <TextBlock
                     Grid.Row="2"
