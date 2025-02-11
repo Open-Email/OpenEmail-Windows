@@ -1,6 +1,7 @@
 using System;
 using CommunityToolkit.WinUI.Controls;
 using EmailValidation;
+using Microsoft.UI.Xaml;
 using OpenEmail.Domain.Models.Navigation;
 using OpenEmail.ViewModels;
 
@@ -11,6 +12,8 @@ namespace OpenEmail.Views
 
     public sealed partial class ComposerPage : ComposerPageAbstract
     {
+        public UIElement GetTitleBar() => ComposeTitleBar;
+
         public ComposerPage()
         {
             InitializeComponent();
