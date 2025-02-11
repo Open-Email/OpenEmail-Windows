@@ -149,7 +149,7 @@ namespace OpenEmail.ViewModels
         {
             ExecuteUIThread(() =>
             {
-                SynchronizationButtonText = $"Next sync in {remainingSyncIntervalMinutes} minutes.";
+                SynchronizationButtonText = $"Next sync in {remainingSyncIntervalMinutes} minutes";
             });
         }
 
