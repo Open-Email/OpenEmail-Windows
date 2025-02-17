@@ -108,18 +108,23 @@
                 Spacing="4">
 
                 <!--  Minimize  -->
-                <Button Click="MinimizeClicked" Style="{StaticResource TitleBarButtonStyle}">
+                <Button
+                    Click="MinimizeClicked"
+                    IsTabStop="False"
+                    Style="{StaticResource TitleBarButtonStyle}">
                     <Viewbox Width="10" Height="10">
                         <PathIcon
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Data="F1 M 0.996094 10 C 0.859375 10 0.730794 9.973959 0.610352 9.921875 C 0.489909 9.869792 0.384115 9.798178 0.292969 9.707031 C 0.201823 9.615886 0.130208 9.510092 0.078125 9.389648 C 0.026042 9.269206 0 9.140625 0 9.003906 C 0 8.867188 0.026042 8.738607 0.078125 8.618164 C 0.130208 8.497722 0.201823 8.3903 0.292969 8.295898 C 0.384115 8.201498 0.489909 8.128256 0.610352 8.076172 C 0.730794 8.024089 0.859375 7.998047 0.996094 7.998047 L 19.003906 7.998047 C 19.140625 7.998047 19.269205 8.024089 19.389648 8.076172 C 19.51009 8.128256 19.615885 8.201498 19.707031 8.295898 C 19.798176 8.3903 19.869791 8.497722 19.921875 8.618164 C 19.973957 8.738607 20 8.867188 20 9.003906 C 20 9.140625 19.973957 9.269206 19.921875 9.389648 C 19.869791 9.510092 19.798176 9.615886 19.707031 9.707031 C 19.615885 9.798178 19.51009 9.869792 19.389648 9.921875 C 19.269205 9.973959 19.140625 10 19.003906 10 Z " />
                     </Viewbox>
-
                 </Button>
 
                 <!--  Close  -->
-                <Button Click="CloseClicked" Style="{StaticResource TitleBarButtonStyle}">
+                <Button
+                    Click="CloseClicked"
+                    IsTabStop="False"
+                    Style="{StaticResource TitleBarButtonStyle}">
                     <Viewbox Width="10" Height="10">
                         <PathIcon
                             HorizontalAlignment="Center"
