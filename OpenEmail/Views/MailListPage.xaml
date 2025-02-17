@@ -391,6 +391,7 @@
                 <!--  Attachments  -->
                 <ListView
                     Grid.Row="5"
+                    Margin="0,12"
                     ItemTemplate="{StaticResource AttachmentTemplate}"
                     ItemsSource="{x:Bind ViewModel.SelectedMessage.AttachmentViewModels, Mode=OneWay}"
                     SelectionMode="None">
