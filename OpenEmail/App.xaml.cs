@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +14,7 @@ using OpenEmail.ViewModels;
 using OpenEmail.Views;
 using OpenEmail.WinRT;
 using SQLite;
+using WinUIEx;
 
 namespace OpenEmail
 {
@@ -23,7 +23,7 @@ namespace OpenEmail
         public IServiceProvider Services { get; }
         public new static App Current => (App)Application.Current;
 
-        public static Window MainWindow { get; set; }
+        public static WindowEx MainWindow { get; set; }
         public static bool HandleClosedEvents { get; set; } = true;
 
         public App()
@@ -107,12 +107,11 @@ namespace OpenEmail
 
             var otherWindows = WindowHelper.ActiveWindows.Where(a => a != MainWindow).ToList();
 
-            Debug.WriteLine("Going through windows.");
             foreach (var item in otherWindows)
             {
                 item.Close();
             }
-            Debug.WriteLine("Went with windows.");
+
         }
 
         private void AppWindowClosing(AppWindow sender, AppWindowClosingEventArgs args)
@@ -126,6 +125,12 @@ namespace OpenEmail
         {
             // Configure title bar.
             window.AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+
+            if (window is WindowEx windowEx)
+            {
+                windowEx.MinWidth = 600;
+                windowEx.MinHeight = 400;
+            }
         }
 
         public void TerminateApplication()

@@ -22,15 +22,34 @@ namespace OpenEmail.Services
 
         public Task ShowAddNewContactDialogAsync() => HandleDialogPresentationAsync(new AddNewContactDialog());
 
+        public async Task<bool> ShowConfirmationDialogAsync(string title, string message, WindowType windowType = WindowType.Shell)
+        {
+            var dialog = new ContentDialog()
+            {
+                Title = title,
+                Content = message,
+                PrimaryButtonText = "Yes",
+                CloseButtonText = "No"
+            };
+
+            AssingXamlRoot(dialog, windowType);
+
+            var result = await dialog.ShowAsync().AsTask();
+
+            return result == ContentDialogResult.Primary;
+        }
+
         public Task ShowMessageAsync(string title, string message, WindowType windowType = WindowType.Shell)
         {
             var contentDialog = new ContentDialog()
             {
                 Title = title,
                 Content = message,
+                PrimaryButtonText = "Ok",
+                DefaultButton = ContentDialogButton.Primary
             };
 
-            InitializePicker(contentDialog);
+            AssingXamlRoot(contentDialog);
 
             return contentDialog.ShowAsync().AsTask();
         }

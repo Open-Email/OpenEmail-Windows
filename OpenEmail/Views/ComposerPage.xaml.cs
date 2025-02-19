@@ -1,6 +1,7 @@
 using System;
 using CommunityToolkit.WinUI.Controls;
 using EmailValidation;
+using Microsoft.UI.Xaml;
 using OpenEmail.Domain.Models.Navigation;
 using OpenEmail.ViewModels;
 
@@ -11,6 +12,11 @@ namespace OpenEmail.Views
 
     public sealed partial class ComposerPage : ComposerPageAbstract
     {
+        public UIElement GetTitleBar() => ComposeTitleBar;
+
+        public event EventHandler CloseWindowRequested;
+        public event EventHandler MinimizeWindowRequested;
+
         public ComposerPage()
         {
             InitializeComponent();
@@ -65,5 +71,9 @@ namespace OpenEmail.Views
                 senderBox.Text = string.Empty;
             }
         }
+
+        private void MinimizeClicked(object sender, RoutedEventArgs e) => MinimizeWindowRequested?.Invoke(this, EventArgs.Empty);
+
+        private void CloseClicked(object sender, RoutedEventArgs e) => CloseWindowRequested?.Invoke(this, EventArgs.Empty);
     }
 }

@@ -25,6 +25,18 @@ namespace OpenEmail.ViewModels
         IRecipient<MessageAdded>,
         IRecipient<ComposeWindowArgs>
     {
+        private string forwardQuoteMessageFormat = @"
+
+----------
+Forwarded message from: {0}
+
+{1}";
+
+        private string replyQuoteMessageFormat = @""
+            + "\n\n"
+            + "On {0}, {1} wrote: \n\n"
+            + "{2}";
+
         [ObservableProperty]
         private MailFolder _currentMailFolderType;
 
@@ -174,6 +186,7 @@ namespace OpenEmail.ViewModels
                     if (args.Type == MailActionType.Reply)
                     {
                         message.Readers = args.ReferencingMessage.Author;
+                        message.Body = GetInitialReplyMessageFormat(args.ReferencingMessage.Author, args.ReferencingMessage.ReceivedAt, args.ReferencingMessage.Body);
                     }
                     else if (args.Type == MailActionType.ReplyAll)
                     {
@@ -185,6 +198,11 @@ namespace OpenEmail.ViewModels
                         var readerString = string.Join(",", readers.Distinct());
 
                         message.Readers = readerString;
+                        message.Body = GetInitialReplyMessageFormat(args.ReferencingMessage.Author, args.ReferencingMessage.ReceivedAt, args.ReferencingMessage.Body);
+                    }
+                    else if (args.Type == MailActionType.Forward)
+                    {
+                        message.Body = GetInitialForwardMessageFormat(args.ReferencingMessage.Author, args.ReferencingMessage.Body);
                     }
 
                     // Apply subject-id.
@@ -205,6 +223,13 @@ namespace OpenEmail.ViewModels
 
             return null;
         }
+
+        private string GetInitialForwardMessageFormat(string referenceAuthor, string referenceContent)
+            => string.Format(forwardQuoteMessageFormat, referenceAuthor, referenceContent);
+
+        private string GetInitialReplyMessageFormat(string referenceAuthor, DateTimeOffset referenceReplyDate, string referenceContent)
+            => string.Format(replyQuoteMessageFormat, referenceReplyDate.ToString("yyyy-MM-dd HH:mm:ss"), referenceAuthor, referenceContent);
+
 
         public override async Task InitializeDataAsync(CancellationToken cancellationToken = default)
         {
