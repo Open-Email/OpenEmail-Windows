@@ -51,5 +51,11 @@ namespace OpenEmail.Core.Services
             get => _configurationService.Get(nameof(MessageListingPaneWidth), 350.0d);
             set => SetPropertyAndSave(nameof(MessageListingPaneWidth), value);
         }
+
+        public double ShellMenuPageOpenWidth
+        {
+            get => _configurationService.Get(nameof(ShellMenuPageOpenWidth), 200.0d);
+            set => SetPropertyAndSave(nameof(ShellMenuPageOpenWidth), value);
+        }
     }
 }

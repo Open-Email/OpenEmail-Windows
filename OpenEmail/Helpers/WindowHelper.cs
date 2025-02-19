@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
 using WinUIEx;
 
 namespace OpenEmail.Helpers
@@ -13,7 +12,6 @@ namespace OpenEmail.Helpers
             {
                 createdWindow = new WindowEx
                 {
-                    SystemBackdrop = new MicaBackdrop(),
                     Content = new Frame()
                 };
             }

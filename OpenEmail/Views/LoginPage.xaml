@@ -6,7 +6,6 @@
     xmlns:helpers="using:OpenEmail.Helpers"
     xmlns:local="using:OpenEmail.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     RequestedTheme="Light"
     mc:Ignorable="d">
     <Grid Padding="36" RowSpacing="6">

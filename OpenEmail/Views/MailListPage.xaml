@@ -12,7 +12,7 @@
     xmlns:local="using:OpenEmail.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="root"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -122,7 +122,7 @@
                 Width="{x:Bind ViewModel.PreferencesService.MessageListingPaneWidth, Converter={StaticResource GridLengthConverter}}"
                 MinWidth="250"
                 MaxWidth="600" />
-            <ColumnDefinition Width="2" />
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
@@ -145,10 +145,7 @@
                 SelectedItem="{x:Bind ViewModel.SelectedMessage, Mode=TwoWay}" />
         </Grid>
 
-        <controls:GridSplitter
-            Grid.Column="1"
-            Background="{ThemeResource GeneralSeperatorBrush}"
-            Opacity="0.5" />
+        <controls:GridSplitter Grid.Column="1" Opacity="0.5" />
 
         <!--  Right Content  -->
         <Grid Grid.Column="2">
@@ -237,15 +234,30 @@
             </CommandBar>
 
             <!--  No message selected  -->
-            <TextBlock
+            <StackPanel
                 Grid.Row="1"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                HorizontalTextAlignment="Center"
-                Style="{StaticResource SubtitleTextBlockStyle}"
-                Text="Select a message on the left"
-                TextWrapping="WrapWholeWords"
-                Visibility="{x:Bind ViewModel.HasNoSelectedMessage, Mode=OneWay}" />
+                Opacity="0.6"
+                Spacing="4"
+                Visibility="{x:Bind ViewModel.HasNoSelectedMessage, Mode=OneWay}">
+                <Viewbox Width="28">
+                    <PathIcon
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Data="F1 M 16.943359 2.5 C 17.353516 2.5 17.744141 2.583008 18.115234 2.749023 C 18.486328 2.915039 18.810221 3.136395 19.086914 3.413086 C 19.363605 3.689779 19.584961 4.013673 19.750977 4.384766 C 19.916992 4.75586 20 5.146485 20 5.556641 L 20 15.693359 C 20 16.103516 19.916992 16.494141 19.750977 16.865234 C 19.584961 17.236328 19.363605 17.560221 19.086914 17.836914 C 18.810221 18.113607 18.486328 18.334961 18.115234 18.500977 C 17.744141 18.666992 17.353516 18.75 16.943359 18.75 L 3.056641 18.75 C 2.646484 18.75 2.255859 18.666992 1.884766 18.500977 C 1.513672 18.334961 1.189779 18.113607 0.913086 17.836914 C 0.636393 17.560221 0.415039 17.236328 0.249023 16.865234 C 0.083008 16.494141 0 16.103516 0 15.693359 L 0 5.556641 C 0 5.146485 0.083008 4.75586 0.249023 4.384766 C 0.415039 4.013673 0.636393 3.689779 0.913086 3.413086 C 1.189779 3.136395 1.513672 2.915039 1.884766 2.749023 C 2.255859 2.583008 2.646484 2.5 3.056641 2.5 Z M 3.125 3.75 C 2.871094 3.75 2.630208 3.798828 2.402344 3.896484 C 2.174479 3.994141 1.974284 4.129232 1.801758 4.301758 C 1.629232 4.474285 1.494141 4.67448 1.396484 4.902344 C 1.298828 5.130209 1.25 5.371094 1.25 5.625 L 1.25 5.898438 L 10 11.142578 L 18.75 5.898438 L 18.75 5.625 C 18.75 5.371094 18.701172 5.130209 18.603516 4.902344 C 18.505859 4.67448 18.370768 4.474285 18.198242 4.301758 C 18.025715 4.129232 17.82552 3.994141 17.597656 3.896484 C 17.369791 3.798828 17.128906 3.75 16.875 3.75 Z M 16.875 17.5 C 17.128906 17.5 17.369791 17.451172 17.597656 17.353516 C 17.82552 17.255859 18.025715 17.120768 18.198242 16.948242 C 18.370768 16.775717 18.505859 16.575521 18.603516 16.347656 C 18.701172 16.119791 18.75 15.878906 18.75 15.625 L 18.75 7.353516 L 10.322266 12.412109 C 10.224609 12.470703 10.117188 12.5 10 12.5 C 9.882812 12.5 9.775391 12.470703 9.677734 12.412109 L 1.25 7.353516 L 1.25 15.625 C 1.25 15.878906 1.298828 16.119791 1.396484 16.347656 C 1.494141 16.575521 1.629232 16.775717 1.801758 16.948242 C 1.974284 17.120768 2.174479 17.255859 2.402344 17.353516 C 2.630208 17.451172 2.871094 17.5 3.125 17.5 Z "
+                        Foreground="Gray" />
+                </Viewbox>
+                <TextBlock
+                    FontSize="17"
+                    FontWeight="Normal"
+                    Foreground="Gray"
+                    HorizontalTextAlignment="Center"
+                    Style="{StaticResource SubtitleTextBlockStyle}"
+                    Text="No message selected"
+                    TextWrapping="WrapWholeWords" />
+            </StackPanel>
+
 
             <!--  Message details  -->
             <Grid
