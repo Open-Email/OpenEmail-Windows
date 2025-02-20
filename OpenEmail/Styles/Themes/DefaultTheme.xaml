@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Color x:Key="OpenEmailBlueColor">#1e76f2</Color>
+    <Color x:Key="OpenEmailDarkBlueColor">#131b2a</Color>
+    <Color x:Key="ContentBackgroundColorLight">#FFFFFF</Color>
+    <Color x:Key="ContentBackgroundColorDark">#131b2a</Color>
+
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Name="Light">
+            <SolidColorBrush x:Key="TitleBarBackgroundBrush" Color="{StaticResource OpenEmailBlueColor}" />
+            <SolidColorBrush x:Key="ContentBackgroundBrush" Color="{StaticResource ContentBackgroundColorLight}" />
+            <ImageSource x:Key="LogoImageSource">/Assets/LogoLight.png</ImageSource>
+        </ResourceDictionary>
+
+        <ResourceDictionary x:Name="Dark">
+            <SolidColorBrush x:Key="TitleBarBackgroundBrush" Color="{StaticResource OpenEmailDarkBlueColor}" />
+            <SolidColorBrush x:Key="ContentBackgroundBrush" Color="{StaticResource ContentBackgroundColorDark}" />
+            <ImageSource x:Key="LogoImageSource">/Assets/LogoLight.png</ImageSource>
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+</ResourceDictionary>
+

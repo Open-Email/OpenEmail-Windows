@@ -21,9 +21,10 @@
     <None Remove="Assets\exe.png" />
     <None Remove="Assets\file.png" />
     <None Remove="Assets\img.png" />
+    <None Remove="Assets\LogoDark.png" />
+    <None Remove="Assets\LogoLight.png" />
     <None Remove="Assets\noavatar.png" />
-    <None Remove="Assets\openemail_logo.dark.png" />
-    <None Remove="Assets\openemail_logo.light.png" />
+    <None Remove="Assets\OpenEmailFonts.ttf" />
     <None Remove="Assets\pdf.png" />
     <None Remove="Assets\titlebar_logo.png" />
     <None Remove="Controls\ContactProfileControl.xaml" />
@@ -31,6 +32,7 @@
     <None Remove="Styles\ButtonStyles.xaml" />
     <None Remove="Styles\Colors.xaml" />
     <None Remove="Styles\Common.xaml" />
+    <None Remove="Styles\Themes\DefaultTheme.xaml" />
     <None Remove="Views\BroadcastPage.xaml" />
     <None Remove="Views\ComposerPage.xaml" />
     <None Remove="Views\ContactsPage.xaml" />
@@ -145,6 +147,11 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\MailListPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Styles\Themes\DefaultTheme.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

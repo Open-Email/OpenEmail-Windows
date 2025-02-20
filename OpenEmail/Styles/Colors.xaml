@@ -14,7 +14,7 @@
             <SolidColorBrush x:Key="AttachmentDropBackgroundBrush" Color="#c23616" />
             <SolidColorBrush x:Key="BroadcastTagForegroundBrush" Color="#f6b93b" />
             <SolidColorBrush x:Key="DetailForegroundBrush" Color="#576574" />
-            <ImageSource x:Key="LogoImageSource">/Assets/openemail_logo.light.png</ImageSource>
+
         </ResourceDictionary>
 
         <ResourceDictionary x:Name="Dark">
@@ -26,7 +26,7 @@
             <SolidColorBrush x:Key="AttachmentDropBackgroundBrush" Color="#323232" />
             <SolidColorBrush x:Key="BroadcastTagForegroundBrush" Color="#f6b93b" />
             <SolidColorBrush x:Key="DetailForegroundBrush" Color="#c8d6e5" />
-            <ImageSource x:Key="LogoImageSource">/Assets/openemail_logo.dark.png</ImageSource>
+
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 </ResourceDictionary>

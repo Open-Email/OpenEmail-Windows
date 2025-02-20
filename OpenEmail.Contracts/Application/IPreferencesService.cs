@@ -28,5 +28,10 @@ namespace OpenEmail.Contracts.Application
         /// Gets or sets the width of the message listing pane.
         /// </summary>
         double MessageListingPaneWidth { get; set; }
+
+        /// <summary>
+        /// Gets or sets the width of the open navigation pane.
+        /// </summary>
+        double ShellMenuPageOpenWidth { get; set; }
     }
 }
