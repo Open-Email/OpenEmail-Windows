@@ -208,5 +208,10 @@ namespace OpenEmail.Views
 
             App.MainWindow.Activate();
         }
+
+        private void NavigationPaneButtonClicked(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        {
+            MainNavigationView.IsPaneOpen = !MainNavigationView.IsPaneOpen;
+        }
     }
 }
