@@ -24,6 +24,7 @@
     <None Remove="Assets\LogoDark.png" />
     <None Remove="Assets\LogoLight.png" />
     <None Remove="Assets\noavatar.png" />
+    <None Remove="Assets\OpenEmailFonts.ttf" />
     <None Remove="Assets\pdf.png" />
     <None Remove="Assets\titlebar_logo.png" />
     <None Remove="Controls\ContactProfileControl.xaml" />
