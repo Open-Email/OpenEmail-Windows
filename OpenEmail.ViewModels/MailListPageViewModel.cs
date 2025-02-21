@@ -56,7 +56,7 @@ Forwarded message from: {0}
         public bool HasMultipleMessagesSelected => SelectedMessages.Count > 1;
         public bool HasSelectedSingleMessage => SelectedMessages.Count == 1;
         public bool HasNoSelectedMessage => SelectedMessages.Count == 0;
-
+        public bool HasNoMessages => Messages.Count == 0;
         public bool HasMultipleReaders => HasSelectedSingleMessage && SelectedSingleMessage.ReaderViewModels.Count > 1;
         public bool ShouldDisplayReplyAll => HasMultipleReaders && IsNotDraftMessage;
 
@@ -79,8 +79,6 @@ Forwarded message from: {0}
             PreferencesService = preferencesService;
             _messagesService = messagesService;
             _messagePreperationService = messagePreperationService;
-
-            SelectedMessages.CollectionChanged += OnSelectedMessagesUpdated;
         }
 
         partial void OnCurrentMailFolderTypeChanging(MailFolder oldValue, MailFolder newValue)
@@ -123,8 +121,6 @@ Forwarded message from: {0}
             Messenger.Send(new NewComposeRequested(new ComposeWindowArgs(MailActionType.ReplyAll, SelectedSingleMessage)));
         }
 
-
-
         public async void Receive(ListingFolderChanged message)
         {
             CurrentMailFolderType = message.NewFolder;
@@ -144,9 +140,19 @@ Forwarded message from: {0}
         public void DisplaySender(AccountContact contact)
             => Messenger.Send(new ProfileDisplayRequested(contact));
 
+        public override void OnNavigatedFrom(FrameNavigationMode navigationMode, object parameter)
+        {
+            base.OnNavigatedFrom(navigationMode, parameter);
+
+            SelectedMessages.CollectionChanged -= OnSelectedMessagesUpdated;
+        }
+
         public override async void OnNavigatedTo(FrameNavigationMode navigationMode, object parameter)
         {
             base.OnNavigatedTo(navigationMode, parameter);
+
+            SelectedMessages.CollectionChanged += OnSelectedMessagesUpdated;
+            Messages.CollectionChanged += OnMessagesUpdated;
 
             if (parameter is MailFolder folderType)
             {
@@ -161,6 +167,11 @@ Forwarded message from: {0}
                 await InitializeDataAsync();
                 await ManageComposeAsync(composingArgs);
             }
+        }
+
+        private void OnMessagesUpdated(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            OnPropertyChanged(nameof(HasNoMessages));
         }
 
         private async Task ManageComposeAsync(ComposeWindowArgs composingArgs)
@@ -403,9 +414,11 @@ Forwarded message from: {0}
         {
             if (SelectedMessages.Count == 0) return;
 
-            foreach (var message in SelectedMessages)
+            var messageIdsToDelete = SelectedMessages.Select(a => a.Id).ToArray();
+
+            foreach (var messageId in messageIdsToDelete)
             {
-                await _messagesService.DeleteMessageAsync(message.Id);
+                await _messagesService.DeleteMessageAsync(messageId);
             }
         }
     }

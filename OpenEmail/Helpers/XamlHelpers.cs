@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
+using OpenEmail.Domain.Models.Mail;
 using Windows.UI.Text;
 
 namespace OpenEmail.Helpers
@@ -20,6 +21,7 @@ namespace OpenEmail.Helpers
         public static string GetFormattedLocalTimeDate(DateTimeOffset dateTimeOffset, string format)
             => dateTimeOffset.ToLocalTime().ToString(format);
 
+        public static string GetFolderHeaderTitle(MailFolder folderType) => $"{folderType} Messages";
         public static string EmptyTextConverter(string value, string emptyValue) => string.IsNullOrWhiteSpace(value) ? emptyValue : value;
 
         public static Visibility VisibilityAndConverter(bool value1, bool value2) => value1 && value2 ? Visibility.Visible : Visibility.Collapsed;

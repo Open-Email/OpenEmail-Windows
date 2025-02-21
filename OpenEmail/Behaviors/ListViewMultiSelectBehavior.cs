@@ -25,18 +25,21 @@ namespace OpenEmail.Behaviors
 
             if (AssociatedObject is not ListView listView) return;
 
-            foreach (var item in args.RemovedItems)
+            listView.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Normal, () =>
             {
-                if (item is not MessageViewModel messageViewModel || !SelectedItems.Contains(messageViewModel)) continue;
+                foreach (var item in args.RemovedItems)
+                {
+                    if (item is not MessageViewModel messageViewModel || !SelectedItems.Contains(messageViewModel)) continue;
 
-                SelectedItems.Remove((MessageViewModel)item);
-            }
+                    SelectedItems.Remove((MessageViewModel)item);
+                }
 
-            foreach (var item in args.AddedItems)
-            {
-                if (item is not MessageViewModel messageViewModel || SelectedItems.Contains(messageViewModel)) continue;
-                SelectedItems.Add(messageViewModel);
-            }
+                foreach (var item in args.AddedItems)
+                {
+                    if (item is not MessageViewModel messageViewModel || SelectedItems.Contains(messageViewModel)) continue;
+                    SelectedItems.Add(messageViewModel);
+                }
+            });
         }
 
         public static void OnSelectedItemsBindingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
