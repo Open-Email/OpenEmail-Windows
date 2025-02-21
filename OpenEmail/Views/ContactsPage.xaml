@@ -92,8 +92,7 @@
                         <AutoSuggestBox
                             Grid.Row="1"
                             Margin="0,6"
-                            BorderThickness="0"
-                            PlaceholderText="search contacts" />
+                            Style="{StaticResource OpenEmailAutoSuggestBoxStyle}" />
 
                         <!--  No contacts area  -->
                         <Grid
