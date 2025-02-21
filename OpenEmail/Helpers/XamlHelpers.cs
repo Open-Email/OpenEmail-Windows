@@ -20,6 +20,13 @@ namespace OpenEmail.Helpers
         public static string GetFormattedLocalTimeDate(DateTimeOffset dateTimeOffset, string format)
             => dateTimeOffset.ToLocalTime().ToString(format);
 
+        public static string EmptyTextConverter(string value, string emptyValue) => string.IsNullOrWhiteSpace(value) ? emptyValue : value;
+
+        public static Visibility VisibilityAndConverter(bool value1, bool value2) => value1 && value2 ? Visibility.Visible : Visibility.Collapsed;
+        public static Visibility VisibilityAndReverseConverter(bool value1, bool value2) => value1 && value2 ? Visibility.Collapsed : Visibility.Visible;
+        public static Visibility VisibilityOrConverter(bool value1, bool value2) => value1 || value2 ? Visibility.Visible : Visibility.Collapsed;
+        public static Visibility VisibilityOrReverseConverter(bool value1, bool value2) => value1 || value2 ? Visibility.Collapsed : Visibility.Visible;
+
         public static string GetDisplayDateOnListingPage(DateTimeOffset dateTimeOffset)
         {
             var diff = DateTimeOffset.Now - dateTimeOffset;
