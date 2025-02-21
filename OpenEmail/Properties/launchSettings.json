@@ -1,7 +1,8 @@
 {
   "profiles": {
     "OpenEmail (Package)": {
-      "commandName": "MsixPackage"
+      "commandName": "MsixPackage",
+      "nativeDebugging": false
     },
     "OpenEmail (Unpackaged)": {
       "commandName": "Project"
