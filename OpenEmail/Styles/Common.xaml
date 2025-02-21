@@ -12,6 +12,16 @@
         <Setter Property="ColumnSpacing" Value="12" />
     </Style>
 
+    <!--  Default AutoSuggestBox style  -->
+    <!--  Warning: Making this a global style causes a crash.  -->
+    <Style
+        x:Key="OpenEmailAutoSuggestBoxStyle"
+        BasedOn="{StaticResource DefaultAutoSuggestBoxStyle}"
+        TargetType="AutoSuggestBox">
+        <Setter Property="QueryIcon" Value="Find" />
+        <Setter Property="PlaceholderText" Value="Search" />
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
 
     <!--  Default page style.  -->
     <Style TargetType="Page">
