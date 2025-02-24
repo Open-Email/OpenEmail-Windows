@@ -12,7 +12,6 @@
         <Setter Property="ColumnSpacing" Value="12" />
     </Style>
 
-
     <!--  Default page style.  -->
     <Style TargetType="Page">
         <Setter Property="Background" Value="{ThemeResource ContentBackgroundBrush}" />

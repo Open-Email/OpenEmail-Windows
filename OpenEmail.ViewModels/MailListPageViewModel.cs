@@ -38,22 +38,26 @@ Forwarded message from: {0}
             + "{2}";
 
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsTrashFolder))]
+        [NotifyPropertyChangedFor(nameof(IsOutboxFolder))]
         private MailFolder _currentMailFolderType;
 
         [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(HasSelectedMessage))]
-        [NotifyPropertyChangedFor(nameof(HasNoSelectedMessage))]
-        [NotifyPropertyChangedFor(nameof(IsDraftMessage))]
-        [NotifyPropertyChangedFor(nameof(IsNotDraftMessage))]
-        private MessageViewModel _selectedMessage;
+        private ObservableCollection<MessageViewModel> _selectedMessages = new();
 
-        public bool IsDraftMessage => SelectedMessage?.Message.IsDraft ?? false;
+        public MessageViewModel SelectedSingleMessage => SelectedMessages.FirstOrDefault();
+
+        public bool IsTrashFolder => CurrentMailFolderType == MailFolder.Trash;
+        public bool IsOutboxFolder => CurrentMailFolderType == MailFolder.Outbox;
+
+        public bool IsDraftMessage => HasSelectedSingleMessage && SelectedSingleMessage.IsDraft;
         public bool IsNotDraftMessage => !IsDraftMessage;
 
-        public bool HasSelectedMessage => SelectedMessage != null;
-        public bool HasNoSelectedMessage => !HasSelectedMessage;
-
-        public bool HasMultipleReaders => SelectedMessage == null ? false : SelectedMessage.ReaderViewModels.Count > 1;
+        public bool HasMultipleMessagesSelected => SelectedMessages.Count > 1;
+        public bool HasSelectedSingleMessage => SelectedMessages.Count == 1;
+        public bool HasNoSelectedMessage => SelectedMessages.Count == 0;
+        public bool HasNoMessages => Messages.Count == 0;
+        public bool HasMultipleReaders => HasSelectedSingleMessage && SelectedSingleMessage.ReaderViewModels.Count > 1;
         public bool ShouldDisplayReplyAll => HasMultipleReaders && IsNotDraftMessage;
 
         public ObservableCollection<MessageViewModel> Messages { get; set; } = [];
@@ -77,36 +81,55 @@ Forwarded message from: {0}
             _messagePreperationService = messagePreperationService;
         }
 
+        partial void OnCurrentMailFolderTypeChanging(MailFolder oldValue, MailFolder newValue)
+        {
+            SelectedMessages.Clear();
+        }
+
+        private async void OnSelectedMessagesUpdated(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            OnPropertyChanged(nameof(HasSelectedSingleMessage));
+            OnPropertyChanged(nameof(HasNoSelectedMessage));
+            OnPropertyChanged(nameof(IsDraftMessage));
+            OnPropertyChanged(nameof(IsNotDraftMessage));
+            OnPropertyChanged(nameof(HasMultipleMessagesSelected));
+            OnPropertyChanged(nameof(HasMultipleReaders));
+            OnPropertyChanged(nameof(SelectedSingleMessage));
+
+            // Mark items as read if they were not.
+
+            foreach (var message in SelectedMessages)
+            {
+                if (!message.IsRead)
+                {
+                    await _messagesService.MarkMessageReadAsync(message.Message.Id).ConfigureAwait(false);
+                    Dispatcher.ExecuteOnDispatcher(() => message.IsRead = true);
+                }
+            }
+        }
+
         [RelayCommand]
         private void Forward()
         {
-            if (SelectedMessage?.Message == null) return;
+            if (SelectedSingleMessage?.Message == null) return;
 
-            Messenger.Send(new NewComposeRequested(new ComposeWindowArgs(MailActionType.Forward, SelectedMessage)));
+            Messenger.Send(new NewComposeRequested(new ComposeWindowArgs(MailActionType.Forward, SelectedSingleMessage)));
         }
 
         [RelayCommand]
         private void Reply()
         {
-            if (SelectedMessage?.Message == null) return;
+            if (SelectedSingleMessage?.Message == null) return;
 
-            Messenger.Send(new NewComposeRequested(new ComposeWindowArgs(MailActionType.Reply, SelectedMessage)));
+            Messenger.Send(new NewComposeRequested(new ComposeWindowArgs(MailActionType.Reply, SelectedSingleMessage)));
         }
 
         [RelayCommand]
         private void ReplyAll()
         {
-            if (SelectedMessage?.Message == null) return;
+            if (SelectedSingleMessage?.Message == null) return;
 
-            Messenger.Send(new NewComposeRequested(new ComposeWindowArgs(MailActionType.ReplyAll, SelectedMessage)));
-        }
-
-        [RelayCommand]
-        private async Task DeleteAsync()
-        {
-            if (SelectedMessage?.Message == null) return;
-
-            await _messagesService.DeleteMessageAsync(SelectedMessage.Message.Id);
+            Messenger.Send(new NewComposeRequested(new ComposeWindowArgs(MailActionType.ReplyAll, SelectedSingleMessage)));
         }
 
         public async void Receive(ListingFolderChanged message)
@@ -119,18 +142,28 @@ Forwarded message from: {0}
         [RelayCommand]
         private void EditDraftMessage()
         {
-            if (SelectedMessage?.Message == null) return;
+            if (SelectedSingleMessage?.Message == null) return;
 
-            Messenger.Send(new NewComposeRequested(new ComposeWindowArgs(MailActionType.EditDraft, SelectedMessage)));
+            Messenger.Send(new NewComposeRequested(new ComposeWindowArgs(MailActionType.EditDraft, SelectedSingleMessage)));
         }
 
         [RelayCommand]
         public void DisplaySender(AccountContact contact)
             => Messenger.Send(new ProfileDisplayRequested(contact));
 
+        public override void OnNavigatedFrom(FrameNavigationMode navigationMode, object parameter)
+        {
+            base.OnNavigatedFrom(navigationMode, parameter);
+
+            SelectedMessages.CollectionChanged -= OnSelectedMessagesUpdated;
+        }
+
         public override async void OnNavigatedTo(FrameNavigationMode navigationMode, object parameter)
         {
             base.OnNavigatedTo(navigationMode, parameter);
+
+            SelectedMessages.CollectionChanged += OnSelectedMessagesUpdated;
+            Messages.CollectionChanged += OnMessagesUpdated;
 
             if (parameter is MailFolder folderType)
             {
@@ -145,6 +178,11 @@ Forwarded message from: {0}
                 await InitializeDataAsync();
                 await ManageComposeAsync(composingArgs);
             }
+        }
+
+        private void OnMessagesUpdated(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            OnPropertyChanged(nameof(HasNoMessages));
         }
 
         private async Task ManageComposeAsync(ComposeWindowArgs composingArgs)
@@ -230,7 +268,6 @@ Forwarded message from: {0}
         private string GetInitialReplyMessageFormat(string referenceAuthor, DateTimeOffset referenceReplyDate, string referenceContent)
             => string.Format(replyQuoteMessageFormat, referenceReplyDate.ToString("yyyy-MM-dd HH:mm:ss"), referenceAuthor, referenceContent);
 
-
         public override async Task InitializeDataAsync(CancellationToken cancellationToken = default)
         {
             DetachAttachmentProgresses();
@@ -259,22 +296,22 @@ Forwarded message from: {0}
             }
         }
 
-        partial void OnSelectedMessageChanged(MessageViewModel value)
-        {
-            if (value == null) return;
+        //partial void OnSelectedMessageChanged(MessageViewModel value)
+        //{
+        //    if (value == null) return;
 
-            if (!value.IsRead)
-            {
-                _messagesService.MarkMessageReadAsync(value.Message.Id).ConfigureAwait(false);
+        //    if (!value.IsRead)
+        //    {
+        //        _messagesService.MarkMessageReadAsync(value.Message.Id).ConfigureAwait(false);
 
-                Dispatcher.ExecuteOnDispatcher(() => value.IsRead = true);
-            }
-        }
+        //        Dispatcher.ExecuteOnDispatcher(() => value.IsRead = true);
+        //    }
+        //}
 
         public override void OnUpdateAttachmentViewModelProgress(Guid attachmentGroupId, AttachmentProgress attachmentProgress)
         {
             // Only update for selected message.
-            if (SelectedMessage == null || !SelectedMessage.HasAttachmentGroupId(attachmentGroupId)) return;
+            if (SelectedSingleMessage == null || !SelectedSingleMessage.HasAttachmentGroupId(attachmentGroupId)) return;
 
             // Find the attachment to attach progress onto.
             var messageViewModel = Messages
@@ -328,6 +365,11 @@ Forwarded message from: {0}
                 ExecuteUIThread(() =>
                 {
                     Messages.Remove(model);
+
+                    if (SelectedMessages.FirstOrDefault(a => a.Id == model.Id) is MessageViewModel selectedVariant)
+                    {
+                        SelectedMessages.Remove(selectedVariant);
+                    }
                 });
             }
         }
@@ -349,21 +391,73 @@ Forwarded message from: {0}
 
                 if (messageToComposeId != null)
                 {
-                    SelectedMessage = Messages.FirstOrDefault(m => m.Message.Id == messageToComposeId);
+                    var composingMessage = Messages.FirstOrDefault(m => m.Message.Id == messageToComposeId);
 
-                    if (SelectedMessage != null)
-                    {
-                        Messenger.Send(new DraftComposeArgs(MailActionType.New, SelectedMessage));
-                    }
+                    if (composingMessage == null) return;
+
+                    // Clear existing selection and select the new message.
+                    SelectedMessages.Clear();
+                    SelectedMessages.Add(composingMessage);
+
+                    Messenger.Send(new DraftComposeArgs(MailActionType.New, SelectedSingleMessage));
 
                     messageToComposeId = null;
                 }
             });
         }
 
-        public async void Receive(ComposeWindowArgs message)
+        public async void Receive(ComposeWindowArgs message) => await ManageComposeAsync(message);
+
+        [RelayCommand(CanExecute = nameof(IsTrashFolder))]
+        private async Task DeletePermanentlyAsync()
         {
-            await ManageComposeAsync(message);
+            if (SelectedMessages.Count == 0) return;
+
+            var messageIdsToDelete = SelectedMessages.Select(a => a.Id).ToArray();
+
+            foreach (var messageId in messageIdsToDelete)
+            {
+                await _messagesService.DeleteMessagePermanentAsync(messageId);
+
+            }
+        }
+
+        [RelayCommand(CanExecute = nameof(IsOutboxFolder))]
+        private async Task RecallAndDeleteAsync()
+        {
+            if (SelectedMessages.Count == 0) return;
+
+            var messageIdsToDelete = SelectedMessages.Select(a => a.Id).ToArray();
+
+            foreach (var messageId in messageIdsToDelete)
+            {
+                await _messagesService.RecallMessageAsync(messageId);
+            }
+        }
+
+        [RelayCommand]
+        private async Task DeleteAsync()
+        {
+            if (IsTrashFolder)
+            {
+                await DeletePermanentlyAsync();
+            }
+            else if (IsOutboxFolder)
+            {
+                await RecallAndDeleteAsync();
+            }
+            else
+            {
+                // Move items to trash.
+                if (SelectedMessages.Count == 0) return;
+
+                var messageIdsToDelete = SelectedMessages.Select(a => a.Id).ToArray();
+
+                foreach (var messageId in messageIdsToDelete)
+                {
+                    await _messagesService.DeleteMessageToTrashAsync(messageId);
+                }
+            }
         }
     }
 }

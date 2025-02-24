@@ -315,50 +315,58 @@ namespace OpenEmail.Core.Services
             return Connection.ExecuteAsync("UPDATE Message SET IsRead = 1 WHERE Id = ?", messageId);
         }
 
-        public async Task DeleteMessageAsync(Guid messageId)
+        public async Task DeleteMessagePermanentAsync(Guid messageId)
         {
             var message = await Connection.Table<Message>().Where(m => m.Id == messageId).FirstOrDefaultAsync();
 
             if (message == null) return;
 
-            if (message.IsDraft)
+            await Connection.RunInTransactionAsync(async (connection) =>
             {
-                // Drafts are always local. We should hard delete them.
-
-                await Connection.RunInTransactionAsync(async (connection) =>
-                {
-                    await Connection.DeleteAsync(message).ConfigureAwait(false);
-                    await Connection.Table<MessageAttachment>().Where(a => a.ParentId == message.EnvelopeId).DeleteAsync().ConfigureAwait(false);
-                });
-            }
-            else if (message.Author == _applicationStateService.ActiveProfile.Account.Address.FullAddress)
-            {
-                // If we're the author of the message, we should remove it from our server as well.
-                // This is undo-send.
-
-                var messagesClient = _clientFactory.CreateProfileClient<IMessagesClient>();
-                var response = await messagesClient.RecallAuthoredMessageAsync(_applicationStateService.ActiveProfile.Account.Address, message.EnvelopeId);
-
-                response.EnsureSuccessStatusCode();
-
-                // Hard delete the message.
-                await Connection.RunInTransactionAsync(async (connection) =>
-                {
-                    await Connection.DeleteAsync(message).ConfigureAwait(false);
-                    await Connection.Table<MessageAttachment>().Where(a => a.ParentId == message.EnvelopeId).DeleteAsync().ConfigureAwait(false);
-                });
-            }
-            else
-            {
-                // Only soft delete.
-                message.IsDeleted = true;
-                message.DeletedAt = DateTimeOffset.Now;
-
-                await Connection.UpdateAsync(message).ConfigureAwait(false);
-            }
+                await Connection.DeleteAsync(message).ConfigureAwait(false);
+                await Connection.Table<MessageAttachment>().Where(a => a.ParentId == message.EnvelopeId).DeleteAsync().ConfigureAwait(false);
+            });
 
             WeakReferenceMessenger.Default.Send(new MessageDeleted(message));
         }
+
+        public async Task DeleteMessageToTrashAsync(Guid messageId)
+        {
+            var message = await Connection.Table<Message>().Where(m => m.Id == messageId).FirstOrDefaultAsync();
+
+            if (message == null) return;
+
+            // Doing a soft delete so Trash folder can list the items.
+            message.IsDeleted = true;
+            message.DeletedAt = DateTimeOffset.Now;
+
+            await Connection.UpdateAsync(message).ConfigureAwait(false);
+
+            WeakReferenceMessenger.Default.Send(new MessageDeleted(message));
+        }
+
+        public async Task RecallMessageAsync(Guid messageId)
+        {
+            var message = await Connection.Table<Message>().Where(m => m.Id == messageId).FirstOrDefaultAsync();
+
+            if (message == null) return;
+
+            // If we're the author of the message, we should remove it from our server as well.
+            // This is undo-send.
+
+            var messagesClient = _clientFactory.CreateProfileClient<IMessagesClient>();
+            var response = await messagesClient
+                .RecallAuthoredMessageAsync(_applicationStateService.ActiveProfile.Account.Address, message.EnvelopeId)
+                .ConfigureAwait(false);
+
+            response.EnsureSuccessStatusCode();
+
+            // Hard delete the message.
+            await DeleteMessagePermanentAsync(messageId).ConfigureAwait(false);
+
+            WeakReferenceMessenger.Default.Send(new MessageDeleted(message));
+        }
+
 
         public async Task UpdateMessageAsync(Message message)
         {

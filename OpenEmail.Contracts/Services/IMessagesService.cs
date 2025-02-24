@@ -34,12 +34,29 @@ namespace OpenEmail.Contracts.Services
         Task<Guid> GetAttachmentGroupIdAsync(string parentMessageId, string fileName);
         Task<List<Message>> GetMessagesAsync(Expression<Func<Message, bool>> filter);
         Task MarkMessageReadAsync(Guid messageId);
-
-        Task DeleteMessageAsync(Guid messageId);
         Task UpdateMessageAsync(Message message);
         List<Tuple<MessageAttachment, byte[]>> CreateMessageAttachments(Message rootMessage, string filePath);
         Task SaveMessageAttachmentAsync(MessageAttachment messageAttachment);
         Task RemoveMessageAttachmentAsync(Guid attachmentGroupId);
         Task<Message> GetMessageAsync(Guid messageId);
+
+        /// <summary>
+        /// Recalls authored message.
+        /// This will delete the message from the server.
+        /// </summary>
+        /// <param name="messageId">Message id.</param>
+        Task RecallMessageAsync(Guid messageId);
+
+        /// <summary>
+        /// Soft deletes the message by moving it to trash.
+        /// </summary>
+        /// <param name="messageId">Message id.</param>
+        Task DeleteMessageToTrashAsync(Guid messageId);
+
+        /// <summary>
+        /// Permanently deletes the message from local storage.
+        /// </summary>
+        /// <param name="messageId">Message id.</param>
+        Task DeleteMessagePermanentAsync(Guid messageId);
     }
 }
