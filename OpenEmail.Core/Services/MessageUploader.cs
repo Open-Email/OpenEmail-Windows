@@ -193,7 +193,8 @@ namespace OpenEmail.Core.Services
                 });
 
                 // Remove root message and attachments.
-                await _messagesService.DeleteMessageAsync(rootMessageId).ConfigureAwait(false);
+                // TODO
+                //await _messagesService.DeleteMessageAsync(rootMessageId).ConfigureAwait(false);
 
                 WeakReferenceMessenger.Default.Send(new TriggerSynchronizationMessage());
 

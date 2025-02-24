@@ -411,17 +411,19 @@ Forwarded message from: {0}
         [RelayCommand(CanExecute = nameof(IsTrashFolder))]
         private async Task DeletePermanentlyAsync()
         {
+            if (SelectedMessages.Count == 0) return;
 
+            var messageIdsToDelete = SelectedMessages.Select(a => a.Id).ToArray();
+
+            foreach (var messageId in messageIdsToDelete)
+            {
+                await _messagesService.DeleteMessagePermanentAsync(messageId);
+
+            }
         }
 
         [RelayCommand(CanExecute = nameof(IsOutboxFolder))]
         private async Task RecallAndDeleteAsync()
-        {
-
-        }
-
-        [RelayCommand]
-        private async Task DeleteAsync()
         {
             if (SelectedMessages.Count == 0) return;
 
@@ -429,7 +431,32 @@ Forwarded message from: {0}
 
             foreach (var messageId in messageIdsToDelete)
             {
-                await _messagesService.DeleteMessageAsync(messageId);
+                await _messagesService.RecallMessageAsync(messageId);
+            }
+        }
+
+        [RelayCommand]
+        private async Task DeleteAsync()
+        {
+            if (IsTrashFolder)
+            {
+                await DeletePermanentlyAsync();
+            }
+            else if (IsOutboxFolder)
+            {
+                await RecallAndDeleteAsync();
+            }
+            else
+            {
+                // Move items to trash.
+                if (SelectedMessages.Count == 0) return;
+
+                var messageIdsToDelete = SelectedMessages.Select(a => a.Id).ToArray();
+
+                foreach (var messageId in messageIdsToDelete)
+                {
+                    await _messagesService.DeleteMessageToTrashAsync(messageId);
+                }
             }
         }
     }
