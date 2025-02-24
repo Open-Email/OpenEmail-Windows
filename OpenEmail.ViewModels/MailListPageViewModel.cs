@@ -95,9 +95,14 @@ Forwarded message from: {0}
             OnPropertyChanged(nameof(HasMultipleMessagesSelected));
             OnPropertyChanged(nameof(HasMultipleReaders));
             OnPropertyChanged(nameof(SelectedSingleMessage));
+            OnPropertyChanged(nameof(IsTrashFolder));
+            OnPropertyChanged(nameof(IsOutboxFolder));
+
+            DeletePermanentlyCommand.NotifyCanExecuteChanged();
+            DeleteCommand.NotifyCanExecuteChanged();
+            RecallAndDeleteCommand.NotifyCanExecuteChanged();
 
             // Mark items as read if they were not.
-
             foreach (var message in SelectedMessages)
             {
                 if (!message.IsRead)
