@@ -9,12 +9,14 @@
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Name="Light">
             <SolidColorBrush x:Key="TitleBarBackgroundBrush" Color="{StaticResource OpenEmailBlueColor}" />
+            <SolidColorBrush x:Key="UnreadBadgeBrush" Color="{StaticResource OpenEmailBlueColor}" />
             <SolidColorBrush x:Key="ContentBackgroundBrush" Color="{StaticResource ContentBackgroundColorLight}" />
             <ImageSource x:Key="LogoImageSource">/Assets/LogoLight.png</ImageSource>
         </ResourceDictionary>
 
         <ResourceDictionary x:Name="Dark">
             <SolidColorBrush x:Key="TitleBarBackgroundBrush" Color="{StaticResource OpenEmailDarkBlueColor}" />
+            <SolidColorBrush x:Key="UnreadBadgeBrush" Color="{StaticResource OpenEmailBlueColor}" />
             <SolidColorBrush x:Key="ContentBackgroundBrush" Color="{StaticResource ContentBackgroundColorDark}" />
             <ImageSource x:Key="LogoImageSource">/Assets/LogoLight.png</ImageSource>
         </ResourceDictionary>
