@@ -86,7 +86,7 @@ Forwarded message from: {0}
             SelectedMessages.Clear();
         }
 
-        private void OnSelectedMessagesUpdated(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private async void OnSelectedMessagesUpdated(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             OnPropertyChanged(nameof(HasSelectedSingleMessage));
             OnPropertyChanged(nameof(HasNoSelectedMessage));
@@ -95,6 +95,17 @@ Forwarded message from: {0}
             OnPropertyChanged(nameof(HasMultipleMessagesSelected));
             OnPropertyChanged(nameof(HasMultipleReaders));
             OnPropertyChanged(nameof(SelectedSingleMessage));
+
+            // Mark items as read if they were not.
+
+            foreach (var message in SelectedMessages)
+            {
+                if (!message.IsRead)
+                {
+                    await _messagesService.MarkMessageReadAsync(message.Message.Id).ConfigureAwait(false);
+                    Dispatcher.ExecuteOnDispatcher(() => message.IsRead = true);
+                }
+            }
         }
 
         [RelayCommand]
