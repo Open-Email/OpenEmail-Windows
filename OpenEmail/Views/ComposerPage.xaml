@@ -70,7 +70,7 @@
         </DataTemplate>
     </Page.Resources>
 
-    <Grid>
+    <Grid Background="{ThemeResource ContentBackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
