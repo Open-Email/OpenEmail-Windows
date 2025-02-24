@@ -80,12 +80,22 @@
                             Text="{x:Bind helpers:XamlHelpers.GetDisplayDateOnListingPage(Message.CreatedAt), Mode=OneWay}" />
                     </Grid>
 
-                    <!--  Subject  -->
+                    <!--  Subject Read  -->
                     <TextBlock
                         Grid.Row="1"
                         FontWeight="{x:Bind helpers:XamlHelpers.IsReadConverter(Message.IsRead), Mode=OneWay}"
                         Text="{x:Bind helpers:XamlHelpers.EmptyTextConverter(Subject,'(no subject)'), Mode=OneWay}"
-                        TextTrimming="CharacterEllipsis" />
+                        TextTrimming="CharacterEllipsis"
+                        Visibility="{x:Bind IsRead, Mode=OneWay}" />
+
+                    <!--  Subject Unread  -->
+                    <TextBlock
+                        Grid.Row="1"
+                        FontWeight="{x:Bind helpers:XamlHelpers.IsReadConverter(Message.IsRead), Mode=OneWay}"
+                        Foreground="{ThemeResource UnreadBadgeBrush}"
+                        Text="{x:Bind helpers:XamlHelpers.EmptyTextConverter(Subject,'(no subject)'), Mode=OneWay}"
+                        TextTrimming="CharacterEllipsis"
+                        Visibility="{x:Bind helpers:XamlHelpers.ReverseBooleanToVisibility(IsRead), Mode=OneWay}" />
 
                     <!--  Message  -->
                     <Grid Grid.Row="2">
