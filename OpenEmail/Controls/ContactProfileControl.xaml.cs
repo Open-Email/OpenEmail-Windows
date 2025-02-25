@@ -42,6 +42,20 @@ namespace OpenEmail.Controls
         public static readonly DependencyProperty IsBroadcastOnProperty = DependencyProperty.Register(nameof(IsBroadcastOn), typeof(bool), typeof(ContactProfileControl), new PropertyMetadata(false, new PropertyChangedCallback(OnBroadcastStateChanged)));
         public static readonly DependencyProperty ContactProperty = DependencyProperty.Register(nameof(Contact), typeof(ContactViewModel), typeof(ContactProfileControl), new PropertyMetadata(null, new PropertyChangedCallback(OnContactChanged)));
         public static readonly DependencyProperty BroadcastStateChangedCommandProperty = DependencyProperty.Register(nameof(BroadcastStateChangedCommand), typeof(ICommand), typeof(ContactProfileControl), new PropertyMetadata(null));
+        public static readonly DependencyProperty IsClosePaneButtonVisibleProperty = DependencyProperty.Register(nameof(IsClosePaneButtonVisible), typeof(bool), typeof(ContactProfileControl), new PropertyMetadata(false));
+        public static readonly DependencyProperty ClosePaneCommandProperty = DependencyProperty.Register(nameof(ClosePaneCommand), typeof(ICommand), typeof(ContactProfileControl), new PropertyMetadata(null));
+
+        public bool IsClosePaneButtonVisible
+        {
+            get { return (bool)GetValue(IsClosePaneButtonVisibleProperty); }
+            set { SetValue(IsClosePaneButtonVisibleProperty, value); }
+        }
+
+        public ICommand ClosePaneCommand
+        {
+            get { return (ICommand)GetValue(ClosePaneCommandProperty); }
+            set { SetValue(ClosePaneCommandProperty, value); }
+        }
 
         public ContactProfileControl() => InitializeComponent();
 

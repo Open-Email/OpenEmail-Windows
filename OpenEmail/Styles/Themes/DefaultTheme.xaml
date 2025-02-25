@@ -12,6 +12,8 @@
             <SolidColorBrush x:Key="UnreadBadgeBrush" Color="{StaticResource OpenEmailBlueColor}" />
             <SolidColorBrush x:Key="ContentBackgroundBrush" Color="{StaticResource ContentBackgroundColorLight}" />
             <ImageSource x:Key="LogoImageSource">/Assets/LogoLight.png</ImageSource>
+
+            <Thickness x:Key="AutoSuggestBoxBorderThicknes">1</Thickness>
         </ResourceDictionary>
 
         <ResourceDictionary x:Name="Dark">
@@ -19,6 +21,8 @@
             <SolidColorBrush x:Key="UnreadBadgeBrush" Color="{StaticResource OpenEmailBlueColor}" />
             <SolidColorBrush x:Key="ContentBackgroundBrush" Color="{StaticResource ContentBackgroundColorDark}" />
             <ImageSource x:Key="LogoImageSource">/Assets/LogoLight.png</ImageSource>
+
+            <Thickness x:Key="AutoSuggestBoxBorderThicknes">0</Thickness>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 </ResourceDictionary>
