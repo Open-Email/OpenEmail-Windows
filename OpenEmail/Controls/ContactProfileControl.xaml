@@ -16,9 +16,18 @@
 
     <UserControl.Resources>
         <DataTemplate x:Key="StringTemplate" x:DataType="profile:ProfileAttribute">
-            <TextBlock TextWrapping="Wrap">
-                <Run FontWeight="SemiBold" Text="{x:Bind DisplayKey}" /><Run Text=": " /><Run Text="{x:Bind Value}" />
-            </TextBlock>
+            <Grid Padding="0,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock FontWeight="SemiBold" Text="{x:Bind DisplayKey}" />
+                <TextBlock
+                    Grid.Column="1"
+                    HorizontalAlignment="Right"
+                    Text="{x:Bind Value}"
+                    TextWrapping="Wrap" />
+            </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="BooleanTemplate" x:DataType="profile:ProfileAttribute">
@@ -64,15 +73,33 @@
         </DataTemplate>
 
         <DataTemplate x:Key="DateTimeTemplate" x:DataType="profile:ProfileAttribute">
-            <TextBlock TextWrapping="Wrap">
-                <Run FontWeight="SemiBold" Text="{x:Bind DisplayKey}" /><Run Text=": " /><Run Text="{x:Bind helpers:XamlHelpers.GetTimeAgo(Value)}" />
-            </TextBlock>
+            <Grid Padding="0,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock FontWeight="SemiBold" Text="{x:Bind DisplayKey}" />
+                <TextBlock
+                    Grid.Column="1"
+                    HorizontalAlignment="Right"
+                    Text="{x:Bind helpers:XamlHelpers.GetTimeAgo(Value)}"
+                    TextWrapping="Wrap" />
+            </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="DateTimeOffsetTemplate" x:DataType="profile:ProfileAttribute">
-            <TextBlock TextWrapping="Wrap">
-                <Run FontWeight="SemiBold" Text="{x:Bind DisplayKey}" /><Run Text=": " /><Run Text="{x:Bind helpers:XamlHelpers.GetTimeAgo(Value)}" />
-            </TextBlock>
+            <Grid Padding="0,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock FontWeight="SemiBold" Text="{x:Bind DisplayKey}" />
+                <TextBlock
+                    Grid.Column="1"
+                    HorizontalAlignment="Right"
+                    Text="{x:Bind helpers:XamlHelpers.GetTimeAgo(Value)}"
+                    TextWrapping="Wrap" />
+            </Grid>
         </DataTemplate>
 
         <selectors:ProfilePropertyTemplateSelector
@@ -85,25 +112,61 @@
         <converters:ProfileImageConverter x:Key="ProfileImageConverter" UseEmptyAvatarIfNoImage="True" />
     </UserControl.Resources>
 
-    <Grid Padding="24,12" ColumnSpacing="24">
+    <Grid
+        Padding="24,12"
+        Background="{ThemeResource ContentBackgroundBrush}"
+        ColumnSpacing="24">
         <ScrollViewer x:Name="LoadedGrid" VerticalScrollBarVisibility="Hidden">
-            <Grid>
+            <Grid RowSpacing="6">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Bind Contact.Profile.Name, Mode=OneWay}" />
+
+                    <TextBlock
+                        Grid.Row="1"
+                        Style="{StaticResource BodyTextBlockStyle}"
+                        Text="{x:Bind Contact.Contact.Address, Mode=OneWay}" />
+
+                    <Button
+                        Grid.RowSpan="2"
+                        Grid.Column="1"
+                        Padding="8,8,11,8"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Command="{x:Bind ClosePaneCommand}"
+                        Style="{ThemeResource AccentButtonStyle}"
+                        Visibility="{x:Bind IsClosePaneButtonVisible, Mode=OneWay}">
+                        <PathIcon
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Data="F1 M 10.253906 9.375 L 16.064453 15.185547 C 16.18815 15.309245 16.25 15.455729 16.25 15.625 C 16.25 15.794271 16.18815 15.940756 16.064453 16.064453 C 15.940754 16.188152 15.79427 16.25 15.625 16.25 C 15.455729 16.25 15.309244 16.188152 15.185547 16.064453 L 9.375 10.253906 L 3.564453 16.064453 C 3.440755 16.188152 3.294271 16.25 3.125 16.25 C 2.955729 16.25 2.809245 16.188152 2.685547 16.064453 C 2.561849 15.940756 2.5 15.794271 2.5 15.625 C 2.5 15.455729 2.561849 15.309245 2.685547 15.185547 L 8.496094 9.375 L 2.685547 3.564453 C 2.561849 3.440756 2.5 3.294271 2.5 3.125 C 2.5 2.95573 2.561849 2.809246 2.685547 2.685547 C 2.809245 2.56185 2.955729 2.5 3.125 2.5 C 3.294271 2.5 3.440755 2.56185 3.564453 2.685547 L 9.375 8.496094 L 15.185547 2.685547 C 15.309244 2.56185 15.455729 2.5 15.625 2.5 C 15.79427 2.5 15.940754 2.56185 16.064453 2.685547 C 16.18815 2.809246 16.25 2.95573 16.25 3.125 C 16.25 3.294271 16.18815 3.440756 16.064453 3.564453 Z " />
+                    </Button>
+                </Grid>
+
                 <Grid
+                    Grid.Row="1"
                     MaxWidth="200"
+                    Margin="0,6,0,0"
                     VerticalAlignment="Top"
                     CornerRadius="8">
                     <Image Source="{x:Bind Contact.ProfileImageUrl, Converter={StaticResource ProfileImageConverter}, Mode=OneWay}" />
                 </Grid>
 
-                <Grid
-                    Grid.Row="1"
-                    Margin="0,12"
-                    RowSpacing="5">
+                <Grid Grid.Row="2" RowSpacing="5">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
@@ -114,14 +177,12 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <TextBlock FontWeight="SemiBold" Text="{x:Bind Contact.Profile.Name, Mode=OneWay}" />
-                    <TextBlock Grid.Row="1" Text="{x:Bind Contact.Contact.Address, Mode=OneWay}" />
-                    <Rectangle
+                    <!--<Rectangle
                         Grid.Row="2"
                         Height="1"
                         HorizontalAlignment="Stretch"
                         Fill="Gray"
-                        Visibility="{x:Bind BroadcastPanel.Visibility, Mode=OneWay}" />
+                        Visibility="{x:Bind BroadcastPanel.Visibility, Mode=OneWay}" />-->
 
                     <!--  Broadcast  -->
                     <Grid
@@ -151,12 +212,12 @@
                             OnContent="On" />
                     </Grid>
 
-                    <Rectangle
+                    <!--<Rectangle
                         Grid.Row="4"
                         Height="1"
                         HorizontalAlignment="Stretch"
                         Fill="Gray"
-                        Visibility="{x:Bind BroadcastPanel.Visibility, Mode=OneWay}" />
+                        Visibility="{x:Bind BroadcastPanel.Visibility, Mode=OneWay}" />-->
 
                     <TextBlock
                         Grid.Row="5"
@@ -168,11 +229,6 @@
                         Grid.Row="6"
                         ItemTemplateSelector="{StaticResource ProfilePropertyTemplateSelector}"
                         ItemsSource="{x:Bind Contact.Profile.DisplayAttributes, Mode=OneWay}">
-                        <!--<ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <ItemsWrapGrid MaximumRowsOrColumns="2" Orientation="Horizontal"  />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>-->
                     </ItemsControl>
                 </Grid>
             </Grid>
@@ -206,4 +262,5 @@
         </VisualStateManager.VisualStateGroups>
     </Grid>
 </UserControl>
+
 

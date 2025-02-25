@@ -128,8 +128,8 @@ namespace OpenEmail
 
             if (window is WindowEx windowEx)
             {
-                windowEx.MinWidth = 600;
-                windowEx.MinHeight = 400;
+                windowEx.MinWidth = 800;
+                windowEx.MinHeight = 600;
             }
         }
 

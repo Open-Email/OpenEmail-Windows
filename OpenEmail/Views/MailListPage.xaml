@@ -167,7 +167,7 @@
 
                     <AutoSuggestBox
                         Grid.Row="1"
-                        BorderThickness="0"
+                        BorderThickness="{ThemeResource AutoSuggestBoxBorderThicknes}"
                         PlaceholderText="Search"
                         QueryIcon="Find" />
 

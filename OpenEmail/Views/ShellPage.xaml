@@ -12,13 +12,22 @@
     xmlns:mail="using:OpenEmail.Domain.Models.Mail"
     xmlns:main="using:OpenEmail"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:media="using:CommunityToolkit.WinUI.Media"
     xmlns:messages="using:OpenEmail.Domain.Models.Messages"
     xmlns:navigation="using:OpenEmail.Domain.Models.Navigation"
     xmlns:selectors="using:OpenEmail.Selectors"
     xmlns:tb="using:H.NotifyIcon"
+    xmlns:ui="using:CommunityToolkit.WinUI"
+    IsDisplayingProfileControl="{x:Bind ViewModel.IsProfileLoadMenuVisible, Mode=OneWay}"
+    RequestedTheme="Light"
     mc:Ignorable="d">
 
     <Page.Resources>
+        <media:AttachedCardShadow
+            x:Key="CommonShadow"
+            CornerRadius="4"
+            Offset="2" />
+
         <DataTemplate x:Key="UploadingMessageUploadProgressTemplate" x:DataType="messages:MessageUploadProgress">
             <Grid ColumnSpacing="6">
                 <Grid.ColumnDefinitions>
@@ -88,6 +97,7 @@
             Failed="{StaticResource FailedMessageUploadProgressTemplate}"
             Uploading="{StaticResource UploadingMessageUploadProgressTemplate}" />
     </Page.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -302,7 +312,6 @@
             </TitleBar.Footer>
         </TitleBar>
 
-
         <controls1:CustomNavigationView
             x:Name="MainNavigationView"
             Grid.Row="1"
@@ -379,6 +388,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1" />
                     <ColumnDefinition Width="*" />
+
                 </Grid.ColumnDefinitions>
 
                 <!--  Note the use of a TwoWay binding here, this is required for this control to work.  -->
@@ -403,17 +413,17 @@
                 </Frame>
 
                 <!--  Profile display side menu  -->
-                <Grid
+                <controls1:ContactProfileControl
                     Grid.Column="1"
-                    MinWidth="400"
-                    MaxWidth="500"
-                    Margin="0"
-                    Padding="6,12"
+                    Width="400"
                     HorizontalAlignment="Right"
-                    BorderBrush="{ThemeResource GeneralSeperatorBrush}"
-                    BorderThickness="1,1,0,1"
+                    ui:Effects.Shadow="{StaticResource CommonShadow}"
+                    Background="{ThemeResource ContentBackgroundBrush}"
+                    BroadcastStateChangedCommand="{x:Bind ViewModel.BroadcastStateChangedCommand}"
+                    ClosePaneCommand="{x:Bind ViewModel.CloseProfileInformationCommand}"
+                    Contact="{x:Bind ViewModel.DisplayingContactInformation, Mode=OneWay}"
+                    IsClosePaneButtonVisible="True"
                     Visibility="{x:Bind ViewModel.IsProfileLoadMenuVisible, Mode=OneWay}">
-
                     <animations:Implicit.ShowAnimations>
                         <animations:TranslationAnimation
                             From="300,0,0"
@@ -424,35 +434,13 @@
                             To="1.0"
                             Duration="0:0:0.5" />
                     </animations:Implicit.ShowAnimations>
-
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-
-                    </Grid.RowDefinitions>
-
-                    <controls1:ContactProfileControl
-                        Grid.Row="0"
-                        HorizontalAlignment="Stretch"
-                        BroadcastStateChangedCommand="{x:Bind ViewModel.BroadcastStateChangedCommand}"
-                        Contact="{x:Bind ViewModel.DisplayingContactInformation, Mode=OneWay}" />
-
-                    <Button
-                        Grid.Row="1"
-                        MinWidth="100"
-                        Margin="0,0,12,12"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Bottom"
-                        Command="{x:Bind ViewModel.CloseProfileInformationCommand}"
-                        Content="Close"
-                        Style="{ThemeResource AccentButtonStyle}" />
-                </Grid>
+                </controls1:ContactProfileControl>
 
                 <!--  Info bar message  -->
                 <InfoBar
                     x:Name="InfoBarMessage"
                     Grid.Column="1"
-                    Grid.ColumnSpan="2"
+                    Grid.ColumnSpan="3"
                     MaxWidth="600"
                     Margin="25"
                     HorizontalAlignment="Right"
@@ -460,9 +448,6 @@
                     IsClosable="False" />
             </Grid>
         </controls1:CustomNavigationView>
-
-
-
 
         <tb:TaskbarIcon
             x:Name="TrayIcon"
@@ -498,6 +483,19 @@
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="800" />
                     </VisualState.StateTriggers>
+                </VisualState>
+            </VisualStateGroup>
+
+            <VisualStateGroup x:Name="ContactProfilePaneStates">
+
+                <VisualState x:Name="PaneInactive" />
+                <VisualState x:Name="PaneActive">
+                    <VisualState.StateTriggers>
+                        <StateTrigger IsActive="{x:Bind IsDisplayingProfileControl, Mode=OneWay}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="LeftFrame.Margin" Value="0,0,400,0" />
+                    </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>

@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using OpenEmail.Domain.Models.Mail;
@@ -12,12 +13,24 @@ using OpenEmail.ViewModels;
 
 namespace OpenEmail.Views
 {
-    public abstract class ShellPageAbstract : BasePage<ShellViewModel> { }
+    public abstract class ShellPageAbstract : BasePage<ShellViewModel>
+    {
+        public bool IsDisplayingProfileControl
+        {
+            get { return (bool)GetValue(IsDisplayingProfileControlProperty); }
+            set { SetValue(IsDisplayingProfileControlProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsDisplayingProfileControlProperty = DependencyProperty.Register(nameof(IsDisplayingProfileControl), typeof(bool), typeof(ShellPageAbstract), new PropertyMetadata(false));
+    }
+
     public sealed partial class ShellPage : ShellPageAbstract,
         IRecipient<NewComposeRequested>,
         IRecipient<DraftComposeArgs>,
         IRecipient<DisplayInfoMessage>
     {
+
+
         public ShellPage()
         {
             InitializeComponent();
