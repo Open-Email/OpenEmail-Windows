@@ -6,7 +6,8 @@
     xmlns:converters="using:OpenEmail.Converters"
     xmlns:data="using:OpenEmail.ViewModels.Data"
     xmlns:local="using:OpenEmail"
-    xmlns:styles="using:OpenEmail.Styles">
+    xmlns:styles="using:OpenEmail.Styles"
+    RequestedTheme="Light">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

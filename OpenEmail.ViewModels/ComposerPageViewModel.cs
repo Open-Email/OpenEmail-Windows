@@ -23,9 +23,6 @@ namespace OpenEmail.ViewModels
         private SemaphoreSlim _draftUpdateSemaphore = new(1);
 
         [ObservableProperty]
-        private bool _isBroadcastVisible;
-
-        [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsErrorMessageVisible))]
         private string _errorMessage;
 
@@ -86,7 +83,7 @@ namespace OpenEmail.ViewModels
             }
 
             // Root message withour readers.
-            if (IsBroadcastVisible && !DraftMessageViewModel.IsBroadcast && !DraftMessageViewModel.ReaderViewModels.Any())
+            if (!DraftMessageViewModel.IsBroadcast && !DraftMessageViewModel.ReaderViewModels.Any())
             {
                 ShowErrorMessage("Please add at least one reader to the message.");
                 return;
@@ -226,8 +223,6 @@ namespace OpenEmail.ViewModels
                 ContactViewModels.Add(profileData);
             }
 
-            IsBroadcastVisible = _referencingMessage.IsBroadcast || _actionType == MailActionType.New || _actionType == MailActionType.Broadcast;
-
             DraftMessageViewModel = _referencingMessage as MessageViewModel;
 
             DraftMessageViewModel.AttachmentViewModels.CollectionChanged += AttachmentsUpdated;
@@ -248,6 +243,16 @@ namespace OpenEmail.ViewModels
             DraftMessageViewModel.ReaderViewModels.CollectionChanged -= ReadersUpdated;
 
             await AutoSaveLocalDraftAsync();
+        }
+
+        [RelayCommand]
+        private async Task DeleteAsync()
+        {
+            if (DraftMessageViewModel == null) return;
+
+            await _messagesService.DeleteMessageToTrashAsync(DraftMessageViewModel.Id);
+
+            DismissWindow?.Invoke(this, EventArgs.Empty);
         }
 
         private async Task AutoSaveLocalDraftAsync()
