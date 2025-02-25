@@ -115,6 +115,9 @@ namespace OpenEmail.Views
                 var pageType = (PageType)selectedPageTypeIndex;
                 NavigatePageType(pageType);
             }
+
+            // This will close the contact profile pane.
+            ViewModel.DisplayingContactInformation = null;
         }
 
         private PageType? GetFrameContentType()
