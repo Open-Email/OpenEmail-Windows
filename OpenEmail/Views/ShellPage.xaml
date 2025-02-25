@@ -19,7 +19,6 @@
     xmlns:tb="using:H.NotifyIcon"
     xmlns:ui="using:CommunityToolkit.WinUI"
     IsDisplayingProfileControl="{x:Bind ViewModel.IsProfileLoadMenuVisible, Mode=OneWay}"
-    RequestedTheme="Light"
     mc:Ignorable="d">
 
     <Page.Resources>
