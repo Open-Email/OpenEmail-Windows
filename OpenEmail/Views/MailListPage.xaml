@@ -197,7 +197,18 @@
             </Interactivity:Interaction.Behaviors>
         </ListView>
 
-        <controls:GridSplitter Grid.Column="1" Opacity="0.5" />
+
+        <!--  Invisible grid splitter to adjust mail list.  -->
+        <controls:GridSplitter
+            Grid.Column="1"
+            HorizontalAlignment="Center"
+            Opacity="0" />
+
+        <!--  Separation of list and content.  -->
+        <Rectangle
+            Grid.Column="1"
+            Width="1"
+            Fill="{ThemeResource NavigationViewItemSeparatorForeground}" />
 
         <!--  Right Content  -->
 
@@ -349,7 +360,7 @@
                 </Grid>
 
                 <!--  Seperator  -->
-                <Grid Grid.Row="2" Margin="-12,0">
+                <Grid Grid.Row="2" Margin="-16,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
@@ -399,7 +410,7 @@
                 <Border
                     Grid.Row="4"
                     Height="1"
-                    Margin="-12,0"
+                    Margin="-16,0"
                     VerticalAlignment="Top"
                     BorderBrush="{ThemeResource MenuFlyoutSeparatorThemeBrush}"
                     BorderThickness="1"
