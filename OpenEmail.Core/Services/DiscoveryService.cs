@@ -1,11 +1,7 @@
-﻿using System.Diagnostics;
-using System.Net;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using OpenEmail.Contracts.Clients;
 using OpenEmail.Contracts.Services;
-using OpenEmail.Core.Services.Refit;
 using OpenEmail.Domain.Models.Discovery;
-using Refit;
 
 namespace OpenEmail.Core.Services
 {
@@ -13,8 +9,9 @@ namespace OpenEmail.Core.Services
     {
         private const int MaxMailAgentsConsidered = 3;
         private const string DefaultMailSubdomain = "mail";
+        private const string WELL_KNOWN_PATH = "/.well-known/mail.txt";
 
-        private List<DiscoveryHost> cachedHosts = [];
+        private List<DiscoveryHost> cachedHosts = new List<DiscoveryHost>();
 
         private readonly IClientFactory _clientFactory;
 
@@ -40,33 +37,103 @@ namespace OpenEmail.Core.Services
 
         public async Task<List<DiscoveryHost>> LoadDiscoveryHostsAsync(string hostPart)
         {
-            // 1. Try out the host part directly.
-            var discoveryClient = _clientFactory.CreateClient<IDiscoveryClient>($"https://{hostPart}");
+            var validAgents = await DiscoverMailAgentsAsync(hostPart);
+            return validAgents.Select(agent => new DiscoveryHost(agent, hostPart)).ToList();
+        }
 
-            string discoveryContent = string.Empty;
+        public async Task<List<string>> DiscoverMailAgentsAsync(string domain)
+        {
+            var validAgents = new List<string>();
 
-            bool shouldAttemptDefaultMailSubdomain = false;
+            // Try well-known file on main domain first
+            var mainDomainAgents = await GetWellKnownAgentsAsync($"https://{domain}{WELL_KNOWN_PATH}");
+            if (mainDomainAgents.Any())
+            {
+                var validMainAgents = await ValidateAgentsAsync(mainDomainAgents, domain);
+                validAgents.AddRange(validMainAgents);
+            }
 
+            // Try well-known file on mail subdomain
+            if (!validAgents.Any())
+            {
+                var mailDomainAgents = await GetWellKnownAgentsAsync($"https://mail.{domain}{WELL_KNOWN_PATH}");
+                if (mailDomainAgents.Any())
+                {
+                    var validMailAgents = await ValidateAgentsAsync(mailDomainAgents, domain);
+                    validAgents.AddRange(validMailAgents);
+                }
+            }
+
+            // Fall back to default mail subdomain if no agents found
+            if (!validAgents.Any())
+            {
+                var defaultMailAgent = $"mail.{domain}";
+                if (await ValidateMailAgentAsync(defaultMailAgent, domain))
+                {
+                    validAgents.Add(defaultMailAgent);
+                }
+            }
+
+            // Take max 3 valid agents per spec
+            return validAgents.Take(3).ToList();
+        }
+
+        private async Task<List<string>> GetWellKnownAgentsAsync(string wellKnownUrl)
+        {
             try
             {
-                discoveryContent = await discoveryClient.GetMailAgentsAsync().ConfigureAwait(false);
+                using var client = new HttpClient();
+                var response = await client.GetStringAsync(wellKnownUrl);
+
+                return response
+                    .Split('\n')
+                    .Select(line => line.Trim())
+                    .Where(line => !string.IsNullOrEmpty(line) && !line.StartsWith("#"))
+                    .Where(IsValidHostname)
+                    .ToList();
             }
-            catch (ApiException apiException) when (apiException.StatusCode == HttpStatusCode.NotFound)
+            catch
             {
-                shouldAttemptDefaultMailSubdomain = true;
+                return new List<string>();
             }
+        }
 
-            if (shouldAttemptDefaultMailSubdomain)
+        private async Task<List<string>> ValidateAgentsAsync(List<string> agents, string domain)
+        {
+            var validAgents = new List<string>();
+            foreach (var agent in agents)
             {
-                Debug.WriteLine($"Failed to load mail agents for {hostPart}. Trying out the default mail subdomain.");
-
-                // In case of failure, try out the default mail subdomain.
-                discoveryClient = _clientFactory.CreateClient<IDiscoveryClient>($"https://{DefaultMailSubdomain}.{hostPart}");
-                discoveryContent = await discoveryClient.GetMailAgentsAsync().ConfigureAwait(false);
+                if (await ValidateMailAgentAsync(agent, domain))
+                {
+                    validAgents.Add(agent);
+                }
             }
+            return validAgents;
+        }
 
-            // Parse hosts from the content.
-            return ParseHostContent(discoveryContent).Select(hostAddress => new DiscoveryHost(hostAddress, hostPart)).ToList();
+        private async Task<bool> ValidateMailAgentAsync(string agentHostname, string domain)
+        {
+            try
+            {
+                using var client = new HttpClient();
+                var response = await client.SendAsync(new HttpRequestMessage(
+                    HttpMethod.Head,
+                    $"https://{agentHostname}/mail/{domain}"
+                ));
+                return response.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private bool IsValidHostname(string hostname)
+        {
+            // Basic hostname validation
+            return !string.IsNullOrEmpty(hostname) &&
+                   hostname.Length <= 255 &&
+                   Uri.CheckHostName(hostname) != UriHostNameType.Unknown;
         }
 
         public List<string> ParseHostContent(string content)
