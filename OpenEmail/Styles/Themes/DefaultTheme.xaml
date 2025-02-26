@@ -12,9 +12,9 @@
             <SolidColorBrush x:Key="TitleBarBackgroundBrush" Color="{StaticResource OpenEmailBlueColor}" />
             <SolidColorBrush x:Key="UnreadBadgeBrush" Color="{StaticResource OpenEmailBlueColor}" />
             <SolidColorBrush x:Key="ContentBackgroundBrush" Color="{StaticResource ContentBackgroundColorLight}" />
-            <SolidColorBrush x:Key="ComposerCommandBarBackgroundBrush" Color="#ecf0f1" />
-            <ImageSource x:Key="LogoImageSource">/Assets/LogoLight.png</ImageSource>
+            <SolidColorBrush x:Key="ContactWriteButtonBackgroundBrush" Color="{StaticResource OpenEmailBlueColor}" />
 
+            <ImageSource x:Key="LogoImageSource">/Assets/LogoLight.png</ImageSource>
             <Thickness x:Key="AutoSuggestBoxBorderThicknes">1</Thickness>
         </ResourceDictionary>
 
@@ -22,10 +22,9 @@
             <SolidColorBrush x:Key="TitleBarBackgroundBrush" Color="{StaticResource OpenEmailDarkBlueColor}" />
             <SolidColorBrush x:Key="UnreadBadgeBrush" Color="{StaticResource OpenEmailBlueColor}" />
             <SolidColorBrush x:Key="ContentBackgroundBrush" Color="{StaticResource ContentBackgroundColorDark}" />
-            <SolidColorBrush x:Key="ComposerCommandBarBackgroundBrush" Color="#2c3e50" />
+            <SolidColorBrush x:Key="ContactWriteButtonBackgroundBrush" Color="{StaticResource ContentBackgroundColorDark}" />
 
             <ImageSource x:Key="LogoImageSource">/Assets/LogoLight.png</ImageSource>
-
             <Thickness x:Key="AutoSuggestBoxBorderThicknes">0</Thickness>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
