@@ -91,7 +91,12 @@
     </DataTemplate>
 
     <DataTemplate x:Key="ComposerAttachmentTemplate" x:DataType="data:AttachmentViewModel">
-        <Grid MaxWidth="200" Margin="0,4">
+        <Grid
+            MaxWidth="200"
+            Margin="0,4"
+            Padding="2,4"
+            BorderBrush="LightGray"
+            BorderThickness="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="40" />
                 <ColumnDefinition Width="*" />
