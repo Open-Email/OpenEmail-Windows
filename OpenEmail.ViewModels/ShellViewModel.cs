@@ -181,6 +181,8 @@ namespace OpenEmail.ViewModels
             DisplayingContactInformation = null;
             IsProfileLoadFailed = false;
             IsLoadingContactInformation = false;
+
+            Messenger.Send(new ProfileDisplayPaneDismissedMessage());
         }
 
         [RelayCommand]

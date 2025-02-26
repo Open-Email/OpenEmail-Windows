@@ -15,7 +15,8 @@ namespace OpenEmail.ViewModels
         IRecipient<ProfileDataUpdated>,
         IRecipient<ContactCreated>,
         IRecipient<ContactUpdated>,
-        IRecipient<ContactDeleted>
+        IRecipient<ContactDeleted>,
+        IRecipient<ProfileDisplayPaneDismissedMessage>
     {
         private readonly IContactService _contactService;
         private readonly IApplicationStateService _applicationStateService;
@@ -152,6 +153,15 @@ namespace OpenEmail.ViewModels
             OnPropertyChanged(nameof(HasNoContacts));
         }
 
+        partial void OnSelectedContactViewModelChanged(ContactViewModel value)
+        {
+            if (value == null) return;
+
+            var message = new ProfileDisplayRequested(value.Contact);
+
+            Messenger.Send(message);
+        }
+
         private async Task ReloadRequestsAsync(CancellationToken cancellationToken = default)
         {
             IsLoading = true;
@@ -277,6 +287,11 @@ namespace OpenEmail.ViewModels
                     contactViewModel.Item1.Remove(contactViewModel.Item2);
                 });
             }
+        }
+
+        public void Receive(ProfileDisplayPaneDismissedMessage message)
+        {
+            SelectedContactViewModel = null;
         }
     }
 }
