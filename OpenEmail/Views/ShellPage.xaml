@@ -210,9 +210,9 @@
                     </Button>
 
                     <Button
+                        Margin="0,4"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
-                        Style="{StaticResource TransparentButtonStyle}"
                         Visibility="{x:Bind ViewModel.HasOngoingUploads, Mode=OneWay}">
                         <Button.Flyout>
                             <Flyout Placement="Bottom">
