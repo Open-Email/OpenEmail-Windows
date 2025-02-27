@@ -254,6 +254,12 @@ namespace OpenEmail.Core.Services
 
             var message = envelope.AsEntity();
 
+            // Authored messages are always read.
+            if (_applicationStateService.ActiveProfile.Address == message.Author)
+            {
+                message.IsRead = true;
+            }
+
             // Save the actual message.
             await Connection.InsertAsync(message).ConfigureAwait(false);
 
