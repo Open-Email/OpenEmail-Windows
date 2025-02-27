@@ -271,6 +271,7 @@
                         ItemsSource="{x:Bind ViewModel.DraftMessageViewModel.AttachmentViewModels, Mode=OneWay}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
+                                <!--  TODO: MeasureOverride crash. Replace it.  -->
                                 <controls:WrapPanel Orientation="Horizontal" />
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
