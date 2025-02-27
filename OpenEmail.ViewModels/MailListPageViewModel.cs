@@ -285,7 +285,7 @@ Forwarded message from: {0}
             if (CurrentMailFolderType == MailFolder.Trash)
                 filter = filter.AndAlso(a => a.IsDeleted);
             else if (CurrentMailFolderType == MailFolder.Drafts)
-                filter = filter.AndAlso(a => a.IsDraft);
+                filter = filter.AndAlso(a => a.IsDraft && !a.IsDeleted);
             else if (CurrentMailFolderType == MailFolder.Outbox)
                 filter = filter.AndAlso(a => a.Author == ApplicationStateService.ActiveProfile.Address && !a.IsDeleted && !a.IsDraft);
             else
