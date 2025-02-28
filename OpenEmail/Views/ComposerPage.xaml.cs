@@ -75,5 +75,15 @@ namespace OpenEmail.Views
         private void MinimizeClicked(object sender, RoutedEventArgs e) => MinimizeWindowRequested?.Invoke(this, EventArgs.Empty);
 
         private void CloseClicked(object sender, RoutedEventArgs e) => CloseWindowRequested?.Invoke(this, EventArgs.Empty);
+
+        private void DismissShortcutInvoked(Microsoft.UI.Xaml.Input.KeyboardAccelerator sender, Microsoft.UI.Xaml.Input.KeyboardAcceleratorInvokedEventArgs args)
+        {
+            ViewModel.DismissComposerWindow();
+        }
+
+        private void SendShortcutInvoked(Microsoft.UI.Xaml.Input.KeyboardAccelerator sender, Microsoft.UI.Xaml.Input.KeyboardAcceleratorInvokedEventArgs args)
+        {
+            ViewModel.SendCommand.Execute(null);
+        }
     }
 }
