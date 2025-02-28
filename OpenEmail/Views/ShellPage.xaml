@@ -21,6 +21,9 @@
     IsDisplayingProfileControl="{x:Bind ViewModel.IsProfileLoadMenuVisible, Mode=OneWay}"
     mc:Ignorable="d">
 
+    <Page.KeyboardAccelerators>
+        <KeyboardAccelerator Key="T" Modifiers="Control" Invoked="NewMailShortcutInvoked" />
+    </Page.KeyboardAccelerators>
     <Page.Resources>
         <media:AttachedCardShadow
             x:Key="CommonShadow"

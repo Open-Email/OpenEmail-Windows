@@ -127,7 +127,7 @@ namespace OpenEmail.ViewModels
             }
 
             Messenger.Send(new SendMessage(DraftMessageViewModel.Id, readerMap));
-            DismissWindow?.Invoke(this, EventArgs.Empty);
+            DismissComposerWindow();
         }
 
         private void ShowErrorMessage(string message) => ErrorMessage = message;
@@ -245,6 +245,8 @@ namespace OpenEmail.ViewModels
             await AutoSaveLocalDraftAsync();
         }
 
+        public void DismissComposerWindow() => DismissWindow?.Invoke(this, EventArgs.Empty);
+
         [RelayCommand]
         private async Task DeleteAsync()
         {
@@ -252,7 +254,7 @@ namespace OpenEmail.ViewModels
 
             await _messagesService.DeleteMessageToTrashAsync(DraftMessageViewModel.Id);
 
-            DismissWindow?.Invoke(this, EventArgs.Empty);
+            DismissComposerWindow();
         }
 
         private async Task AutoSaveLocalDraftAsync()
