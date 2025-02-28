@@ -229,5 +229,10 @@ namespace OpenEmail.Views
         {
             MainNavigationView.IsPaneOpen = !MainNavigationView.IsPaneOpen;
         }
+
+        private void NewMailShortcutInvoked(Microsoft.UI.Xaml.Input.KeyboardAccelerator sender, Microsoft.UI.Xaml.Input.KeyboardAcceleratorInvokedEventArgs args)
+        {
+            ViewModel.NewMessageCommand.Execute(null);
+        }
     }
 }
