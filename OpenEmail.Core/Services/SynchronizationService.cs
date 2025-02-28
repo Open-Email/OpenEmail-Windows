@@ -207,7 +207,24 @@ namespace OpenEmail.Core.Services
 
             if (messageIds != null)
             {
-                foreach (var messageId in messageIds)
+                // Find authored messages locally.
+                // 1. Download locally missing ones.
+                // 2. Remove remotely deleted ones.
+
+                var localOutboxMessages = await _messagesService.GetMessagesAsync(a => a.Author == accountProfile.Address && !a.IsDraft && !a.IsDeleted).ConfigureAwait(false);
+
+                // Remove remotely deleted messages.
+                var deletedMessages = localOutboxMessages.Where(a => !messageIds.Contains(a.EnvelopeId));
+
+                foreach (var message in deletedMessages)
+                {
+                    await _messagesService.DeleteMessagePermanentAsync(message.Id).ConfigureAwait(false);
+                }
+
+                // Download missing messages.
+                var missingMessages = messageIds.Where(a => !localOutboxMessages.Select(b => b.EnvelopeId).Contains(a));
+
+                foreach (var messageId in missingMessages)
                 {
                     try
                     {

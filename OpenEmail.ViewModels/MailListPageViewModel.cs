@@ -13,6 +13,7 @@ using OpenEmail.Domain.Models.Mail;
 using OpenEmail.Domain.Models.Messages;
 using OpenEmail.Domain.Models.Navigation;
 using OpenEmail.Domain.Models.Profile;
+using OpenEmail.Domain.Models.Shell;
 using OpenEmail.Domain.PubSubMessages;
 using OpenEmail.ViewModels.Data;
 using OpenEmail.ViewModels.Interfaces;
@@ -63,6 +64,7 @@ Forwarded message from: {0}
         public ObservableCollection<MessageViewModel> Messages { get; set; } = [];
         public IPreferencesService PreferencesService { get; }
 
+        private readonly IDialogService _dialogService;
         private readonly IMessagesService _messagesService;
         private readonly IMessagePreperationService _messagePreperationService;
         private Expression<Func<Message, bool>> filter;
@@ -73,10 +75,12 @@ Forwarded message from: {0}
         public MailListPageViewModel(IFileService fileService,
                                      IApplicationStateService applicationStateService,
                                      IPreferencesService preferencesService,
+                                     IDialogService dialogService,
                                      IMessagesService messagesService,
                                      IMessagePreperationService messagePreperationService) : base(fileService, applicationStateService)
         {
             PreferencesService = preferencesService;
+            _dialogService = dialogService;
             _messagesService = messagesService;
             _messagePreperationService = messagePreperationService;
         }
@@ -436,7 +440,15 @@ Forwarded message from: {0}
 
             foreach (var messageId in messageIdsToDelete)
             {
-                await _messagesService.RecallMessageAsync(messageId);
+                try
+                {
+                    await _messagesService.RecallMessageAsync(messageId);
+                }
+                catch (Exception ex)
+                {
+                    // TODO: Logging.
+                    _dialogService.ShowInfoBarMessage("Error", $"Failed to recall message.\n{ex.Message}", InfoBarMessageSeverity.Error);
+                }
             }
         }
 
