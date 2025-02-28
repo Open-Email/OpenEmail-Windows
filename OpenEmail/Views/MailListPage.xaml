@@ -280,6 +280,9 @@
                     </AppBarButton>
 
                     <AppBarButton Command="{x:Bind ViewModel.DeleteCommand}" Label="Delete">
+                        <AppBarButton.KeyboardAccelerators>
+                            <KeyboardAccelerator Key="Delete" />
+                        </AppBarButton.KeyboardAccelerators>
                         <AppBarButton.Icon>
                             <FontIcon FontFamily="{StaticResource OpenEmailIconFontFamily}" Glyph="{x:Bind main:OpenEmailIcons.Trash}" />
                         </AppBarButton.Icon>
