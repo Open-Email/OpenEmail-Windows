@@ -28,6 +28,7 @@
     <None Remove="Assets\pdf.png" />
     <None Remove="Assets\titlebar_logo.png" />
     <None Remove="Controls\ContactProfileControl.xaml" />
+    <None Remove="Controls\CustomAppBarButton.xaml" />
     <None Remove="Dialogs\AddNewContactDialog.xaml" />
     <None Remove="Styles\ButtonStyles.xaml" />
     <None Remove="Styles\Colors.xaml" />
@@ -90,6 +91,11 @@
     <ProjectReference Include="..\OpenEmail.Core\OpenEmail.Core.csproj" />
     <ProjectReference Include="..\OpenEmail.ViewModels\OpenEmail.ViewModels.csproj" />
     <ProjectReference Include="..\OpenEmail.WinRT\OpenEmail.WinRT.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\CustomAppBarButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\ComposerPage.xaml">
