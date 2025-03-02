@@ -9,7 +9,7 @@ namespace OpenEmail.Controls
         public static readonly DependencyProperty IconProperty = DependencyProperty.Register(nameof(Icon), typeof(object), typeof(CustomAppBarButton), new PropertyMetadata(null));
         public static readonly DependencyProperty LabelProperty = DependencyProperty.Register(nameof(Label), typeof(string), typeof(CustomAppBarButton), new PropertyMetadata(string.Empty));
         public static readonly DependencyProperty CommandProperty = DependencyProperty.Register(nameof(Command), typeof(ICommand), typeof(CustomAppBarButton), new PropertyMetadata(null));
-        public static readonly DependencyProperty IsCompactProperty = DependencyProperty.Register(nameof(IsCompact), typeof(bool), typeof(CustomAppBarButton), new PropertyMetadata(true));
+        public static readonly DependencyProperty IsCompactProperty = DependencyProperty.Register(nameof(IsCompact), typeof(bool), typeof(CustomAppBarButton), new PropertyMetadata(true, new PropertyChangedCallback(OnIsCompactChanged)));
 
         public bool IsCompact
         {
@@ -33,6 +33,19 @@ namespace OpenEmail.Controls
         {
             get => (string)GetValue(LabelProperty);
             set => SetValue(LabelProperty, value);
+        }
+
+        public static void OnIsCompactChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is CustomAppBarButton button)
+            {
+                button.OnIsCompactChanged();
+            }
+        }
+
+        private void OnIsCompactChanged()
+        {
+            LabelTextblock.Visibility = IsCompact ? Visibility.Collapsed : Visibility.Visible;
         }
 
         public CustomAppBarButton()

@@ -20,7 +20,7 @@
         Style="{StaticResource AppBarButtonRevealStyle}">
         <StackPanel Orientation="Horizontal" Spacing="                     4">
             <ContentPresenter x:Name="IconPresenter" Content="{x:Bind Icon, Mode=OneWay}" />
-            <TextBlock Text="{x:Bind Label, Mode=OneWay}" />
+            <TextBlock x:Name="LabelTextblock" Text="{x:Bind Label, Mode=OneWay}" />
         </StackPanel>
     </Button>
 </UserControl>

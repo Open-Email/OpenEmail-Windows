@@ -15,6 +15,7 @@
     xmlns:main="using:OpenEmail"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="root"
+    SizeChanged="PageSizeChanged"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -335,7 +336,9 @@
                         <!--  Buttons  -->
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <controls1:CustomAppBarButton
+                                x:Name="ReplyButton"
                                 Command="{x:Bind ViewModel.ReplyCommand}"
+                                IsCompact="{x:Bind IsCompactPage, Mode=OneWay}"
                                 Label="Reply"
                                 Visibility="{x:Bind ViewModel.IsNotDraftMessage, Mode=OneWay}">
                                 <controls1:CustomAppBarButton.Icon>
@@ -344,7 +347,9 @@
                             </controls1:CustomAppBarButton>
 
                             <controls1:CustomAppBarButton
+                                x:Name="ReplyAllButton"
                                 Command="{x:Bind ViewModel.ReplyAllCommand}"
+                                IsCompact="{x:Bind IsCompactPage, Mode=OneWay}"
                                 Label="Reply All"
                                 Visibility="{x:Bind ViewModel.ShouldDisplayReplyAll, Mode=OneWay}">
                                 <controls1:CustomAppBarButton.Icon>
@@ -352,14 +357,20 @@
                                 </controls1:CustomAppBarButton.Icon>
                             </controls1:CustomAppBarButton>
 
-                            <controls1:CustomAppBarButton Label="Send" Visibility="{x:Bind ViewModel.IsDraftMessage, Mode=OneWay}">
+                            <controls1:CustomAppBarButton
+                                x:Name="SendButton"
+                                IsCompact="{x:Bind IsCompactPage, Mode=OneWay}"
+                                Label="Send"
+                                Visibility="{x:Bind ViewModel.IsDraftMessage, Mode=OneWay}">
                                 <controls1:CustomAppBarButton.Icon>
                                     <PathIcon Data="F1 M 20 9.375 C 20 9.498698 19.967447 9.611003 19.902344 9.711914 C 19.837238 9.812826 19.749348 9.889323 19.638672 9.941406 L 0.888672 18.691406 C 0.810547 18.730469 0.722656 18.75 0.625 18.75 C 0.442708 18.75 0.292969 18.689779 0.175781 18.569336 C 0.058594 18.448893 0 18.297525 0 18.115234 C 0 18.082682 0 18.053385 0 18.027344 C 0 18.001303 0.00651 17.97526 0.019531 17.949219 L 2.470703 9.375 L 0.019531 0.800781 C 0.00651 0.77474 0 0.748699 0 0.722656 C 0 0.696615 0 0.667318 0 0.634766 C 0 0.452475 0.058594 0.301107 0.175781 0.180664 C 0.292969 0.060223 0.442708 0 0.625 0 C 0.722656 0 0.810547 0.019531 0.888672 0.058594 L 19.638672 8.808594 C 19.879557 8.919271 20 9.108073 20 9.375 Z M 1.601562 16.982422 L 17.900391 9.375 L 1.601562 1.767578 L 3.603516 8.75 L 11.875 8.75 C 12.04427 8.75 12.190754 8.81185 12.314453 8.935547 C 12.43815 9.059245 12.5 9.205729 12.5 9.375 C 12.5 9.544271 12.43815 9.690756 12.314453 9.814453 C 12.190754 9.938151 12.04427 10 11.875 10 L 3.603516 10 Z " />
                                 </controls1:CustomAppBarButton.Icon>
                             </controls1:CustomAppBarButton>
 
                             <controls1:CustomAppBarButton
+                                x:Name="ForwardButton"
                                 Command="{x:Bind ViewModel.ForwardCommand}"
+                                IsCompact="{x:Bind IsCompactPage, Mode=OneWay}"
                                 Label="Forward"
                                 Visibility="{x:Bind ViewModel.IsNotDraftMessage, Mode=OneWay}">
                                 <controls1:CustomAppBarButton.Icon>
@@ -368,7 +379,9 @@
                             </controls1:CustomAppBarButton>
 
                             <controls1:CustomAppBarButton
+                                x:Name="EditDraftButton"
                                 Command="{x:Bind ViewModel.EditDraftMessageCommand}"
+                                IsCompact="{x:Bind IsCompactPage, Mode=OneWay}"
                                 Label="Edit"
                                 Visibility="{x:Bind ViewModel.IsDraftMessage, Mode=OneWay}">
                                 <controls1:CustomAppBarButton.Icon>
@@ -376,7 +389,11 @@
                                 </controls1:CustomAppBarButton.Icon>
                             </controls1:CustomAppBarButton>
 
-                            <controls1:CustomAppBarButton Command="{x:Bind ViewModel.DeleteCommand}" Label="Delete">
+                            <controls1:CustomAppBarButton
+                                x:Name="DeleteButton"
+                                Command="{x:Bind ViewModel.DeleteCommand}"
+                                IsCompact="{x:Bind IsCompactPage, Mode=OneWay}"
+                                Label="Delete">
                                 <controls1:CustomAppBarButton.KeyboardAccelerators>
                                     <KeyboardAccelerator Key="Delete" />
                                 </controls1:CustomAppBarButton.KeyboardAccelerators>
