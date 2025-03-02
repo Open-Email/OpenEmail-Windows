@@ -305,18 +305,6 @@ Forwarded message from: {0}
             }
         }
 
-        //partial void OnSelectedMessageChanged(MessageViewModel value)
-        //{
-        //    if (value == null) return;
-
-        //    if (!value.IsRead)
-        //    {
-        //        _messagesService.MarkMessageReadAsync(value.Message.Id).ConfigureAwait(false);
-
-        //        Dispatcher.ExecuteOnDispatcher(() => value.IsRead = true);
-        //    }
-        //}
-
         public override void OnUpdateAttachmentViewModelProgress(Guid attachmentGroupId, AttachmentProgress attachmentProgress)
         {
             // Only update for selected message.
