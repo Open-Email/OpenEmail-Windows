@@ -9,6 +9,13 @@ namespace OpenEmail.Controls
         public static readonly DependencyProperty IconProperty = DependencyProperty.Register(nameof(Icon), typeof(object), typeof(CustomAppBarButton), new PropertyMetadata(null));
         public static readonly DependencyProperty LabelProperty = DependencyProperty.Register(nameof(Label), typeof(string), typeof(CustomAppBarButton), new PropertyMetadata(string.Empty));
         public static readonly DependencyProperty CommandProperty = DependencyProperty.Register(nameof(Command), typeof(ICommand), typeof(CustomAppBarButton), new PropertyMetadata(null));
+        public static readonly DependencyProperty IsCompactProperty = DependencyProperty.Register(nameof(IsCompact), typeof(bool), typeof(CustomAppBarButton), new PropertyMetadata(true));
+
+        public bool IsCompact
+        {
+            get { return (bool)GetValue(IsCompactProperty); }
+            set { SetValue(IsCompactProperty, value); }
+        }
 
         public ICommand Command
         {

@@ -260,34 +260,66 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-
                         <PersonPicture
                             Width="48"
                             HorizontalAlignment="Left"
                             DisplayName="{x:Bind ViewModel.SelectedSingleMessage.ContactViewModel.ContactDisplayName, Mode=OneWay}"
                             Initials="{x:Bind ViewModel.SelectedSingleMessage.ContactViewModel.Initials, Mode=OneWay}"
                             ProfilePicture="{x:Bind ViewModel.SelectedSingleMessage.ContactViewModel.ProfileThumbnailUrl, Mode=OneWay, Converter={StaticResource ProfileImageConverter}}" />
+                        <Grid Grid.Column="1" Padding="12,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
 
-                        <HyperlinkButton
-                            Grid.Column="1"
-                            Margin="-2,0,0,0"
-                            Padding="6,2,4,4"
-                            VerticalAlignment="Top"
-                            Command="{x:Bind ViewModel.DisplaySenderCommand}"
-                            CommandParameter="{x:Bind ViewModel.SelectedSingleMessage.ContactViewModel.Contact, Mode=OneWay}"
-                            Foreground="{ThemeResource ApplicationForegroundThemeBrush}">
-                            <TextBlock>
-                                <Run FontWeight="SemiBold" Text="{x:Bind ViewModel.SelectedSingleMessage.ContactViewModel.ContactDisplayName, Mode=OneWay}" />
-                                <Run
+                            <HyperlinkButton
+                                Margin="-4,0,0,0"
+                                Padding="4,0"
+                                VerticalAlignment="Top"
+                                Command="{x:Bind ViewModel.DisplaySenderCommand}"
+                                CommandParameter="{x:Bind ViewModel.SelectedSingleMessage.ContactViewModel.Contact, Mode=OneWay}"
+                                Foreground="{ThemeResource ApplicationForegroundThemeBrush}">
+                                <TextBlock MaxLines="2" TextWrapping="Wrap">
+                                    <Run FontWeight="SemiBold" Text="{x:Bind ViewModel.SelectedSingleMessage.ContactViewModel.ContactDisplayName, Mode=OneWay}" />
+                                    <Run
+                                        FontSize="14"
+                                        Foreground="{ThemeResource DetailForegroundBrush}"
+                                        Text="{x:Bind ViewModel.SelectedSingleMessage.ContactViewModel.Contact.Address, Mode=OneWay}" />
+                                </TextBlock>
+                            </HyperlinkButton>
+
+                            <!--  Readers  -->
+                            <Grid Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <FontIcon
+                                    VerticalAlignment="Center"
+                                    FontFamily="{ThemeResource OpenEmailIconFontFamily}"
                                     FontSize="14"
-                                    Foreground="{ThemeResource DetailForegroundBrush}"
-                                    Text="{x:Bind ViewModel.SelectedSingleMessage.ContactViewModel.Contact.Address, Mode=OneWay}" />
-                            </TextBlock>
-                        </HyperlinkButton>
+                                    Glyph="{x:Bind main:OpenEmailIcons.Contacts}" />
+
+                                <ItemsRepeater
+                                    Grid.Column="1"
+                                    Margin="0,0,0,4"
+                                    VerticalAlignment="Bottom"
+                                    ItemsSource="{x:Bind ViewModel.SelectedSingleMessage.ReaderViewModels, Mode=OneWay}">
+                                    <ItemsRepeater.ItemTemplate>
+                                        <DataTemplate x:DataType="data:ContactViewModel">
+                                            <HyperlinkButton Padding="4,0">
+                                                <TextBlock
+                                                    MaxLines="2"
+                                                    Text="{x:Bind ContactDisplayName}"
+                                                    TextTrimming="CharacterEllipsis"
+                                                    TextWrapping="Wrap" />
+                                            </HyperlinkButton>
+                                        </DataTemplate>
+                                    </ItemsRepeater.ItemTemplate>
+                                </ItemsRepeater>
+                            </Grid>
+                        </Grid>
                     </Grid>
 
                     <!--  Buttons / Date  -->
@@ -361,7 +393,7 @@
                         <TextBlock
                             Grid.Row="1"
                             HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
+                            VerticalAlignment="Top"
                             FontSize="13"
                             Foreground="{ThemeResource DetailForegroundBrush}"
                             Text="{x:Bind helpers:XamlHelpers.GetFormattedLocalTimeDate(ViewModel.SelectedSingleMessage.CreatedAt,'g'), Mode=OneWay}" />
