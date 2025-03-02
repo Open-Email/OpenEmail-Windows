@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Navigation;
 using OpenEmail.ViewModels;
@@ -30,7 +29,6 @@ namespace OpenEmail.Views
         private void UpdateAdaptiveness()
         {
             IsCompactPage = ActualWidth < CompactWidth;
-            Debug.WriteLine($"Width: {ActualWidth}, IsCompact: {IsCompactPage}");
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

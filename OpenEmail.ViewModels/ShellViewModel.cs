@@ -8,6 +8,7 @@ using OpenEmail.Domain.Models.Accounts;
 using OpenEmail.Domain.Models.Mail;
 using OpenEmail.Domain.Models.Navigation;
 using OpenEmail.Domain.Models.Profile;
+using OpenEmail.Domain.Models.Shell;
 using OpenEmail.Domain.PubSubMessages;
 using OpenEmail.ViewModels.Data;
 
@@ -66,18 +67,22 @@ namespace OpenEmail.ViewModels
         private readonly System.Timers.Timer _syncIntervalTimer;
         private readonly IAttachmentManager _attachmentManager;
         private readonly ILoginService _loginService;
+        private readonly IFileService _fileService;
         private readonly IContactService _contactService;
         private readonly IMessagesService _messagesService;
         private readonly IWindowService _windowService;
+        private readonly IDialogService _dialogService;
         private readonly IProfileDataService _profileDataService;
         private readonly ISynchronizationService _synchronizationService;
 
         public ShellViewModel(IApplicationStateService applicationStateService,
                               IAttachmentManager attachmentManager,
                               ILoginService loginService,
+                              IFileService fileService,
                               IContactService contactService,
                               IMessagesService messagesService,
                               IWindowService windowService,
+                              IDialogService dialogService,
                               IPreferencesService preferencesService,
                               IMessageUploader messageUploader,
                               IProfileDataService profileDataService,
@@ -89,9 +94,11 @@ namespace OpenEmail.ViewModels
 
             _attachmentManager = attachmentManager;
             _loginService = loginService;
+            _fileService = fileService;
             _contactService = contactService;
             _messagesService = messagesService;
             _windowService = windowService;
+            _dialogService = dialogService;
             _profileDataService = profileDataService;
             _synchronizationService = synchronizationService;
 
@@ -245,7 +252,27 @@ namespace OpenEmail.ViewModels
 
         public async void Receive(StartAttachmentDownload message)
         {
-            await _attachmentManager.StartDownloadAttachmentAsync(message.Info).ConfigureAwait(false);
+            try
+            {
+                await _attachmentManager.StartDownloadAttachmentAsync(message.Info).ConfigureAwait(false);
+
+                var filePath = _attachmentManager.CreateAttachmentFilePath(message.Info.EnvelopeId, message.Info.FileName);
+
+                if (message.LaunchAfter)
+                {
+                    await _fileService.LaunchFileAsync(filePath);
+                }
+                else if (!string.IsNullOrEmpty(message.SaveAfterPath))
+                {
+                    File.Copy(filePath, Path.Combine(message.SaveAfterPath, message.Info.FileName), true);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowInfoBarMessage("Error", $"Failed to download attachment.\n{ex.Message}", InfoBarMessageSeverity.Error);
+                throw;
+            }
         }
 
         public void Receive(ProfileDisplayRequested message) => _ = LoadContactInformationAsync(message.Contact);

@@ -31,7 +31,14 @@ namespace OpenEmail.ViewModels
         [RelayCommand]
         private async Task OpenAttachmentAsync(AttachmentViewModel attachmentViewModel)
         {
-            if (!attachmentViewModel.LocallyExists) return;
+            if (!attachmentViewModel.LocallyExists)
+            {
+                var downloadInfo = attachmentViewModel.CreateDownloadInfo(ApplicationStateService.ActiveProfile);
+                var downloadRequest = new StartAttachmentDownload(downloadInfo, true);
+
+                Messenger.Send(downloadRequest);
+                return;
+            }
 
             await _fileService.LaunchFileAsync(attachmentViewModel.LocalFilePath);
         }
@@ -39,23 +46,25 @@ namespace OpenEmail.ViewModels
         [RelayCommand]
         private async Task SaveAttachmentAsync(AttachmentViewModel attachmentViewModel)
         {
-            if (!attachmentViewModel.LocallyExists) return;
-
             var pickedFolder = await _fileService.PickFolderAsync();
 
             if (string.IsNullOrEmpty(pickedFolder)) return;
 
-            var destinationPath = Path.Combine(pickedFolder, attachmentViewModel.FileName);
+            if (!attachmentViewModel.LocallyExists)
+            {
+                var downloadInfo = attachmentViewModel.CreateDownloadInfo(ApplicationStateService.ActiveProfile);
+                var downloadRequest = new StartAttachmentDownload(downloadInfo, false, pickedFolder);
 
-            File.Copy(attachmentViewModel.LocalFilePath, destinationPath, true);
-        }
+                Messenger.Send(downloadRequest);
+                return;
+            }
+            else
+            {
+                // No need to download.
+                var destinationPath = Path.Combine(pickedFolder, attachmentViewModel.FileName);
 
-        [RelayCommand]
-        private void DownloadAttachment(AttachmentViewModel attachmentViewModel)
-        {
-            var downloadInfo = attachmentViewModel.CreateDownloadInfo(ApplicationStateService.ActiveProfile);
-
-            Messenger.Send(new StartAttachmentDownload(downloadInfo));
+                File.Copy(attachmentViewModel.LocalFilePath, destinationPath, true);
+            }
         }
 
         public void Receive(AttachmentDownloadSessionCreated message)
