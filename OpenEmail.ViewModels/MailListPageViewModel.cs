@@ -50,6 +50,7 @@ Forwarded message from: {0}
 
         public bool IsTrashFolder => CurrentMailFolderType == MailFolder.Trash;
         public bool IsOutboxFolder => CurrentMailFolderType == MailFolder.Outbox;
+        public bool IsBroadcastMessage => HasSelectedSingleMessage && SelectedSingleMessage.IsBroadcast;
 
         public bool IsDraftMessage => HasSelectedSingleMessage && SelectedSingleMessage.IsDraft;
         public bool IsNotDraftMessage => !IsDraftMessage;
@@ -95,6 +96,7 @@ Forwarded message from: {0}
             OnPropertyChanged(nameof(HasSelectedSingleMessage));
             OnPropertyChanged(nameof(HasNoSelectedMessage));
             OnPropertyChanged(nameof(IsDraftMessage));
+            OnPropertyChanged(nameof(IsBroadcastMessage));
             OnPropertyChanged(nameof(IsNotDraftMessage));
             OnPropertyChanged(nameof(HasMultipleMessagesSelected));
             OnPropertyChanged(nameof(HasMultipleReaders));
@@ -292,8 +294,10 @@ Forwarded message from: {0}
                 filter = filter.AndAlso(a => a.IsDraft && !a.IsDeleted);
             else if (CurrentMailFolderType == MailFolder.Outbox)
                 filter = filter.AndAlso(a => a.Author == ApplicationStateService.ActiveProfile.Address && !a.IsDeleted && !a.IsDraft);
+            else if (CurrentMailFolderType == MailFolder.Broadcast)
+                filter = filter.AndAlso(a => a.IsBroadcast && !a.IsDeleted);
             else
-                filter = filter.AndAlso(a => !a.IsDeleted && !a.IsDraft && a.Author != ApplicationStateService.ActiveProfile.Address);
+                filter = filter.AndAlso(a => !a.IsDeleted && !a.IsDraft && !a.IsBroadcast && a.Author != ApplicationStateService.ActiveProfile.Address);
 
             var messages = await _messagesService.GetMessagesAsync(filter);
 

@@ -8,7 +8,8 @@
         MailOutbox,
         MailDrafts,
         MailTrash,
-        BroadcastPage,
+        MailBroadcast, // Mail list broadcast page.
+        BroadcastPage, // Disabled broadcast page.
         SettingsPage,
         ContactsPage,
         ProfileEditPage

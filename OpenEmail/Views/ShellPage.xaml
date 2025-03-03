@@ -331,7 +331,7 @@
             <NavigationView.MenuItems>
                 <NavigationViewItem Content="Broadcast">
                     <NavigationViewItem.Tag>
-                        <navigation:PageType>BroadcastPage</navigation:PageType>
+                        <navigation:PageType>MailBroadcast</navigation:PageType>
                     </NavigationViewItem.Tag>
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource OpenEmailIconFontFamily}" Glyph="{x:Bind main:OpenEmailIcons.Broadcast}" />
