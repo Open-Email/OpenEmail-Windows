@@ -193,12 +193,17 @@ namespace OpenEmail.Core.Services
 
                 var messagesClient = _clientFactory.CreateProfileClientWithProgress<IMessagesClient>(progress);
                 var attachmentPartContent = await messagesClient.GetMessageContentAsync(downloadInfo.TargetAddress, attachmentPart.Id, downloadInfo.Link).ConfigureAwait(false);
-                var content = await attachmentPartContent.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
 
-                var accessKey = Convert.FromBase64String(attachmentPart.AccessKey);
-                var decryptedContent = CryptoUtils.DecryptSymmetric(content, accessKey);
+                byte[] rawContent = await attachmentPartContent.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
 
-                await SaveAttachmentEnvelopeAsync(attachmentPart, decryptedContent).ConfigureAwait(false);
+                // Content is encrypted with symmetric key.
+                if (attachmentPart.AccessKey != null)
+                {
+                    var accessKey = Convert.FromBase64String(attachmentPart.AccessKey);
+                    rawContent = CryptoUtils.DecryptSymmetric(rawContent, accessKey);
+                }
+
+                await SaveAttachmentEnvelopeAsync(attachmentPart, rawContent).ConfigureAwait(false);
             }
 
             // Merge parts.
