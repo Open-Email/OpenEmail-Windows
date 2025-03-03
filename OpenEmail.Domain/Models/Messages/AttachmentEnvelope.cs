@@ -22,17 +22,21 @@ namespace OpenEmail.Domain.Models.Messages
 
         public MessageAttachment AsEntity()
         {
-            return new MessageAttachment()
+            var attachment = new MessageAttachment()
             {
                 Id = Envelope.Id,
                 ParentId = ParentId,
                 Size = Envelope.EnvelopeHeaderStore.GetData<long>("size"),
                 MimeType = Envelope.EnvelopeHeaderStore.GetData<string>("type"),
-                FileName = Envelope.EnvelopeHeaderStore.GetData<string>("name"),
-                AccessKey = Convert.ToBase64String(Envelope.AccessKey)
+                FileName = Envelope.EnvelopeHeaderStore.GetData<string>("name")
             };
+
+            if (Envelope.AccessKey != null)
+            {
+                attachment.AccessKey = Convert.ToBase64String(Envelope.AccessKey);
+            }
+
+            return attachment;
         }
     }
-
-
 }
