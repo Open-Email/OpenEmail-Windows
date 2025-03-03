@@ -173,33 +173,36 @@ namespace OpenEmail.Views
 
         public void Receive(DisplayInfoMessage message)
         {
-            switch (message.Severity)
+            ViewModel.Dispatcher.ExecuteOnDispatcher(() =>
             {
-                case InfoBarMessageSeverity.Success:
-                    InfoBarMessage.Severity = InfoBarSeverity.Success;
-                    break;
-                case InfoBarMessageSeverity.Info:
-                    InfoBarMessage.Severity = InfoBarSeverity.Informational;
-                    break;
-                case InfoBarMessageSeverity.Warning:
-                    InfoBarMessage.Severity = InfoBarSeverity.Warning;
-                    break;
-                case InfoBarMessageSeverity.Error:
-                    InfoBarMessage.Severity = InfoBarSeverity.Error;
-                    break;
-                default:
-                    break;
-            }
+                switch (message.Severity)
+                {
+                    case InfoBarMessageSeverity.Success:
+                        InfoBarMessage.Severity = InfoBarSeverity.Success;
+                        break;
+                    case InfoBarMessageSeverity.Info:
+                        InfoBarMessage.Severity = InfoBarSeverity.Informational;
+                        break;
+                    case InfoBarMessageSeverity.Warning:
+                        InfoBarMessage.Severity = InfoBarSeverity.Warning;
+                        break;
+                    case InfoBarMessageSeverity.Error:
+                        InfoBarMessage.Severity = InfoBarSeverity.Error;
+                        break;
+                    default:
+                        break;
+                }
 
-            InfoBarMessage.Title = message.Title;
-            InfoBarMessage.Message = message.Message;
-            InfoBarMessage.IsOpen = true;
-            InfoBarMessage.IsClosable = !message.AutoDismiss;
+                InfoBarMessage.Title = message.Title;
+                InfoBarMessage.Message = message.Message;
+                InfoBarMessage.IsOpen = true;
+                InfoBarMessage.IsClosable = !message.AutoDismiss;
 
-            if (message.AutoDismiss)
-            {
-                StartAutoDismissInfoBar();
-            }
+                if (message.AutoDismiss)
+                {
+                    StartAutoDismissInfoBar();
+                }
+            });
         }
 
         private void StartAutoDismissInfoBar()

@@ -9,5 +9,8 @@
         public static string Trash = "\uE904";
         public static string Broadcast = "\uE905";
         public static string Contacts = "\uE906";
+        public static string Reply = "\uE908";
+        public static string ReplyAll = "\uE909";
+        public static string Forward = "\uE907";
     }
 }

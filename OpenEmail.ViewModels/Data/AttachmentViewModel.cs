@@ -15,23 +15,18 @@ namespace OpenEmail.ViewModels.Data
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(HasProgress))]
-        [NotifyPropertyChangedFor(nameof(CanOpen))]
-        [NotifyPropertyChangedFor(nameof(CanSave))]
-        [NotifyPropertyChangedFor(nameof(CanDownload))]
+        [NotifyPropertyChangedFor(nameof(CanOperate))]
         private AttachmentDownloadStatus _status;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(LocallyExists))]
-        [NotifyPropertyChangedFor(nameof(CanOpen))]
-        [NotifyPropertyChangedFor(nameof(CanSave))]
-        [NotifyPropertyChangedFor(nameof(CanDownload))]
+
+        [NotifyPropertyChangedFor(nameof(CanOperate))]
         private string _localFilePath;
 
         public bool LocallyExists => File.Exists(LocalFilePath);
 
-        public bool CanOpen => LocallyExists;
-        public bool CanSave => LocallyExists;
-        public bool CanDownload => !LocallyExists && Status != AttachmentDownloadStatus.Downloading;
+        public bool CanOperate => Status != AttachmentDownloadStatus.Downloading;
 
         public bool HasProgress => Status == AttachmentDownloadStatus.Downloading || (Progress > 0 && Progress < 100);
 

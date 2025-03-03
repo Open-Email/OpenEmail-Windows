@@ -19,10 +19,14 @@
     xmlns:tb="using:H.NotifyIcon"
     xmlns:ui="using:CommunityToolkit.WinUI"
     IsDisplayingProfileControl="{x:Bind ViewModel.IsProfileLoadMenuVisible, Mode=OneWay}"
+    KeyboardAcceleratorPlacementMode="Hidden"
     mc:Ignorable="d">
 
     <Page.KeyboardAccelerators>
-        <KeyboardAccelerator Key="T" Modifiers="Control" Invoked="NewMailShortcutInvoked" />
+        <KeyboardAccelerator
+            Key="T"
+            Invoked="NewMailShortcutInvoked"
+            Modifiers="Control" />
     </Page.KeyboardAccelerators>
     <Page.Resources>
         <media:AttachedCardShadow
