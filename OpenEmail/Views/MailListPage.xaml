@@ -313,6 +313,9 @@
                                     Margin="0,0,0,4"
                                     VerticalAlignment="Bottom"
                                     ItemsSource="{x:Bind ViewModel.SelectedSingleMessage.ReaderViewModels, Mode=OneWay}">
+                                    <ItemsRepeater.Layout>
+                                        <UniformGridLayout Orientation="Horizontal" />
+                                    </ItemsRepeater.Layout>
                                     <ItemsRepeater.ItemTemplate>
                                         <DataTemplate x:DataType="data:ContactViewModel">
                                             <HyperlinkButton Margin="2,0" Padding="4,0">
