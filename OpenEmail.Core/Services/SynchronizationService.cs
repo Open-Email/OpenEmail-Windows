@@ -186,14 +186,29 @@ namespace OpenEmail.Core.Services
 
             var toAddress = UserAddress.CreateFromAddress(contact.Address);
             var connectionLink = new AccountLink(contact.Link);
-            var messageIds = await _messagesService.GetEnvelopeIdsAsync(toAddress, connectionLink).ConfigureAwait(false);
 
-            if (messageIds != null)
+            List<string> handlingMessageIds = new();
+
+            var privateMessageIds = await _messagesService.GetEnvelopeIdsAsync(toAddress, connectionLink).ConfigureAwait(false);
+
+            if (contact.ReceiveBroadcasts)
             {
-                foreach (var messageId in messageIds)
+                var broadcastMessageIds = await _messagesService.GetBroadcastMessageIdsAsync(toAddress).ConfigureAwait(false);
+
+                if (broadcastMessageIds != null)
                 {
-                    await _messagesService.HandleMessageAsync(toAddress, connectionLink, messageId).ConfigureAwait(false);
+                    handlingMessageIds.AddRange(broadcastMessageIds);
                 }
+            }
+
+            if (privateMessageIds != null)
+            {
+                handlingMessageIds.AddRange(privateMessageIds);
+            }
+
+            foreach (var messageId in handlingMessageIds)
+            {
+                await _messagesService.HandleMessageAsync(toAddress, connectionLink, messageId).ConfigureAwait(false);
             }
         }
 

@@ -58,5 +58,6 @@ namespace OpenEmail.Contracts.Services
         /// </summary>
         /// <param name="messageId">Message id.</param>
         Task DeleteMessagePermanentAsync(Guid messageId);
+        Task<string[]> GetBroadcastMessageIdsAsync(UserAddress address);
     }
 }

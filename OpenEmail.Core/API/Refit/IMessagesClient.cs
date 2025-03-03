@@ -76,6 +76,23 @@ namespace OpenEmail.Core.API.Refit
         [QueryUriFormat(UriFormat.Unescaped)]
         Task<HttpResponseMessage> RecallAuthoredMessageAsync(UserAddress address, string messageId);
 
+        /// <summary>
+        /// Gets the broadcast messages for the given address.
+        /// </summary>
+        /// <param name="address">Address</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns></returns>
+        [Get("/mail/{address}/messages")]
+        [QueryUriFormat(UriFormat.Unescaped)]
+        Task<HttpResponseMessage> GetBroadcastMessagesAsync(UserAddress address, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Sends a message to the given address.
+        /// </summary>
+        /// <param name="address">Address</param>
+        /// <param name="payloadContent">Message payload.</param>
+        /// <param name="headers">Headers</param>
+        /// <returns></returns>
         [Post("/home/{address}/messages")]
         [QueryUriFormat(UriFormat.Unescaped)]
         [Headers("Content-Type: application/octet-stream")]
