@@ -340,7 +340,10 @@
                         </Grid.RowDefinitions>
 
                         <!--  Buttons  -->
-                        <StackPanel Orientation="Horizontal" Spacing="8">
+                        <StackPanel
+                            HorizontalAlignment="Right"
+                            Orientation="Horizontal"
+                            Spacing="8">
                             <!--  Standard message buttons  -->
                             <StackPanel
                                 Orientation="Horizontal"
