@@ -39,6 +39,20 @@ namespace OpenEmail.Core.Services
             _publicClientService = publicClientService;
         }
 
+        public async Task<string[]> GetBroadcastMessageIdsAsync(UserAddress address)
+        {
+            var messagesClient = _clientFactory.CreateProfileClient<IMessagesClient>();
+            var messageIdsResponse = await messagesClient.GetBroadcastMessagesAsync(address);
+
+            var messagesContent = await messageIdsResponse.Content.ReadAsStringAsync();
+
+            // TODO: Handle empty messages
+            if (string.IsNullOrEmpty(messagesContent)) return null;
+
+            // Each line corresponds to a message
+            return messagesContent.Split('\n');
+        }
+
         public async Task<string[]> GetEnvelopeIdsAsync(UserAddress address, AccountLink link)
         {
             var messagesClient = _clientFactory.CreateProfileClient<IMessagesClient>();
@@ -131,8 +145,14 @@ namespace OpenEmail.Core.Services
                 }
                 else if (attachmentModel != null && string.IsNullOrEmpty(attachmentModel.AccessKey))
                 {
-                    // Update access key for the attachment.
-                    attachmentModel.AccessKey = Convert.ToBase64String(envelopeBase.AccessKey);
+                    // Update access key for the attachment if available.
+                    // Broadcast attachments don't have it.
+
+                    if (envelopeBase.AccessKey != null)
+                    {
+                        attachmentModel.AccessKey = Convert.ToBase64String(envelopeBase.AccessKey);
+                    }
+
                     attachmentModel.AttachmentGroupId = attachmentGroupId;
 
                     await Connection.UpdateAsync(attachmentModel);

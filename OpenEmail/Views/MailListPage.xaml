@@ -296,7 +296,7 @@
                             </HyperlinkButton>
 
                             <!--  Readers  -->
-                            <Grid Grid.Row="1">
+                            <Grid Grid.Row="1" Visibility="{x:Bind helpers:XamlHelpers.ReverseBooleanToVisibility(ViewModel.SelectedSingleMessage.IsBroadcast), Mode=OneWay}">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
@@ -340,60 +340,70 @@
                         </Grid.RowDefinitions>
 
                         <!--  Buttons  -->
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <controls1:CustomAppBarButton
-                                x:Name="ReplyButton"
-                                Command="{x:Bind ViewModel.ReplyCommand}"
-                                IsCompact="{x:Bind IsCompactPage, Mode=OneWay}"
-                                Label="Reply"
-                                Visibility="{x:Bind ViewModel.IsNotDraftMessage, Mode=OneWay}">
-                                <controls1:CustomAppBarButton.Icon>
-                                    <FontIcon FontFamily="{StaticResource OpenEmailIconFontFamily}" Glyph="{x:Bind main:OpenEmailIcons.Reply}" />
-                                </controls1:CustomAppBarButton.Icon>
-                            </controls1:CustomAppBarButton>
+                        <StackPanel
+                            HorizontalAlignment="Right"
+                            Orientation="Horizontal"
+                            Spacing="8">
+                            <!--  Standard message buttons  -->
+                            <StackPanel
+                                Orientation="Horizontal"
+                                Spacing="8"
+                                Visibility="{x:Bind helpers:XamlHelpers.ReverseBooleanToVisibility(ViewModel.IsBroadcastMessage), Mode=OneWay}">
+                                <controls1:CustomAppBarButton
+                                    x:Name="ReplyButton"
+                                    Command="{x:Bind ViewModel.ReplyCommand}"
+                                    IsCompact="{x:Bind IsCompactPage, Mode=OneWay}"
+                                    Label="Reply"
+                                    Visibility="{x:Bind ViewModel.IsNotDraftMessage, Mode=OneWay}">
+                                    <controls1:CustomAppBarButton.Icon>
+                                        <FontIcon FontFamily="{StaticResource OpenEmailIconFontFamily}" Glyph="{x:Bind main:OpenEmailIcons.Reply}" />
+                                    </controls1:CustomAppBarButton.Icon>
+                                </controls1:CustomAppBarButton>
 
-                            <controls1:CustomAppBarButton
-                                x:Name="ReplyAllButton"
-                                Command="{x:Bind ViewModel.ReplyAllCommand}"
-                                IsCompact="{x:Bind IsCompactPage, Mode=OneWay}"
-                                Label="Reply All"
-                                Visibility="{x:Bind ViewModel.ShouldDisplayReplyAll, Mode=OneWay}">
-                                <controls1:CustomAppBarButton.Icon>
-                                    <FontIcon FontFamily="{StaticResource OpenEmailIconFontFamily}" Glyph="{x:Bind main:OpenEmailIcons.ReplyAll}" />
-                                </controls1:CustomAppBarButton.Icon>
-                            </controls1:CustomAppBarButton>
+                                <controls1:CustomAppBarButton
+                                    x:Name="ReplyAllButton"
+                                    Command="{x:Bind ViewModel.ReplyAllCommand}"
+                                    IsCompact="{x:Bind IsCompactPage, Mode=OneWay}"
+                                    Label="Reply All"
+                                    Visibility="{x:Bind ViewModel.ShouldDisplayReplyAll, Mode=OneWay}">
+                                    <controls1:CustomAppBarButton.Icon>
+                                        <FontIcon FontFamily="{StaticResource OpenEmailIconFontFamily}" Glyph="{x:Bind main:OpenEmailIcons.ReplyAll}" />
+                                    </controls1:CustomAppBarButton.Icon>
+                                </controls1:CustomAppBarButton>
 
-                            <controls1:CustomAppBarButton
-                                x:Name="SendButton"
-                                IsCompact="{x:Bind IsCompactPage, Mode=OneWay}"
-                                Label="Send"
-                                Visibility="{x:Bind ViewModel.IsDraftMessage, Mode=OneWay}">
-                                <controls1:CustomAppBarButton.Icon>
-                                    <PathIcon Data="F1 M 20 9.375 C 20 9.498698 19.967447 9.611003 19.902344 9.711914 C 19.837238 9.812826 19.749348 9.889323 19.638672 9.941406 L 0.888672 18.691406 C 0.810547 18.730469 0.722656 18.75 0.625 18.75 C 0.442708 18.75 0.292969 18.689779 0.175781 18.569336 C 0.058594 18.448893 0 18.297525 0 18.115234 C 0 18.082682 0 18.053385 0 18.027344 C 0 18.001303 0.00651 17.97526 0.019531 17.949219 L 2.470703 9.375 L 0.019531 0.800781 C 0.00651 0.77474 0 0.748699 0 0.722656 C 0 0.696615 0 0.667318 0 0.634766 C 0 0.452475 0.058594 0.301107 0.175781 0.180664 C 0.292969 0.060223 0.442708 0 0.625 0 C 0.722656 0 0.810547 0.019531 0.888672 0.058594 L 19.638672 8.808594 C 19.879557 8.919271 20 9.108073 20 9.375 Z M 1.601562 16.982422 L 17.900391 9.375 L 1.601562 1.767578 L 3.603516 8.75 L 11.875 8.75 C 12.04427 8.75 12.190754 8.81185 12.314453 8.935547 C 12.43815 9.059245 12.5 9.205729 12.5 9.375 C 12.5 9.544271 12.43815 9.690756 12.314453 9.814453 C 12.190754 9.938151 12.04427 10 11.875 10 L 3.603516 10 Z " />
-                                </controls1:CustomAppBarButton.Icon>
-                            </controls1:CustomAppBarButton>
+                                <controls1:CustomAppBarButton
+                                    x:Name="SendButton"
+                                    IsCompact="{x:Bind IsCompactPage, Mode=OneWay}"
+                                    Label="Send"
+                                    Visibility="{x:Bind ViewModel.IsDraftMessage, Mode=OneWay}">
+                                    <controls1:CustomAppBarButton.Icon>
+                                        <PathIcon Data="F1 M 20 9.375 C 20 9.498698 19.967447 9.611003 19.902344 9.711914 C 19.837238 9.812826 19.749348 9.889323 19.638672 9.941406 L 0.888672 18.691406 C 0.810547 18.730469 0.722656 18.75 0.625 18.75 C 0.442708 18.75 0.292969 18.689779 0.175781 18.569336 C 0.058594 18.448893 0 18.297525 0 18.115234 C 0 18.082682 0 18.053385 0 18.027344 C 0 18.001303 0.00651 17.97526 0.019531 17.949219 L 2.470703 9.375 L 0.019531 0.800781 C 0.00651 0.77474 0 0.748699 0 0.722656 C 0 0.696615 0 0.667318 0 0.634766 C 0 0.452475 0.058594 0.301107 0.175781 0.180664 C 0.292969 0.060223 0.442708 0 0.625 0 C 0.722656 0 0.810547 0.019531 0.888672 0.058594 L 19.638672 8.808594 C 19.879557 8.919271 20 9.108073 20 9.375 Z M 1.601562 16.982422 L 17.900391 9.375 L 1.601562 1.767578 L 3.603516 8.75 L 11.875 8.75 C 12.04427 8.75 12.190754 8.81185 12.314453 8.935547 C 12.43815 9.059245 12.5 9.205729 12.5 9.375 C 12.5 9.544271 12.43815 9.690756 12.314453 9.814453 C 12.190754 9.938151 12.04427 10 11.875 10 L 3.603516 10 Z " />
+                                    </controls1:CustomAppBarButton.Icon>
+                                </controls1:CustomAppBarButton>
 
-                            <controls1:CustomAppBarButton
-                                x:Name="ForwardButton"
-                                Command="{x:Bind ViewModel.ForwardCommand}"
-                                IsCompact="{x:Bind IsCompactPage, Mode=OneWay}"
-                                Label="Forward"
-                                Visibility="{x:Bind ViewModel.IsNotDraftMessage, Mode=OneWay}">
-                                <controls1:CustomAppBarButton.Icon>
-                                    <FontIcon FontFamily="{StaticResource OpenEmailIconFontFamily}" Glyph="{x:Bind main:OpenEmailIcons.Forward}" />
-                                </controls1:CustomAppBarButton.Icon>
-                            </controls1:CustomAppBarButton>
+                                <controls1:CustomAppBarButton
+                                    x:Name="ForwardButton"
+                                    Command="{x:Bind ViewModel.ForwardCommand}"
+                                    IsCompact="{x:Bind IsCompactPage, Mode=OneWay}"
+                                    Label="Forward"
+                                    Visibility="{x:Bind ViewModel.IsNotDraftMessage, Mode=OneWay}">
+                                    <controls1:CustomAppBarButton.Icon>
+                                        <FontIcon FontFamily="{StaticResource OpenEmailIconFontFamily}" Glyph="{x:Bind main:OpenEmailIcons.Forward}" />
+                                    </controls1:CustomAppBarButton.Icon>
+                                </controls1:CustomAppBarButton>
 
-                            <controls1:CustomAppBarButton
-                                x:Name="EditDraftButton"
-                                Command="{x:Bind ViewModel.EditDraftMessageCommand}"
-                                IsCompact="{x:Bind IsCompactPage, Mode=OneWay}"
-                                Label="Edit"
-                                Visibility="{x:Bind ViewModel.IsDraftMessage, Mode=OneWay}">
-                                <controls1:CustomAppBarButton.Icon>
-                                    <PathIcon Data="F1 M 19.931641 3.212891 C 19.931641 3.681641 19.84375 4.135743 19.667969 4.575195 C 19.492188 5.014649 19.238281 5.400392 18.90625 5.732422 L 6.425781 18.212891 C 6.347656 18.291016 6.258138 18.356119 6.157227 18.408203 C 6.056314 18.460287 5.950521 18.502604 5.839844 18.535156 L 1.005859 19.746094 C 0.940755 19.759115 0.891927 19.765625 0.859375 19.765625 C 0.690104 19.765625 0.54362 19.705404 0.419922 19.584961 C 0.296224 19.464518 0.234375 19.319662 0.234375 19.150391 C 0.234375 19.111328 0.240885 19.059244 0.253906 18.994141 L 1.464844 14.160156 C 1.497396 14.049479 1.539714 13.943686 1.591797 13.842773 C 1.64388 13.741862 1.708984 13.652344 1.787109 13.574219 L 14.404297 0.957031 C 14.710286 0.651043 15.066731 0.415039 15.473633 0.249023 C 15.880533 0.083008 16.298828 0 16.728516 0 C 17.177734 0 17.597656 0.083008 17.988281 0.249023 C 18.378906 0.415039 18.719074 0.642904 19.008789 0.932617 C 19.298502 1.222332 19.524738 1.5625 19.6875 1.953125 C 19.85026 2.34375 19.931641 2.763672 19.931641 3.212891 Z M 18.681641 3.251953 C 18.681641 2.972006 18.634439 2.709961 18.540039 2.46582 C 18.445637 2.22168 18.312174 2.008465 18.139648 1.826172 C 17.967121 1.643881 17.760416 1.502279 17.519531 1.401367 C 17.278645 1.300457 17.014973 1.25 16.728516 1.25 C 16.481119 1.25 16.26302 1.28418 16.074219 1.352539 C 15.885416 1.420898 15.711262 1.513672 15.551758 1.630859 C 15.392252 1.748047 15.240885 1.881512 15.097656 2.03125 C 14.954426 2.18099 14.801432 2.33724 14.638672 2.5 L 17.5 5.361328 C 17.66276 5.205078 17.815754 5.052084 17.958984 4.902344 C 18.102213 4.752605 18.227539 4.596355 18.334961 4.433594 C 18.442383 4.270834 18.527018 4.095053 18.588867 3.90625 C 18.650715 3.717449 18.681641 3.49935 18.681641 3.251953 Z M 1.71875 18.28125 L 5.537109 17.324219 L 16.621094 6.240234 L 13.759766 3.378906 L 2.675781 14.462891 Z " />
-                                </controls1:CustomAppBarButton.Icon>
-                            </controls1:CustomAppBarButton>
+                                <controls1:CustomAppBarButton
+                                    x:Name="EditDraftButton"
+                                    Command="{x:Bind ViewModel.EditDraftMessageCommand}"
+                                    IsCompact="{x:Bind IsCompactPage, Mode=OneWay}"
+                                    Label="Edit"
+                                    Visibility="{x:Bind ViewModel.IsDraftMessage, Mode=OneWay}">
+                                    <controls1:CustomAppBarButton.Icon>
+                                        <PathIcon Data="F1 M 19.931641 3.212891 C 19.931641 3.681641 19.84375 4.135743 19.667969 4.575195 C 19.492188 5.014649 19.238281 5.400392 18.90625 5.732422 L 6.425781 18.212891 C 6.347656 18.291016 6.258138 18.356119 6.157227 18.408203 C 6.056314 18.460287 5.950521 18.502604 5.839844 18.535156 L 1.005859 19.746094 C 0.940755 19.759115 0.891927 19.765625 0.859375 19.765625 C 0.690104 19.765625 0.54362 19.705404 0.419922 19.584961 C 0.296224 19.464518 0.234375 19.319662 0.234375 19.150391 C 0.234375 19.111328 0.240885 19.059244 0.253906 18.994141 L 1.464844 14.160156 C 1.497396 14.049479 1.539714 13.943686 1.591797 13.842773 C 1.64388 13.741862 1.708984 13.652344 1.787109 13.574219 L 14.404297 0.957031 C 14.710286 0.651043 15.066731 0.415039 15.473633 0.249023 C 15.880533 0.083008 16.298828 0 16.728516 0 C 17.177734 0 17.597656 0.083008 17.988281 0.249023 C 18.378906 0.415039 18.719074 0.642904 19.008789 0.932617 C 19.298502 1.222332 19.524738 1.5625 19.6875 1.953125 C 19.85026 2.34375 19.931641 2.763672 19.931641 3.212891 Z M 18.681641 3.251953 C 18.681641 2.972006 18.634439 2.709961 18.540039 2.46582 C 18.445637 2.22168 18.312174 2.008465 18.139648 1.826172 C 17.967121 1.643881 17.760416 1.502279 17.519531 1.401367 C 17.278645 1.300457 17.014973 1.25 16.728516 1.25 C 16.481119 1.25 16.26302 1.28418 16.074219 1.352539 C 15.885416 1.420898 15.711262 1.513672 15.551758 1.630859 C 15.392252 1.748047 15.240885 1.881512 15.097656 2.03125 C 14.954426 2.18099 14.801432 2.33724 14.638672 2.5 L 17.5 5.361328 C 17.66276 5.205078 17.815754 5.052084 17.958984 4.902344 C 18.102213 4.752605 18.227539 4.596355 18.334961 4.433594 C 18.442383 4.270834 18.527018 4.095053 18.588867 3.90625 C 18.650715 3.717449 18.681641 3.49935 18.681641 3.251953 Z M 1.71875 18.28125 L 5.537109 17.324219 L 16.621094 6.240234 L 13.759766 3.378906 L 2.675781 14.462891 Z " />
+                                    </controls1:CustomAppBarButton.Icon>
+                                </controls1:CustomAppBarButton>
+                            </StackPanel>
+
 
                             <controls1:CustomAppBarButton
                                 x:Name="DeleteButton"
@@ -431,7 +441,7 @@
                         ItemTemplate="{StaticResource AttachmentTemplate}"
                         ItemsSource="{x:Bind ViewModel.SelectedSingleMessage.AttachmentViewModels, Mode=OneWay}"
                         SelectionMode="None">
-                       
+
                         <ListView.Resources>
                             <Style BasedOn="{StaticResource DefaultListViewItemStyle}" TargetType="ListViewItem">
                                 <Setter Property="Padding" Value="0" />

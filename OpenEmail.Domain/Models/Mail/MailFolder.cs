@@ -5,6 +5,7 @@
         Inbox,
         Outbox,
         Drafts,
-        Trash
+        Trash,
+        Broadcast
     }
 }

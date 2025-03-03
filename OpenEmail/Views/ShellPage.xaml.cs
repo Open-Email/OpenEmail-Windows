@@ -63,13 +63,15 @@ namespace OpenEmail.Views
             bool isMailListPageRequested = pageType is PageType.MailDrafts
                                             or PageType.MailInbox
                                             or PageType.MailOutbox
-                                            or PageType.MailTrash;
+                                            or PageType.MailTrash
+                                            or PageType.MailBroadcast;
 
             bool isMailListPageCurrent =
                 currentPageType is PageType.MailDrafts or
                 PageType.MailInbox or
                 PageType.MailOutbox or
-                PageType.MailTrash;
+                PageType.MailTrash or
+                PageType.MailBroadcast;
 
             if (isMailListPageRequested && isMailListPageCurrent)
             {
@@ -91,10 +93,12 @@ namespace OpenEmail.Views
             {
                 LeftFrame.Navigate(typeof(ContactsPage), null, defaultTransition);
             }
-            else if (pageType == PageType.BroadcastPage)
-            {
-                LeftFrame.Navigate(typeof(BroadcastPage), null, defaultTransition);
-            }
+
+            // Temporarily disabled. We use mail list UI for listing broadcast messages.
+            //else if (pageType == PageType.BroadcastPage)
+            //{
+            //    LeftFrame.Navigate(typeof(BroadcastPage), null, defaultTransition);
+            //}
             else
             {
                 // Mail list page.
@@ -135,6 +139,7 @@ namespace OpenEmail.Views
                 Type _ when contentType == typeof(MailListPage) && (LeftFrame.Content as MailListPage).ViewModel.CurrentMailFolderType == MailFolder.Inbox => PageType.MailInbox,
                 Type _ when contentType == typeof(MailListPage) && (LeftFrame.Content as MailListPage).ViewModel.CurrentMailFolderType == MailFolder.Outbox => PageType.MailOutbox,
                 Type _ when contentType == typeof(MailListPage) && (LeftFrame.Content as MailListPage).ViewModel.CurrentMailFolderType == MailFolder.Trash => PageType.MailTrash,
+                Type _ when contentType == typeof(MailListPage) && (LeftFrame.Content as MailListPage).ViewModel.CurrentMailFolderType == MailFolder.Broadcast => PageType.MailBroadcast,
                 _ => throw new NotImplementedException(),
             };
         }
