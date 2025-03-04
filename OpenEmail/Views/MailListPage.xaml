@@ -329,6 +329,7 @@
                                                         TextTrimming="CharacterEllipsis"
                                                         TextWrapping="Wrap" />
                                                     <FontIcon
+                                                        Margin="0,2,0,0"
                                                         VerticalAlignment="Center"
                                                         FontFamily="{StaticResource OpenEmailIconFontFamily}"
                                                         FontSize="11"
