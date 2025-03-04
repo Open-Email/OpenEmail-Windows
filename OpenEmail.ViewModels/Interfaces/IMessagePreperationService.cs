@@ -10,7 +10,7 @@ namespace OpenEmail.ViewModels.Interfaces
     public interface IMessagePreperationService
     {
         Task<ContactViewModel> PrepareContactViewModel(string address, CancellationToken cancellationToken = default);
-        Task<MessageViewModel> PrepareViewModelAsync(Message message, IPlatformDispatcher platformDispatcher, CancellationToken cancellationToken = default);
+        Task<MessageViewModel> PrepareViewModelAsync(Message message, IPlatformDispatcher platformDispatcher, bool assignDeliveryInfo, CancellationToken cancellationToken = default);
 
     }
 }

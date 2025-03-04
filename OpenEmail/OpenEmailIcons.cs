@@ -12,5 +12,6 @@
         public static string Reply = "\uE908";
         public static string ReplyAll = "\uE909";
         public static string Forward = "\uE907";
+        public static string Delivered = "\uE90A";
     }
 }

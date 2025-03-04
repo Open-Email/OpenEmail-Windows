@@ -53,6 +53,40 @@ namespace OpenEmail.Core.Services
             return messagesContent.Split('\n');
         }
 
+        private Task ResetDeliveryInformationAsync(string envelopeId) => Connection.ExecuteAsync($"DELETE FROM {nameof(MessageDeliveryInformation)} WHERE EnvelopeId = ?", envelopeId);
+
+        public async Task HandleDeliveryInformationAsync(string envelopeId)
+        {
+            var messagesClient = _clientFactory.CreateProfileClient<IMessagesClient>();
+            var deliveryInformations = new List<DeliveryInfo>();
+            var deliveryInfoResponse = await messagesClient.FetchMessageDeliveriesAsync(_applicationStateService.ActiveProfile.Account.Address, envelopeId);
+
+            if (deliveryInfoResponse.IsSuccessStatusCode)
+            {
+                var deliveryInfoContent = await deliveryInfoResponse.Content.ReadAsStringAsync();
+
+                var splitted = deliveryInfoContent.Split('\n');
+
+                foreach (var item in splitted)
+                {
+                    deliveryInformations.Add(DeliveryInfo.FromString(item));
+                }
+
+                // Clear existing delivery information.
+                await ResetDeliveryInformationAsync(envelopeId);
+            }
+
+            var dbDeliveryInformations = deliveryInformations.Select(a => new MessageDeliveryInformation
+            {
+                EnvelopeId = envelopeId,
+                Link = a.Link,
+                SeenAt = a.SeenAt,
+                Id = Guid.NewGuid()
+            }).ToList();
+
+            await Connection.InsertAllAsync(dbDeliveryInformations).ConfigureAwait(false);
+        }
+
         public async Task<string[]> GetEnvelopeIdsAsync(UserAddress address, AccountLink link)
         {
             var messagesClient = _clientFactory.CreateProfileClient<IMessagesClient>();
@@ -349,8 +383,10 @@ namespace OpenEmail.Core.Services
 
             await Connection.RunInTransactionAsync(async (connection) =>
             {
-                await Connection.DeleteAsync(message).ConfigureAwait(false);
+                await Connection.Table<MessageDeliveryInformation>().Where(a => a.EnvelopeId == message.EnvelopeId).DeleteAsync().ConfigureAwait(false);
                 await Connection.Table<MessageAttachment>().Where(a => a.ParentId == message.EnvelopeId).DeleteAsync().ConfigureAwait(false);
+
+                await Connection.DeleteAsync(message).ConfigureAwait(false);
             });
 
             WeakReferenceMessenger.Default.Send(new MessageDeleted(message));
@@ -466,5 +502,8 @@ namespace OpenEmail.Core.Services
                 _attachmentManager.DeleteAttachment(attachment);
             }
         }
+
+        public Task<List<MessageDeliveryInformation>> GetMessageDeliveryInformationAsync(string envelopeId)
+            => Connection.Table<MessageDeliveryInformation>().Where(a => a.EnvelopeId == envelopeId).ToListAsync();
     }
 }

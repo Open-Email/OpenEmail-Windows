@@ -21,6 +21,9 @@ namespace OpenEmail.ViewModels.Data
         public string Initials => GetInitials();
 
         [ObservableProperty]
+        public partial bool IsOutboxDelivered { get; set; }
+
+        [ObservableProperty]
         private ContactRelationship relationship;
 
         [ObservableProperty]

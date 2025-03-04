@@ -303,7 +303,7 @@ Forwarded message from: {0}
 
             foreach (var message in messages)
             {
-                var messageViewModel = await _messagePreperationService.PrepareViewModelAsync(message, Dispatcher, cancellationToken);
+                var messageViewModel = await _messagePreperationService.PrepareViewModelAsync(message, Dispatcher, CurrentMailFolderType == MailFolder.Outbox, cancellationToken);
 
                 Messages.Add(messageViewModel);
             }
@@ -381,7 +381,7 @@ Forwarded message from: {0}
 
             if (!filter.Compile().Invoke(message.Message)) return;
 
-            var messageViewModel = await _messagePreperationService.PrepareViewModelAsync(message.Message, Dispatcher);
+            var messageViewModel = await _messagePreperationService.PrepareViewModelAsync(message.Message, Dispatcher, CurrentMailFolderType == MailFolder.Outbox);
 
             // TODO: Add sorted.
             // TODO: Grouping by conversation id.

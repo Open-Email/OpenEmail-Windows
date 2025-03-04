@@ -54,7 +54,10 @@ namespace OpenEmail.Services
             }
         }
 
-        public async Task<MessageViewModel> PrepareViewModelAsync(Message message, IPlatformDispatcher platformDispatcher, CancellationToken cancellationToken = default)
+        public async Task<MessageViewModel> PrepareViewModelAsync(Message message,
+                                                                  IPlatformDispatcher platformDispatcher,
+                                                                  bool assignDeliveryInfo,
+                                                                  CancellationToken cancellationToken = default)
         {
             // Find the contact and profile data for the author.
             ContactViewModel authorContactViewModel = await PrepareContactViewModel(message.Author, cancellationToken);
@@ -89,6 +92,14 @@ namespace OpenEmail.Services
 
             if (!string.IsNullOrEmpty(message.Readers))
             {
+                // Retrieve the delivery information.
+                List<MessageDeliveryInformation> messageDeliveryInformations = null;
+
+                if (assignDeliveryInfo)
+                {
+                    messageDeliveryInformations = await _messagesService.GetMessageDeliveryInformationAsync(message.EnvelopeId).ConfigureAwait(false);
+                }
+
                 var readers = message.Readers.Split(',');
 
                 foreach (var reader in readers)
@@ -98,6 +109,16 @@ namespace OpenEmail.Services
                     var readerContactViewModel = await PrepareContactViewModel(reader, cancellationToken);
 
                     if (readerContactViewModel == null) continue;
+
+                    if (assignDeliveryInfo)
+                    {
+                        var accountLink = AccountLink.Create(UserAddress.CreateFromAddress(_applicationStateService.ActiveProfile.Account.Address.FullAddress),
+                                                         UserAddress.CreateFromAddress(reader));
+
+                        var deliveryInformation = messageDeliveryInformations.FirstOrDefault(d => d.Link.Equals(accountLink.Link));
+
+                        readerContactViewModel.IsOutboxDelivered = deliveryInformation != null;
+                    }
 
                     readerViewModels.Add(readerContactViewModel);
                 }

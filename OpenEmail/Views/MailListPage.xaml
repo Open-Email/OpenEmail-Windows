@@ -318,12 +318,24 @@
                                     </ItemsRepeater.Layout>
                                     <ItemsRepeater.ItemTemplate>
                                         <DataTemplate x:DataType="data:ContactViewModel">
-                                            <HyperlinkButton Margin="2,0" Padding="4,0">
-                                                <TextBlock
-                                                    MaxLines="2"
-                                                    Text="{x:Bind ContactDisplayName}"
-                                                    TextTrimming="CharacterEllipsis"
-                                                    TextWrapping="Wrap" />
+                                            <HyperlinkButton
+                                                Margin="2,0"
+                                                Padding="4,0"
+                                                Foreground="{ThemeResource DetailForegroundBrush}">
+                                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                                    <TextBlock
+                                                        MaxLines="2"
+                                                        Text="{x:Bind ContactDisplayName}"
+                                                        TextTrimming="CharacterEllipsis"
+                                                        TextWrapping="Wrap" />
+                                                    <FontIcon
+                                                        VerticalAlignment="Center"
+                                                        FontFamily="{StaticResource OpenEmailIconFontFamily}"
+                                                        FontSize="11"
+                                                        Foreground="{ThemeResource ReaderDeliveredForegroundBrush}"
+                                                        Glyph="{x:Bind main:OpenEmailIcons.Delivered}"
+                                                        Visibility="{x:Bind IsOutboxDelivered}" />
+                                                </StackPanel>
                                             </HyperlinkButton>
                                         </DataTemplate>
                                     </ItemsRepeater.ItemTemplate>
