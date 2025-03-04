@@ -13,6 +13,7 @@
             <SolidColorBrush x:Key="UnreadBadgeBrush" Color="{StaticResource OpenEmailBlueColor}" />
             <SolidColorBrush x:Key="ContentBackgroundBrush" Color="{StaticResource ContentBackgroundColorLight}" />
             <SolidColorBrush x:Key="ContactWriteButtonBackgroundBrush" Color="{StaticResource OpenEmailBlueColor}" />
+            <SolidColorBrush x:Key="ReaderDeliveredForegroundBrush">#1abc9c</SolidColorBrush>
 
             <ImageSource x:Key="LogoImageSource">/Assets/LogoLight.png</ImageSource>
             <Thickness x:Key="AutoSuggestBoxBorderThicknes">1</Thickness>
@@ -23,6 +24,7 @@
             <SolidColorBrush x:Key="UnreadBadgeBrush" Color="{StaticResource OpenEmailBlueColor}" />
             <SolidColorBrush x:Key="ContentBackgroundBrush" Color="{StaticResource ContentBackgroundColorDark}" />
             <SolidColorBrush x:Key="ContactWriteButtonBackgroundBrush" Color="{StaticResource ContentBackgroundColorDark}" />
+            <SolidColorBrush x:Key="ReaderDeliveredForegroundBrush">#78e08f</SolidColorBrush>
 
             <ImageSource x:Key="LogoImageSource">/Assets/LogoLight.png</ImageSource>
             <Thickness x:Key="AutoSuggestBoxBorderThicknes">0</Thickness>

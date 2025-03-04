@@ -59,5 +59,18 @@ namespace OpenEmail.Contracts.Services
         /// <param name="messageId">Message id.</param>
         Task DeleteMessagePermanentAsync(Guid messageId);
         Task<string[]> GetBroadcastMessageIdsAsync(UserAddress address);
+
+        /// <summary>
+        /// Fetches delivery informations for the given envelope id and inserts them into the database.
+        /// </summary>
+        /// <param name="envelopeId">Envelope id</param>
+        Task HandleDeliveryInformationAsync(string envelopeId);
+
+        /// <summary>
+        /// Returns the delivery information for the given envelope id.
+        /// </summary>
+        /// <param name="envelopeId">Envelope id</param>
+        /// <returns>A list of delivery info containing links for the given envelope id.</returns>
+        Task<List<MessageDeliveryInformation>> GetMessageDeliveryInformationAsync(string envelopeId);
     }
 }

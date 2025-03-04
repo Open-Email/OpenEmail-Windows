@@ -87,7 +87,7 @@ namespace OpenEmail.ViewModels
 
             foreach (var message in broadcastMessages)
             {
-                var messageViewModel = await _messagePreperationService.PrepareViewModelAsync(message, Dispatcher, cancellationToken);
+                var messageViewModel = await _messagePreperationService.PrepareViewModelAsync(message, Dispatcher, false, cancellationToken);
 
                 BroadcastMessages.Add(new BroadcastMessageViewModel(messageViewModel.Message, messageViewModel.ContactViewModel, messageViewModel.ReaderViewModels, messageViewModel.AttachmentViewModels));
             }

@@ -18,7 +18,6 @@ namespace OpenEmail.Core.DataServices
         public DatabaseService(IApplicationConfiguration configuration)
         {
             Configuration = configuration;
-
         }
 
         public async Task InitializeAsync()
@@ -38,7 +37,8 @@ namespace OpenEmail.Core.DataServices
                 typeof(AccountContact),
                 typeof(Notification),
                 typeof(Message),
-                typeof(MessageAttachment)
+                typeof(MessageAttachment),
+                typeof(MessageDeliveryInformation)
                 );
 
         public async Task CloseAndDeleteAsync()

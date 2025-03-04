@@ -226,7 +226,8 @@ namespace OpenEmail.Core.Services
                 // 1. Download locally missing ones.
                 // 2. Remove remotely deleted ones.
 
-                var localOutboxMessages = await _messagesService.GetMessagesAsync(a => a.Author == accountProfile.Address && !a.IsDraft && !a.IsDeleted).ConfigureAwait(false);
+                var localOutboxMessages = await _messagesService.GetMessagesAsync(a => a.Author == accountProfile.Address && !a.IsDraft && !a.IsDeleted)
+                                                                .ConfigureAwait(false);
 
                 // Remove remotely deleted messages.
                 var deletedMessages = localOutboxMessages.Where(a => !messageIds.Contains(a.EnvelopeId));
@@ -249,6 +250,18 @@ namespace OpenEmail.Core.Services
                     {
 
                     }
+                }
+
+                var localOutboxEnvelopeIds = localOutboxMessages.Except(deletedMessages)
+                                                               .Select(a => a.EnvelopeId)
+                                                               .Concat(missingMessages)
+                                                               .Distinct()
+                                                               .ToList();
+
+                // Reset the outbox delivered status.
+                foreach (var envelopeId in localOutboxEnvelopeIds)
+                {
+                    await _messagesService.HandleDeliveryInformationAsync(envelopeId).ConfigureAwait(false);
                 }
             }
         }

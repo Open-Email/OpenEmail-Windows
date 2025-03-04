@@ -39,7 +39,6 @@ namespace OpenEmail.Core.API.Refit
         /// </summary>
         /// <param name="address">Target address of the author.</param>
         /// <param name="messageId">Message envelope id.</param>
-        /// <returns></returns>
         [Get("/home/{address}/messages/{messageId}")]
         [QueryUriFormat(UriFormat.Unescaped)]
         Task<HttpResponseMessage> GetMessageContentAsync(UserAddress address, string messageId);
@@ -61,7 +60,6 @@ namespace OpenEmail.Core.API.Refit
         /// </summary>
         /// <param name="authorAddress">Author of the messages.</param>
         /// <param name="messageId">Message id.</param>
-        /// <returns></returns>
         [Head("/home/{authorAddress}/messages/{messageId}")]
         [QueryUriFormat(UriFormat.Unescaped)]
         Task<HttpResponseMessage> GetMessageHeadersAsync(UserAddress authorAddress, string messageId);
@@ -71,7 +69,6 @@ namespace OpenEmail.Core.API.Refit
         /// </summary>
         /// <param name="address">Address</param>
         /// <param name="messageId">Message envelope id.</param>
-        /// <returns></returns>
         [Delete("/home/{address}/messages/{messageId}")]
         [QueryUriFormat(UriFormat.Unescaped)]
         Task<HttpResponseMessage> RecallAuthoredMessageAsync(UserAddress address, string messageId);
@@ -81,10 +78,19 @@ namespace OpenEmail.Core.API.Refit
         /// </summary>
         /// <param name="address">Address</param>
         /// <param name="cancellationToken">Cancellation token</param>
-        /// <returns></returns>
         [Get("/mail/{address}/messages")]
         [QueryUriFormat(UriFormat.Unescaped)]
         Task<HttpResponseMessage> GetBroadcastMessagesAsync(UserAddress address, CancellationToken cancellationToken = default);
+
+
+        /// <summary>
+        /// Gets the readers that opened the message.
+        /// </summary>
+        /// <param name="address">Address</param>
+        /// <param name="messageId">Message id</param>
+        [Get("/home/{address}/messages/{messageId}/deliveries")]
+        [QueryUriFormat(UriFormat.Unescaped)]
+        Task<HttpResponseMessage> FetchMessageDeliveriesAsync(UserAddress address, string messageId);
 
         /// <summary>
         /// Sends a message to the given address.
@@ -92,7 +98,6 @@ namespace OpenEmail.Core.API.Refit
         /// <param name="address">Address</param>
         /// <param name="payloadContent">Message payload.</param>
         /// <param name="headers">Headers</param>
-        /// <returns></returns>
         [Post("/home/{address}/messages")]
         [QueryUriFormat(UriFormat.Unescaped)]
         [Headers("Content-Type: application/octet-stream")]
