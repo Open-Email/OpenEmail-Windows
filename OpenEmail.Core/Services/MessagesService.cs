@@ -20,21 +20,27 @@ namespace OpenEmail.Core.Services
     public class MessagesService : BaseDataService, IMessagesService
     {
         private readonly IClientFactory _clientFactory;
+        private readonly ILinksService _linksService;
         private readonly IApplicationStateService _applicationStateService;
         private readonly IAttachmentManager _attachmentManager;
+        private readonly IProfileDataService _profileDataService;
         private readonly IPreferencesService _preferencesService;
         private readonly IPublicClientService _publicClientService;
 
         public MessagesService(IDatabaseService<ISQLiteAsyncConnection> databaseService,
                                IClientFactory clientFactory,
+                               ILinksService linksService,
                                IApplicationStateService applicationStateService,
                                IAttachmentManager attachmentManager,
+                               IProfileDataService profileDataService,
                                IPreferencesService preferencesService,
                                IPublicClientService publicClientService) : base(databaseService)
         {
             _clientFactory = clientFactory;
+            _linksService = linksService;
             _applicationStateService = applicationStateService;
             _attachmentManager = attachmentManager;
+            _profileDataService = profileDataService;
             _preferencesService = preferencesService;
             _publicClientService = publicClientService;
         }
@@ -85,6 +91,38 @@ namespace OpenEmail.Core.Services
             }).ToList();
 
             await Connection.InsertAllAsync(dbDeliveryInformations).ConfigureAwait(false);
+
+            var message = await GetMessageByEnvelopeIdAsync(envelopeId);
+
+            if (message != null && !string.IsNullOrEmpty(message.Readers))
+            {
+                var readers = message.Readers.Split('\n').ToList();
+
+                foreach (var reader in readers)
+                {
+                    var readerUserAddress = UserAddress.CreateFromAddress(reader);
+                    var accountLink = AccountLink.Create(readerUserAddress, _applicationStateService.ActiveProfile.UserAddress);
+
+                    var deliveryInfo = dbDeliveryInformations.FirstOrDefault(a => a.Link == accountLink.Link);
+
+                    if (deliveryInfo == null)
+                    {
+                        // This user must be notified again.
+                        var readerProfile = await _profileDataService.GetProfileDataAsync(readerUserAddress);
+
+                        if (readerProfile == null)
+                        {
+                            Debug.WriteLine($"Can't find the profile data for {reader}");
+                            continue;
+                        }
+
+                        var uploadData = readerProfile.CreateUploadPayload(reader);
+
+                        await _linksService.CreateNotificationAsync(accountLink, readerUserAddress, _applicationStateService.ActiveProfile.UserAddress, uploadData)
+                                           .ConfigureAwait(false);
+                    }
+                }
+            }
         }
 
         public async Task<string[]> GetEnvelopeIdsAsync(UserAddress address, AccountLink link)
@@ -369,6 +407,9 @@ namespace OpenEmail.Core.Services
 
         public Task<Message> GetMessageAsync(Guid messageId)
             => Connection.Table<Message>().Where(m => m.Id == messageId).FirstOrDefaultAsync();
+
+        private Task<Message> GetMessageByEnvelopeIdAsync(string envelopeId)
+            => Connection.Table<Message>().Where(m => m.EnvelopeId == envelopeId).FirstOrDefaultAsync();
 
         public Task MarkMessageReadAsync(Guid messageId)
         {

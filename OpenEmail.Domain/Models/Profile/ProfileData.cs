@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using CommunityToolkit.Diagnostics;
+using OpenEmail.Domain.Models.Mail;
 
 namespace OpenEmail.Domain.Models.Profile
 {
@@ -84,5 +85,9 @@ namespace OpenEmail.Domain.Models.Profile
 
             return sb.ToString();
         }
+
+        // Address is not stored in profile data.
+        public ReaderUploadData CreateUploadPayload(string address) =>
+            new ReaderUploadData(address, EncryptionKey, SigningKey, EncryptionKeyId);
     }
 }

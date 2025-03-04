@@ -115,7 +115,8 @@ namespace OpenEmail.ViewModels
                     continue;
                 }
 
-                readerMap.Add(new ReaderUploadData(reader.Contact.Address, reader.Profile.EncryptionKey, reader.Profile.SigningKey, reader.Profile.EncryptionKeyId));
+                var uploadData = reader.Profile.CreateUploadPayload(reader.Contact.Address);
+                readerMap.Add(uploadData);
             }
 
             // Can't continue with these readers.
