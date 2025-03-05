@@ -13,7 +13,6 @@ using OpenEmail.Domain.Models.Mail;
 using OpenEmail.Domain.Models.Messages;
 using OpenEmail.Domain.Models.Navigation;
 using OpenEmail.Domain.Models.Profile;
-using OpenEmail.Domain.Models.Shell;
 using OpenEmail.Domain.PubSubMessages;
 using OpenEmail.ViewModels.Data;
 using OpenEmail.ViewModels.Interfaces;
@@ -432,15 +431,7 @@ Forwarded message from: {0}
 
             foreach (var messageId in messageIdsToDelete)
             {
-                try
-                {
-                    await _messagesService.RecallMessageAsync(messageId);
-                }
-                catch (Exception ex)
-                {
-                    // TODO: Logging.
-                    _dialogService.ShowInfoBarMessage("Error", $"Failed to recall message.\n{ex.Message}", InfoBarMessageSeverity.Error);
-                }
+                await _messagesService.RecallMessageAsync(messageId);
             }
         }
 
