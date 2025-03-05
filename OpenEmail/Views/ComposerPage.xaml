@@ -249,7 +249,7 @@
                             TokenItemTemplate="{StaticResource PickedReaderTemplate}" />
 
                         <InfoBar
-                            Title="Invalid Addresses"
+                            Title="Validation Failed"
                             Grid.Row="0"
                             IsClosable="True"
                             IsOpen="{x:Bind ViewModel.IsErrorMessageVisible, Mode=OneWay}"
