@@ -71,6 +71,8 @@ namespace OpenEmail.Core.Services
             {
                 var deliveryInfoContent = await deliveryInfoResponse.Content.ReadAsStringAsync();
 
+                if (string.IsNullOrEmpty(deliveryInfoContent)) return;
+
                 var splitted = deliveryInfoContent.Split('\n');
 
                 foreach (var item in splitted)
