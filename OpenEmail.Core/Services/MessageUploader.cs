@@ -84,6 +84,39 @@ namespace OpenEmail.Core.Services
 
                 platformDispatcher.ExecuteOnDispatcher(() => MessageUploadQueue.Insert(0, progress));
 
+                var envelope = new MessageUploadPayload(message.EnvelopeId,
+                                                        message.Author,
+                                                        message.Size.ToString(),
+                                                        message.Category,
+                                                        message.CreatedAt,
+                                                        message.Subject,
+                                                        message.SubjectId,
+                                                        string.Empty,
+                                                        message.Readers,
+                                                        Encoding.ASCII.GetBytes(message.Body),
+                                                        readersMap,
+                                                        attachments,
+                                                        _applicationStateService.ActiveProfile,
+                                                        payloadSeal);
+
+                byte[] uploadContent = null;
+
+                if (message.IsBroadcast)
+                {
+                    // No need for encryption. The message body is plain text for broadcast messages.
+                    uploadContent = Encoding.UTF8.GetBytes(message.Body);
+                }
+                else
+                {
+                    // Encrypt the message body using the envelope access key.
+                    uploadContent = CryptoUtils.EncryptSymmetric(Encoding.UTF8.GetBytes(message.Body), envelope.MessageAccessKey);
+                }
+
+                platformDispatcher.ExecuteOnDispatcher(() => progress.CurrentPart += 1);
+
+                await UploadMessageInternalAsync(envelope, uploadContent).ConfigureAwait(false);
+
+                // Upload attachments after the envelope.
                 if (attachments.Any())
                 {
                     foreach (var attachment in attachments)
@@ -121,7 +154,7 @@ namespace OpenEmail.Core.Services
 
                         try
                         {
-                            await UploadMessageAsync(attachmentPayload, attachmentUploadContent).ConfigureAwait(false);
+                            await UploadMessageInternalAsync(attachmentPayload, attachmentUploadContent).ConfigureAwait(false);
                         }
                         catch (MessageConflictException)
                         {
@@ -132,38 +165,6 @@ namespace OpenEmail.Core.Services
                         platformDispatcher.ExecuteOnDispatcher(() => progress.CurrentPart += 1);
                     }
                 }
-
-                var envelope = new MessageUploadPayload(message.EnvelopeId,
-                                                        message.Author,
-                                                        message.Size.ToString(),
-                                                        message.Category,
-                                                        message.CreatedAt,
-                                                        message.Subject,
-                                                        message.SubjectId,
-                                                        string.Empty,
-                                                        message.Readers,
-                                                        Encoding.ASCII.GetBytes(message.Body),
-                                                        readersMap,
-                                                        attachments,
-                                                        _applicationStateService.ActiveProfile,
-                                                        payloadSeal);
-
-                byte[] uploadContent = null;
-
-                if (message.IsBroadcast)
-                {
-                    // No need for encryption. The message body is plain text for broadcast messages.
-                    uploadContent = Encoding.UTF8.GetBytes(message.Body);
-                }
-                else
-                {
-                    // Encrypt the message body using the envelope access key.
-                    uploadContent = CryptoUtils.EncryptSymmetric(Encoding.UTF8.GetBytes(message.Body), envelope.MessageAccessKey);
-                }
-
-                platformDispatcher.ExecuteOnDispatcher(() => progress.CurrentPart += 1);
-
-                await UploadMessageAsync(envelope, uploadContent).ConfigureAwait(false);
 
                 // Create notification for each reader except myself.
 
@@ -226,7 +227,7 @@ namespace OpenEmail.Core.Services
             }
         }
 
-        private async Task UploadMessageAsync(MessageUploadPayload envelope, byte[] uploadContent)
+        private async Task UploadMessageInternalAsync(MessageUploadPayload envelope, byte[] uploadContent)
         {
             var messagesClient = _clientFactory.CreateProfileClient<IMessagesClient>();
 
