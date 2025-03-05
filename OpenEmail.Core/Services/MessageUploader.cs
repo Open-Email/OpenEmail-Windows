@@ -50,6 +50,8 @@ namespace OpenEmail.Core.Services
 
             if (message == null) return;
 
+            var attachments = await _messagesService.GetMessageAttachmentsAsync(message.EnvelopeId).ConfigureAwait(false);
+
             var progress = MessageUploadQueue.FirstOrDefault(x => x.MessageId == rootMessageId);
 
             if (progress != null)
@@ -74,8 +76,6 @@ namespace OpenEmail.Core.Services
                 var payloadSeal = new PayloadSeal(CryptoConstants.SYMMETRIC_CIPHER);
 
                 // Get attachments for the message.
-
-                var attachments = await _messagesService.GetMessageAttachmentsAsync(message.EnvelopeId).ConfigureAwait(false);
 
                 // Attachments + root envelope.
                 int totalParts = attachments.Count + 1;
@@ -203,10 +203,17 @@ namespace OpenEmail.Core.Services
             catch (MessageConflictException)
             {
                 // Root message has already been uploaded.
-                // TODO: Delete the draft and sync outbox.
+                // Delete the draft and sync outbox.
+
+                await _messagesService.DeleteMessagePermanentAsync(rootMessageId).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
+                // Try recalling the root message envelope.
+                // This will attempt to delete the root message envelope and attachments.
+
+                await _messagesService.RecallMessageAsync(rootMessageId).ConfigureAwait(false);
+
                 // Failed to upload.
                 platformDispatcher.ExecuteOnDispatcher(() =>
                 {
@@ -221,6 +228,10 @@ namespace OpenEmail.Core.Services
                                                   InfoBarMessageSeverity.Error,
                                                   autoDismiss: false);
                 });
+
+
+                // Safely try to delete all the uploaded parts.
+
 
                 // TODO: Log errors.
                 Debug.WriteLine($"Uploading message envelope failed. {ex.Message}");

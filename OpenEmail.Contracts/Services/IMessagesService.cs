@@ -41,11 +41,18 @@ namespace OpenEmail.Contracts.Services
         Task<Message> GetMessageAsync(Guid messageId);
 
         /// <summary>
-        /// Recalls authored message.
+        /// Recalls authored message by message id.
         /// This will delete the message from the server.
         /// </summary>
         /// <param name="messageId">Message id.</param>
         Task RecallMessageAsync(Guid messageId);
+
+        /// <summary>
+        /// Recalls authored message by envelope id.
+        /// This is primarily used for attachments since we don't store them as a Message entity.
+        /// </summary>
+        /// <param name="envelopeId">Envelope id (remote server id) of the message.</param>
+        Task RecallMessageByEnvelopeId(string envelopeId);
 
         /// <summary>
         /// Soft deletes the message by moving it to trash.
@@ -58,6 +65,12 @@ namespace OpenEmail.Contracts.Services
         /// </summary>
         /// <param name="messageId">Message id.</param>
         Task DeleteMessagePermanentAsync(Guid messageId);
+
+        /// <summary>
+        /// Gets the list of broadcast message ids.
+        /// </summary>
+        /// <param name="address">Contact address.</param>
+        /// <returns>Array of ids of the contact's broadcast messages.</returns>
         Task<string[]> GetBroadcastMessageIdsAsync(UserAddress address);
 
         /// <summary>
@@ -72,5 +85,6 @@ namespace OpenEmail.Contracts.Services
         /// <param name="envelopeId">Envelope id</param>
         /// <returns>A list of delivery info containing links for the given envelope id.</returns>
         Task<List<MessageDeliveryInformation>> GetMessageDeliveryInformationAsync(string envelopeId);
+
     }
 }

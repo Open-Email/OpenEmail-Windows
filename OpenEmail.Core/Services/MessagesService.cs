@@ -450,21 +450,48 @@ namespace OpenEmail.Core.Services
             WeakReferenceMessenger.Default.Send(new MessageDeleted(message));
         }
 
+        public async Task RecallMessageByEnvelopeId(string envelopeId)
+        {
+            var messagesClient = _clientFactory.CreateProfileClient<IMessagesClient>();
+            var response = await messagesClient
+                .RecallAuthoredMessageAsync(_applicationStateService.ActiveProfile.Account.Address, envelopeId)
+                .ConfigureAwait(false);
+
+            response.EnsureSuccessStatusCode();
+        }
+
         public async Task RecallMessageAsync(Guid messageId)
         {
             var message = await Connection.Table<Message>().Where(m => m.Id == messageId).FirstOrDefaultAsync();
 
             if (message == null) return;
 
-            // If we're the author of the message, we should remove it from our server as well.
-            // This is undo-send.
+            List<string> recallEnvelopeIds = new List<string> { message.EnvelopeId };
 
-            var messagesClient = _clientFactory.CreateProfileClient<IMessagesClient>();
-            var response = await messagesClient
-                .RecallAuthoredMessageAsync(_applicationStateService.ActiveProfile.Account.Address, message.EnvelopeId)
-                .ConfigureAwait(false);
+            // Check if there are any attachments.
+            var attachments = await GetMessageAttachmentsAsync(message.EnvelopeId).ConfigureAwait(false);
 
-            response.EnsureSuccessStatusCode();
+            if (attachments.Count > 0)
+            {
+                foreach (var attachment in attachments)
+                {
+                    recallEnvelopeIds.Add(attachment.Id);
+                }
+            }
+
+            // Safely try to recall the envelopes.
+
+            try
+            {
+                foreach (var envelopeId in recallEnvelopeIds)
+                {
+                    await RecallMessageByEnvelopeId(message.EnvelopeId).ConfigureAwait(false);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Failed to recall the message. {ex.Message}");
+            }
 
             // Hard delete the message.
             await DeleteMessagePermanentAsync(messageId).ConfigureAwait(false);
