@@ -80,7 +80,7 @@ namespace OpenEmail.Core.DataServices
             Name: {fullName}
             Public-Access: Yes
             Last-Seen-Public: Yes
-            Encryption-Key: id={CryptoUtils.Base64Encode(localUser.PublicEncryptionKey)}; algorithm={CryptoConstants.ANONYMOUS_ENCRYPTION_CIPHER}; value={localUser.PublicEncryptionKeyBase64}
+            Encryption-Key: id=1; algorithm={CryptoConstants.ANONYMOUS_ENCRYPTION_CIPHER}; value={localUser.PublicEncryptionKeyBase64}
             Signing-Key: algorithm={CryptoConstants.SIGNING_ALGORITHM}; value={localUser.PublicSigningKeyBase64}    
             Updated: {dateString}";
 
