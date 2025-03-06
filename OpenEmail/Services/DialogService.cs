@@ -29,7 +29,8 @@ namespace OpenEmail.Services
                 Title = title,
                 Content = message,
                 PrimaryButtonText = "Yes",
-                CloseButtonText = "No"
+                CloseButtonText = "No",
+                DefaultButton = ContentDialogButton.Primary
             };
 
             AssingXamlRoot(dialog, windowType);

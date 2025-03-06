@@ -1,16 +1,21 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using OpenEmail.Contracts.Application;
 using OpenEmail.Contracts.Services;
 using OpenEmail.Domain.Models.Navigation;
 using OpenEmail.Domain.Models.Settings;
+using OpenEmail.Domain.PubSubMessages;
 
 namespace OpenEmail.ViewModels
 {
     public partial class SettingsPageViewModel : BaseViewModel
     {
         private readonly IApplicationStateService _applicationStateService;
+        private readonly IDialogService _dialogService;
+        private readonly ILoginService _loginService;
+        private readonly IWindowService _windowService;
         private readonly IQrService _qrService;
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsGeneralSectionVisible))]
@@ -79,12 +84,38 @@ namespace OpenEmail.ViewModels
 
         #endregion
 
-        public SettingsPageViewModel(IApplicationStateService applicationStateService, IPreferencesService preferencesService, IQrService qrService)
+        public SettingsPageViewModel(IApplicationStateService applicationStateService,
+                                     IPreferencesService preferencesService,
+                                     IDialogService dialogService,
+                                     ILoginService loginService,
+                                     IWindowService windowService,
+                                     IQrService qrService)
         {
             _applicationStateService = applicationStateService;
             _qrService = qrService;
 
             PreferencesService = preferencesService;
+            _dialogService = dialogService;
+            _loginService = loginService;
+            _windowService = windowService;
+        }
+
+        [RelayCommand]
+        private async Task LogoutAsync()
+        {
+            // Confirm the logout request.
+
+            var isConfirmed = await _dialogService.ShowConfirmationDialogAsync("Logout", "Are you sure? All local data will be removed. Did you backup your keys?");
+
+            if (!isConfirmed) return;
+
+            await _loginService.LogoutAsync(_applicationStateService.ActiveProfile);
+
+            // TODO: Cancel existing synchronizations.
+
+            WeakReferenceMessenger.Default.Send(new DisposeViewModels());
+
+            await _windowService.RestartApplicationAsync();
         }
 
         public override void OnNavigatedTo(FrameNavigationMode navigationMode, object parameter)

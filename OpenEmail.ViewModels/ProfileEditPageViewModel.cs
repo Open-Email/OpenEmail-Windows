@@ -197,24 +197,6 @@ namespace OpenEmail.ViewModels
             _profileDataManager = profileDataManager;
         }
 
-        [RelayCommand]
-        private async Task LogoutAsync()
-        {
-            // Confirm the logout request.
-
-            var isConfirmed = await _dialogService.ShowConfirmationDialogAsync("Logout", "Are you sure you want to logout?");
-
-            if (!isConfirmed) return;
-
-            await _loginService.LogoutAsync(_applicationStateService.ActiveProfile);
-
-            // TODO: Cancel existing synchronizations.
-
-            WeakReferenceMessenger.Default.Send(new DisposeViewModels());
-
-            await _windowService.RestartApplicationAsync();
-        }
-
         // General
         partial void OnAboutChanged(string oldValue, string newValue) => UserProfileData?.UpdateAttribute(nameof(About), newValue);
         partial void OnStatusChanged(string oldValue, string newValue) => UserProfileData?.UpdateAttribute(nameof(Status), newValue);
