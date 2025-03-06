@@ -89,6 +89,32 @@ namespace OpenEmail.ViewModels
                 return;
             }
 
+            // We used attachment metadata to create attachments.
+            // Actual file might not be there at the time of sending.
+            // Make sure the attachments are there and fail if there are missing files.
+
+            var missingAttachmentFilenames = DraftMessageViewModel.AttachmentViewModels
+                .Where(a => !File.Exists(a.LocalFilePath))
+                .Select(a => a.FileName)
+                .ToList();
+
+            if (missingAttachmentFilenames.Any())
+            {
+                // Remove these attachments from the message.
+                foreach (var missingFileName in missingAttachmentFilenames)
+                {
+                    var attachmentViewModel = DraftMessageViewModel.AttachmentViewModels.FirstOrDefault(a => a.FileName == missingFileName);
+
+                    if (attachmentViewModel == null) continue;
+
+                    await RemoveAttachment(attachmentViewModel);
+                }
+
+                ShowErrorMessage($"Following files are missing on the disk. Please re-attach them.\n\n{string.Join("\n", missingAttachmentFilenames)}");
+
+                return;
+            }
+
             await AutoSaveLocalDraftAsync();
 
             // Make sure all readers are accessable by the author.
