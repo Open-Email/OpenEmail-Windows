@@ -149,7 +149,7 @@ namespace OpenEmail.Core.Services
             if (string.IsNullOrEmpty(messagesContent)) return null;
 
             // Each line corresponds to a message
-            return messagesContent.Split('\n');
+            return messagesContent.Split('\n').Distinct().ToArray();
         }
 
         public async Task<AttachmentContentEnvelope> GetAttachmentContentEnvelopeAsync(UserAddress toAddress, AccountLink link, EnvelopeFile envelopeFile)
