@@ -12,6 +12,7 @@ namespace OpenEmail.Domain.Entities
         public DateTimeOffset ModifiedAt { get; set; }
         public string MimeType { get; set; }
         public string FileName { get; set; }
+        public string FilePath { get; set; }
         public int Part { get; set; }
         public string AccessKey { get; set; }
 
