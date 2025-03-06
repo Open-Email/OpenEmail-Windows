@@ -480,9 +480,6 @@ namespace OpenEmail.Core.Services
             }
 
             // Safely try to recall the envelopes.
-
-            try
-            {
                 foreach (var envelopeId in recallEnvelopeIds)
                 {
                     await RecallMessageByEnvelopeId(message.EnvelopeId).ConfigureAwait(false);
