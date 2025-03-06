@@ -293,19 +293,21 @@
 
             <TextBox
                 Grid.Row="2"
-                Grid.ColumnSpan="2"
-                MinHeight="200"
+                Grid.ColumnSpan="1"
+                MinHeight="75"
                 AcceptsReturn="True"
                 Header="Notes"
+                MaxLength="1000"
                 PlaceholderText="Message"
-                Text="{x:Bind ViewModel.Notes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                Text="{x:Bind ViewModel.Notes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                TextWrapping="Wrap" />
 
             <TextBlock
                 Grid.Row="3"
-                Grid.ColumnSpan="2"
+                Grid.ColumnSpan="1"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top">
-                <Run Text="{x:Bind ViewModel.NotesMessageLength, Mode=OneWay}" /><Run Text="/" /><Run Text="100" />
+                <Run Text="{x:Bind ViewModel.NotesMessageLength, Mode=OneWay}" /><Run Text="/" /><Run Text="1000" />
             </TextBlock>
         </Grid>
 
