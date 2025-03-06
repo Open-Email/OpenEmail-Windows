@@ -555,46 +555,6 @@ namespace OpenEmail.Core.Services
             return attachments;
         }
 
-        public List<Tuple<MessageAttachment, byte[]>> CreateMessageAttachments(Message rootMessage, string filePath)
-        {
-            var attachments = new List<Tuple<MessageAttachment, byte[]>>();
-
-            if (!File.Exists(filePath)) return default;
-
-            var file = File.ReadAllBytes(filePath);
-
-            // Split files into parts, each of them can have maximum 64 mb.
-            var splittedFileData = ByteHelper.SplitByteArray(file);
-
-            // Some properties are shared among attachment parts.
-
-            var fileName = Path.GetFileName(filePath);
-            var mimeType = "pdf"; // TODO: Get mime type from file extension.
-            var attachmentGroupId = Guid.NewGuid();
-
-            for (int i = 0; i < splittedFileData.Count; i++)
-            {
-                // Create attachment for each part.
-
-                var attachment = new MessageAttachment
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    ParentId = rootMessage.EnvelopeId,
-                    FileName = fileName,
-                    MimeType = mimeType,
-                    Size = splittedFileData[i].Length,
-                    AccessKey = rootMessage.AccessKey,
-                    AttachmentGroupId = attachmentGroupId,
-                    ModifiedAt = DateTimeOffset.Now,
-                    Part = i + 1
-                };
-
-                attachments.Add(new Tuple<MessageAttachment, byte[]>(attachment, splittedFileData[i]));
-            }
-
-            return attachments;
-        }
-
         public Task SaveMessageAttachmentAsync(MessageAttachment messageAttachment) => Connection.InsertAsync(messageAttachment);
 
         public async Task RemoveMessageAttachmentAsync(Guid attachmentGroupId)

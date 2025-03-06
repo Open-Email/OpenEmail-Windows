@@ -81,6 +81,7 @@ namespace OpenEmail.ViewModels.Data
             ParentMessage = parentMessage;
 
             FileName = attachmentParts[0].FileName;
+            LocalFilePath = attachmentParts[0].FilePath;
             FileSize = attachmentParts.Sum(a => a.Size);
         }
 
