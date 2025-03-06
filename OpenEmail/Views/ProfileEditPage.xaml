@@ -291,12 +291,6 @@
                     Text="{x:Bind ViewModel.PlacesLived, Mode=TwoWay}" />
             </Grid>
 
-
-            <Border
-                Grid.Row="1"
-                Grid.ColumnSpan="2"
-                Background="{ThemeResource GeneralSeperatorBrush}" />
-
             <TextBox
                 Grid.Row="2"
                 Grid.ColumnSpan="2"
