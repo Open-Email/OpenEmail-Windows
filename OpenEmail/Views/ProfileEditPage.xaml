@@ -16,7 +16,6 @@
 
         <DataTemplate x:Key="GeneralHeaderTemplate">
             <TextBlock
-                Margin="0,0,0,5"
                 CharacterSpacing="12"
                 FontWeight="SemiBold"
                 Text="{Binding}" />
@@ -150,68 +149,78 @@
             <!--  Status etc.  -->
             <Grid
                 Grid.Column="1"
-                Padding="24,0,0,0"
+                Padding="12"
                 RowSpacing="12">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <TextBox Text="{x:Bind ViewModel.Name, Mode=TwoWay}" TextWrapping="Wrap" />
-                <TextBlock
-                    Grid.Row="1"
-                    Text="{x:Bind ViewModel.FullAddress}"
-                    TextWrapping="Wrap" />
-                <ToggleSwitch
-                    Grid.Row="2"
-                    IsOn="{x:Bind ViewModel.IsAway, Mode=TwoWay}"
-                    OffContent="Away"
-                    OnContent="Away" />
+                <Grid ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox
+                        VerticalAlignment="Top"
+                        Header="Name"
+                        Text="{x:Bind ViewModel.Name, Mode=TwoWay}"
+                        TextWrapping="Wrap" />
+                    <ToggleSwitch
+                        x:Name="AwayToggle"
+                        Grid.Column="1"
+                        MinWidth="0"
+                        Margin="0,4,0,0"
+                        Padding="0"
+                        VerticalAlignment="Bottom"
+                        Header=" "
+                        IsOn="{x:Bind ViewModel.IsAway, Mode=TwoWay}"
+                        OffContent="Away"
+                        OnContent="Away" />
+                </Grid>
+
                 <TextBox
-                    Grid.Row="3"
+                    Grid.Row="1"
                     AcceptsReturn="True"
+                    Header="Away Message"
                     IsEnabled="{x:Bind ViewModel.IsAwayMessageAvailable, Mode=OneWay}"
                     PlaceholderText="Enter a message here to display contacts when you are away"
                     Text="{x:Bind ViewModel.AwayMessage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    TextWrapping="Wrap" />
-            </Grid>
+                    TextWrapping="Wrap"
+                    Visibility="{x:Bind AwayToggle.IsOn, Mode=OneWay}" />
 
-            <Border
-                Grid.Row="1"
-                Grid.ColumnSpan="2"
-                Background="{ThemeResource GeneralSeperatorBrush}" />
-
-            <Grid
-                Grid.Row="2"
-                Grid.ColumnSpan="2"
-                RowSpacing="12">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-
-                <TextBox
-                    Header="Status"
-                    PlaceholderText="Share your mood, plans etc."
-                    Text="{x:Bind ViewModel.Status, Mode=TwoWay}" />
-                <TextBox
-                    x:Name="AboutTextBox"
-                    Grid.Row="1"
-                    AcceptsReturn="True"
-                    Header="About"
-                    MaxLength="100"
-                    PlaceholderText="Message"
-                    Text="{x:Bind ViewModel.About, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    TextWrapping="Wrap" />
-
-                <TextBlock
+                <Grid
                     Grid.Row="2"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Top">
-                    <Run Text="{x:Bind ViewModel.AboutMessageMaxLength, Mode=OneWay}" /><Run Text="/" /><Run Text="100" />
-                </TextBlock>
+                    Grid.ColumnSpan="2"
+                    VerticalAlignment="Top"
+                    RowSpacing="12">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBox
+                        Header="Status"
+                        PlaceholderText="Share your mood, plans etc."
+                        Text="{x:Bind ViewModel.Status, Mode=TwoWay}" />
+                    <TextBox
+                        x:Name="AboutTextBox"
+                        Grid.Row="1"
+                        AcceptsReturn="True"
+                        Header="About"
+                        MaxLength="100"
+                        PlaceholderText="Message"
+                        Text="{x:Bind ViewModel.About, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        TextWrapping="Wrap" />
+
+                    <TextBlock
+                        Grid.Row="2"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top">
+                        <Run Text="{x:Bind ViewModel.AboutMessageMaxLength, Mode=OneWay}" /><Run Text="/" /><Run Text="100" />
+                    </TextBlock>
+                </Grid>
             </Grid>
         </Grid>
 
