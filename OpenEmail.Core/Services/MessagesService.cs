@@ -149,7 +149,7 @@ namespace OpenEmail.Core.Services
             if (string.IsNullOrEmpty(messagesContent)) return null;
 
             // Each line corresponds to a message
-            return messagesContent.Split('\n');
+            return messagesContent.Split('\n').Distinct().ToArray();
         }
 
         public async Task<AttachmentContentEnvelope> GetAttachmentContentEnvelopeAsync(UserAddress toAddress, AccountLink link, EnvelopeFile envelopeFile)
@@ -480,17 +480,16 @@ namespace OpenEmail.Core.Services
             }
 
             // Safely try to recall the envelopes.
-
-            try
+            foreach (var envelopeId in recallEnvelopeIds)
             {
-                foreach (var envelopeId in recallEnvelopeIds)
+                try
                 {
-                    await RecallMessageByEnvelopeId(message.EnvelopeId).ConfigureAwait(false);
+                    await RecallMessageByEnvelopeId(envelopeId).ConfigureAwait(false);
                 }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Failed to recall the message. {ex.Message}");
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Failed to recall the message. ({envelopeId}) {ex.Message}");
+                }
             }
 
             // Hard delete the message.
@@ -516,41 +515,41 @@ namespace OpenEmail.Core.Services
             }
         }
 
-        public List<Tuple<MessageAttachment, byte[]>> CreateMessageAttachments(Message rootMessage, string filePath)
+        public List<MessageAttachment> CreateMessageAttachmentMetadata(Message rootMessage, string filePath)
         {
-            var attachments = new List<Tuple<MessageAttachment, byte[]>>();
+            // Don't split the file content.
+            // Just create parts with blank.
+
+            var attachments = new List<MessageAttachment>();
 
             if (!File.Exists(filePath)) return default;
-
-            var file = File.ReadAllBytes(filePath);
-
-            // Split files into parts, each of them can have maximum 64 mb.
-            var splittedFileData = ByteHelper.SplitByteArray(file);
-
-            // Some properties are shared among attachment parts.
 
             var fileName = Path.GetFileName(filePath);
             var mimeType = "pdf"; // TODO: Get mime type from file extension.
             var attachmentGroupId = Guid.NewGuid();
 
-            for (int i = 0; i < splittedFileData.Count; i++)
-            {
-                // Create attachment for each part.
+            var chunks = ByteHelper.GetFilePartSizes(filePath);
 
+            int i = 0;
+
+            foreach (var chunk in chunks)
+            {
                 var attachment = new MessageAttachment
                 {
                     Id = Guid.NewGuid().ToString(),
                     ParentId = rootMessage.EnvelopeId,
                     FileName = fileName,
                     MimeType = mimeType,
-                    Size = splittedFileData[i].Length,
+                    Size = chunk.Value,
                     AccessKey = rootMessage.AccessKey,
                     AttachmentGroupId = attachmentGroupId,
                     ModifiedAt = DateTimeOffset.Now,
-                    Part = i + 1
+                    Part = i + 1,
+                    FilePath = filePath
                 };
 
-                attachments.Add(new Tuple<MessageAttachment, byte[]>(attachment, splittedFileData[i]));
+                attachments.Add(attachment);
+                i++;
             }
 
             return attachments;
@@ -567,9 +566,6 @@ namespace OpenEmail.Core.Services
             foreach (var attachment in attachments)
             {
                 await Connection.DeleteAsync(attachment).ConfigureAwait(false);
-
-                // Delete parts from the disk.
-                _attachmentManager.DeleteAttachment(attachment);
             }
         }
 

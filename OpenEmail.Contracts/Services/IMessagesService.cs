@@ -35,7 +35,6 @@ namespace OpenEmail.Contracts.Services
         Task<List<Message>> GetMessagesAsync(Expression<Func<Message, bool>> filter);
         Task MarkMessageReadAsync(Guid messageId);
         Task UpdateMessageAsync(Message message);
-        List<Tuple<MessageAttachment, byte[]>> CreateMessageAttachments(Message rootMessage, string filePath);
         Task SaveMessageAttachmentAsync(MessageAttachment messageAttachment);
         Task RemoveMessageAttachmentAsync(Guid attachmentGroupId);
         Task<Message> GetMessageAsync(Guid messageId);
@@ -86,5 +85,14 @@ namespace OpenEmail.Contracts.Services
         /// <returns>A list of delivery info containing links for the given envelope id.</returns>
         Task<List<MessageDeliveryInformation>> GetMessageDeliveryInformationAsync(string envelopeId);
 
+        /// <summary>
+        /// Creates a message attachment metadata chunks for the given root message from the file path.
+        /// File is not read, but only the file size.
+        /// Chunks are created based on the given chunk size.
+        /// </summary>
+        /// <param name="rootMessage">Root message.</param>
+        /// <param name="filePath">Physical file path.</param>
+        /// <returns>List of attachment metadata without a content bytes.</returns>
+        List<MessageAttachment> CreateMessageAttachmentMetadata(Message rootMessage, string filePath);
     }
 }

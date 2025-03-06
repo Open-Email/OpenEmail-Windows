@@ -3,6 +3,7 @@ using OpenEmail.Contracts.Clients;
 using OpenEmail.Contracts.Configuration;
 using OpenEmail.Contracts.Services;
 using OpenEmail.Core.API.Refit;
+using OpenEmail.Core.Helpers;
 using OpenEmail.Domain;
 using OpenEmail.Domain.Entities;
 using OpenEmail.Domain.Models.Messages;
@@ -243,12 +244,36 @@ namespace OpenEmail.Core.Services
             var parentId = messageAttachment.ParentId;
             var attachmentFolderPath = Path.Combine(_applicationConfiguration.ApplicationDataFolderPath, AttachmentsFolderName, parentId);
 
-            var fullFileName = CreateAttachmentFilePath(messageAttachment.ParentId, messageAttachment.FileName);
+            var fullFileName = messageAttachment.FilePath;
             var partFilePath = $"{attachmentFolderPath}\\{messageAttachment.Id}{AttachmentFilePartFileFormat}";
 
             if (File.Exists(partFilePath)) return File.ReadAllBytes(partFilePath);
 
-            return new byte[0];
+            if (!File.Exists(fullFileName)) return new byte[0];
+
+            // Append or create the attachment file on the app storage.
+            try
+            {
+                using var fileStream = File.OpenRead(fullFileName);
+
+                if (messageAttachment.Part > 1)
+                {
+                    fileStream.Seek((messageAttachment.Part - 1) * ByteHelper.MaxPartSizeMB * 1024 * 1024, SeekOrigin.Begin);
+                }
+
+                var remainingBytes = Math.Min(ByteHelper.MaxPartSizeMB * 1024 * 1024, fileStream.Length - fileStream.Position);
+                var buffer = new byte[remainingBytes];
+                fileStream.Read(buffer, 0, (int)remainingBytes);
+
+                Directory.CreateDirectory(attachmentFolderPath);
+                File.WriteAllBytes(partFilePath, buffer);
+
+                return buffer;
+            }
+            catch
+            {
+                return new byte[0];
+            }
         }
     }
 }

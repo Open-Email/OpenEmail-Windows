@@ -89,6 +89,32 @@ namespace OpenEmail.ViewModels
                 return;
             }
 
+            // We used attachment metadata to create attachments.
+            // Actual file might not be there at the time of sending.
+            // Make sure the attachments are there and fail if there are missing files.
+
+            var missingAttachmentFilenames = DraftMessageViewModel.AttachmentViewModels
+                .Where(a => !File.Exists(a.LocalFilePath))
+                .Select(a => a.FileName)
+                .ToList();
+
+            if (missingAttachmentFilenames.Any())
+            {
+                // Remove these attachments from the message.
+                foreach (var missingFileName in missingAttachmentFilenames)
+                {
+                    var attachmentViewModel = DraftMessageViewModel.AttachmentViewModels.FirstOrDefault(a => a.FileName == missingFileName);
+
+                    if (attachmentViewModel == null) continue;
+
+                    await RemoveAttachment(attachmentViewModel);
+                }
+
+                ShowErrorMessage($"Following files are missing on the disk. Please re-attach them.\n\n{string.Join("\n", missingAttachmentFilenames)}");
+
+                return;
+            }
+
             await AutoSaveLocalDraftAsync();
 
             // Make sure all readers are accessable by the author.
@@ -148,7 +174,6 @@ namespace OpenEmail.ViewModels
             await AutoSaveLocalDraftAsync();
         }
 
-
         [RelayCommand]
         private async Task BrowseAsync()
         {
@@ -171,25 +196,17 @@ namespace OpenEmail.ViewModels
 
             if (existingAttachment == null)
             {
-                var attachmentPartTuples = _messagesService.CreateMessageAttachments(DraftMessageViewModel.Self, filePath);
+                var attachmentParts = _messagesService.CreateMessageAttachmentMetadata(DraftMessageViewModel.Self, filePath);
 
-                foreach (var part in attachmentPartTuples)
+                foreach (var part in attachmentParts)
                 {
                     // Save them to the disk.
 
-                    var messageAttachment = part.Item1;
-                    var fileData = part.Item2;
-
-                    await _attachmentManager.SaveAttachmentEnvelopeAsync(messageAttachment, fileData);
-                    await _messagesService.SaveMessageAttachmentAsync(messageAttachment);
+                    await _messagesService.SaveMessageAttachmentAsync(part);
                 }
 
-                var parts = attachmentPartTuples.Select(a => a.Item1).ToList();
-
-                var attachmentViewModel = new AttachmentViewModel(parts, DraftMessageViewModel.Self);
+                var attachmentViewModel = new AttachmentViewModel(attachmentParts, DraftMessageViewModel.Self);
                 DraftMessageViewModel.AttachmentViewModels.Add(attachmentViewModel);
-
-                GC.Collect();
             }
         }
 
