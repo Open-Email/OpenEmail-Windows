@@ -480,14 +480,16 @@ namespace OpenEmail.Core.Services
             }
 
             // Safely try to recall the envelopes.
-                foreach (var envelopeId in recallEnvelopeIds)
-                {
-                    await RecallMessageByEnvelopeId(message.EnvelopeId).ConfigureAwait(false);
-                }
-            }
-            catch (Exception ex)
+            foreach (var envelopeId in recallEnvelopeIds)
             {
-                Debug.WriteLine($"Failed to recall the message. {ex.Message}");
+                try
+                {
+                    await RecallMessageByEnvelopeId(envelopeId).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Failed to recall the message. ({envelopeId}) {ex.Message}");
+                }
             }
 
             // Hard delete the message.
@@ -511,6 +513,46 @@ namespace OpenEmail.Core.Services
                 await Connection.InsertAsync(message).ConfigureAwait(false);
                 WeakReferenceMessenger.Default.Send(new MessageAdded(message));
             }
+        }
+
+        public List<MessageAttachment> CreateMessageAttachmentMetadata(Message rootMessage, string filePath)
+        {
+            // Don't split the file content.
+            // Just create parts with blank.
+
+            var attachments = new List<MessageAttachment>();
+
+            if (!File.Exists(filePath)) return default;
+
+            var fileName = Path.GetFileName(filePath);
+            var mimeType = "pdf"; // TODO: Get mime type from file extension.
+            var attachmentGroupId = Guid.NewGuid();
+
+            var chunks = ByteHelper.GetFilePartSizes(filePath);
+
+            int i = 0;
+
+            foreach (var chunk in chunks)
+            {
+                var attachment = new MessageAttachment
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    ParentId = rootMessage.EnvelopeId,
+                    FileName = fileName,
+                    MimeType = mimeType,
+                    Size = chunk.Value,
+                    AccessKey = rootMessage.AccessKey,
+                    AttachmentGroupId = attachmentGroupId,
+                    ModifiedAt = DateTimeOffset.Now,
+                    Part = i + 1,
+                    FilePath = filePath
+                };
+
+                attachments.Add(attachment);
+                i++;
+            }
+
+            return attachments;
         }
 
         public List<Tuple<MessageAttachment, byte[]>> CreateMessageAttachments(Message rootMessage, string filePath)
@@ -564,9 +606,6 @@ namespace OpenEmail.Core.Services
             foreach (var attachment in attachments)
             {
                 await Connection.DeleteAsync(attachment).ConfigureAwait(false);
-
-                // Delete parts from the disk.
-                _attachmentManager.DeleteAttachment(attachment);
             }
         }
 
