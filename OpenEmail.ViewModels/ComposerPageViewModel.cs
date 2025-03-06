@@ -174,7 +174,6 @@ namespace OpenEmail.ViewModels
             await AutoSaveLocalDraftAsync();
         }
 
-
         [RelayCommand]
         private async Task BrowseAsync()
         {
@@ -197,25 +196,17 @@ namespace OpenEmail.ViewModels
 
             if (existingAttachment == null)
             {
-                var attachmentPartTuples = _messagesService.CreateMessageAttachments(DraftMessageViewModel.Self, filePath);
+                var attachmentParts = _messagesService.CreateMessageAttachmentMetadata(DraftMessageViewModel.Self, filePath);
 
-                foreach (var part in attachmentPartTuples)
+                foreach (var part in attachmentParts)
                 {
                     // Save them to the disk.
 
-                    var messageAttachment = part.Item1;
-                    var fileData = part.Item2;
-
-                    await _attachmentManager.SaveAttachmentEnvelopeAsync(messageAttachment, fileData);
-                    await _messagesService.SaveMessageAttachmentAsync(messageAttachment);
+                    await _messagesService.SaveMessageAttachmentAsync(part);
                 }
 
-                var parts = attachmentPartTuples.Select(a => a.Item1).ToList();
-
-                var attachmentViewModel = new AttachmentViewModel(parts, DraftMessageViewModel.Self);
+                var attachmentViewModel = new AttachmentViewModel(attachmentParts, DraftMessageViewModel.Self);
                 DraftMessageViewModel.AttachmentViewModels.Add(attachmentViewModel);
-
-                GC.Collect();
             }
         }
 
