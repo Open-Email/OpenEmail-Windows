@@ -10,7 +10,6 @@ namespace OpenEmail.Contracts.Services
     /// </summary>
     public interface IProfileDataManager
     {
-        bool CanSaveImage(byte[] imageData);
         Task DeleteProfileImageAsync(UserAddress address);
 
         /// <summary>
@@ -18,6 +17,13 @@ namespace OpenEmail.Contracts.Services
         /// </summary>
         /// <param name="address">Address to get the profile data for.</param>
         Task<ProfileData> GetProfileDataAsync(UserAddress address, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Validates avatar size and dimensions. Resizes the image if necessary.
+        /// </summary>
+        /// <param name="pickedFileBytes"></param>
+        /// <returns>Image data in allowed limits.</returns>
+        byte[] GetValidAvatar(byte[] pickedFileBytes);
 
         /// <summary>
         /// Returns whether the profile data for the given address exists.
