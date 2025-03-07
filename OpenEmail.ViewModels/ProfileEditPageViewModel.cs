@@ -310,7 +310,7 @@ namespace OpenEmail.ViewModels
         {
             var pickedFileBytes = await _dialogService.ShowProfilePictureEditorAsync();
 
-            if (pickedFileBytes?.Length == 0) return;
+            if (pickedFileBytes == null || pickedFileBytes.Length == 0) return;
 
             try
             {
