@@ -14,7 +14,10 @@ namespace OpenEmail.Core.Services
         private const string ProfileDataFileExtension = ".data";
         private const string ProfileImageFileExtension = ".png";
 
-        private const long MaximumImageSize = 1024 * 512; // 512 KB
+        private const long MaximumImageSize = 1024 * 640; // 640 KB
+        private const int MaximumWidth = 800;
+        private const int MaximumHeight = 800;
+
 
         private string ProfileDataFolderPath { get; }
         private readonly IApplicationConfiguration _applicationConfiguration;
@@ -74,66 +77,43 @@ namespace OpenEmail.Core.Services
             }
         }
 
-        public SKImageInfo ValidateAndGetImageInfo(byte[] downloadedImage)
+        public byte[] GetValidAvatar(byte[] pickedFileBytes)
         {
-            // Supported formats JPEG,GIF, PNG and WebP.
-            // Image must be square. Ideally 400x400.
-            // Maximum size 512 KB.
+            // Max dimensions 800x800.
+            // Rescale to 400x400 if exceeds.
 
-            bool exceedsSize = downloadedImage.Length > MaximumImageSize;
+            var finalImageData = pickedFileBytes;
 
-            if (exceedsSize)
-                throw new ArgumentException($"Image size is too large. Maximum allowed size {MaximumImageSize} bytes.");
+            using var input = new MemoryStream(pickedFileBytes);
 
-            using var input = new MemoryStream(downloadedImage);
+            var imageInfo = SKBitmap.DecodeBounds(input);
 
-            var info = SKBitmap.DecodeBounds(input);
+            int width = imageInfo.Width;
+            int height = imageInfo.Height;
 
-            int width = info.Width;
-            int height = info.Height;
+            bool exceedsBoundsLimit = width > MaximumWidth || height > MaximumHeight;
 
-            bool isImageSquare = width == height;
+            // Resize to 400x400.
+            if (exceedsBoundsLimit)
+            {
+                finalImageData = GetResizedImageData(pickedFileBytes, 400, 400);
+            }
 
-            if (!isImageSquare)
-                throw new ArgumentException("Profile picture must be square, ideally 400x400 in size with less than 512kb.");
+            // Check size.
+            if (finalImageData.Length > MaximumImageSize)
+                throw new Exception("Image size exceeds the maximum allowed size. Try again with smaller image.");
 
-            return info;
-        }
-
-        public bool CanSaveImage(byte[] imageData)
-        {
-            var imageInfo = ValidateAndGetImageInfo(imageData);
-            return imageInfo.Width <= 400 && imageInfo.Height <= 400;
+            return finalImageData;
         }
 
         public async Task SaveProfileImageAsync(byte[] downloadedImage, UserAddress address, CancellationToken cancellationToken = default)
         {
             if (downloadedImage.Length == 0) return;
 
-            byte[] finalImageData = null;
-
-            var imageInfo = ValidateAndGetImageInfo(downloadedImage);
-
-            int width = imageInfo.Width;
-            int height = imageInfo.Height;
-
-            bool exceedsBoundsLimit = width > 400 || height > 400;
-
-            // Resize to 400x400.
-            if (exceedsBoundsLimit)
-            {
-                finalImageData = GetResizedImageData(downloadedImage, 400, 400);
-            }
-            else
-            {
-                // Everything looks good.
-                finalImageData = downloadedImage;
-            }
-
             // Save 64x64 image as thumbnail.
             var thumbnailImageData = GetResizedImageData(downloadedImage, 64, 64);
 
-            await File.WriteAllBytesAsync($"{Path.Combine(ProfileDataFolderPath, address.FullAddress)}{ProfileImageFileExtension}", finalImageData, cancellationToken);
+            await File.WriteAllBytesAsync($"{Path.Combine(ProfileDataFolderPath, address.FullAddress)}{ProfileImageFileExtension}", downloadedImage, cancellationToken);
             await File.WriteAllBytesAsync($"{Path.Combine(ProfileDataFolderPath, address.FullAddress)}_thumbnail{ProfileImageFileExtension}", thumbnailImageData, cancellationToken);
         }
 

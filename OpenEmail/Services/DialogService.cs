@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using OpenEmail.Contracts.Application;
+using OpenEmail.Controls;
 using OpenEmail.Dialogs;
 using OpenEmail.Domain.Models.Shell;
 using OpenEmail.Domain.PubSubMessages;
 using OpenEmail.Helpers;
+using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
 
@@ -38,6 +39,35 @@ namespace OpenEmail.Services
             var result = await dialog.ShowAsync().AsTask();
 
             return result == ContentDialogResult.Primary;
+        }
+
+        public async Task<byte[]> ShowProfilePictureEditorAsync()
+        {
+            var pickedFile = await ShowProfilePicturePickerAsync();
+
+            if (pickedFile == null) return default;
+
+            var control = new ProfilePictureEditControl(pickedFile);
+
+            var dialog = new ContentDialog()
+            {
+                Content = control,
+                FullSizeDesired = true
+            };
+
+            byte[] result = null;
+
+            control.DismissRequested += (c, r) =>
+            {
+                result = control.ResultBytes;
+                dialog.Hide();
+            };
+
+            AssingXamlRoot(dialog);
+
+            await dialog.ShowAsync();
+
+            return result;
         }
 
         public Task ShowMessageAsync(string title, string message, WindowType windowType = WindowType.Shell)
@@ -83,7 +113,7 @@ namespace OpenEmail.Services
             element.XamlRoot = targetWindow.Content.XamlRoot;
         }
 
-        public async Task<byte[]> ShowProfilePicturePickerAsync()
+        public async Task<StorageFile> ShowProfilePicturePickerAsync()
         {
             var picker = new FileOpenPicker()
             {
@@ -93,9 +123,7 @@ namespace OpenEmail.Services
 
             InitializePicker(picker);
 
-            var file = await picker.PickSingleFileAsync();
-
-            return file == null ? (new byte[0]) : File.ReadAllBytes(file.Path);
+            return await picker.PickSingleFileAsync();
         }
 
         private async Task<ContentDialogResult> HandleDialogPresentationAsync(ContentDialog dialog)

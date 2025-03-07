@@ -33,8 +33,7 @@ namespace OpenEmail.Contracts.Services
         /// </summary>
         /// <param name="address">Address to update profile for.</param>
         /// <param name="imageData">Resized byte array of image data.</param>
-        /// <returns></returns>
-        Task<bool> UpdateProfileImageAsync(UserAddress address, byte[] imageData, CancellationToken cancellationToken = default);
+        Task UpdateProfileImageAsync(UserAddress address, byte[] imageData, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Deletes user's avatar.

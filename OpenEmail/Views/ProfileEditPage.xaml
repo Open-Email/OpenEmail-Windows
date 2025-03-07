@@ -104,18 +104,23 @@
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="400" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="2" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
             <!--  avatar  -->
             <Grid>
-                <Grid CornerRadius="6">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid Height="400" CornerRadius="6">
                     <Image Source="{x:Bind ViewModel.ContactProfilePicture, Mode=OneWay, Converter={StaticResource ProfileImageConverter}}" />
                 </Grid>
 
                 <StackPanel
+                    Grid.Row="1"
                     Margin="6"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Top"

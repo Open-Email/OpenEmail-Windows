@@ -78,22 +78,12 @@ namespace OpenEmail.Core.DataServices
             return await RefreshProfileDataAsync(address, refreshProfileImage: false, cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task<bool> UpdateProfileImageAsync(UserAddress address, byte[] imageData, CancellationToken cancellationToken = default)
+        public async Task UpdateProfileImageAsync(UserAddress address, byte[] imageData, CancellationToken cancellationToken = default)
         {
             var client = _clientFactory.CreateProfileClient<IProfileClient>();
             var updatedMessage = await client.UpdateProfileImageAsync(address, new ByteArrayContent(imageData), cancellationToken);
 
-            if (updatedMessage.IsSuccessStatusCode)
-            {
-                // Update locally if success.
-                await _profileDataManager.SaveProfileImageAsync(imageData, address, cancellationToken).ConfigureAwait(false);
-
-                WeakReferenceMessenger.Default.Send(new ProfileImageUpdated());
-            }
-            else
-                return false;
-
-            return true;
+            updatedMessage.EnsureSuccessStatusCode();
         }
     }
 }

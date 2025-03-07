@@ -11,6 +11,8 @@ namespace OpenEmail.ViewModels
 {
     public partial class ProfileEditPageViewModel : BaseViewModel, IRecipient<ProfileImageUpdated>
     {
+
+
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsGeneralSettingsVisible))]
         [NotifyPropertyChangedFor(nameof(IsPersonalSettingsVisible))]
@@ -292,8 +294,11 @@ namespace OpenEmail.ViewModels
             UserProfileData.IsReadOnly = false;
         }
 
-        public void Receive(ProfileImageUpdated message)
+        public async void Receive(ProfileImageUpdated message)
         {
+            // Shell will update first. This will make sure the preview is updated after the file is released.
+            await Task.Delay(500);
+
             Dispatcher.ExecuteOnDispatcher(() =>
             {
                 OnPropertyChanged(nameof(ContactProfilePicture));
@@ -303,30 +308,22 @@ namespace OpenEmail.ViewModels
         [RelayCommand]
         private async Task ChangeAvatarAsync()
         {
-            var pickedFileBytes = await _dialogService.ShowProfilePicturePickerAsync();
+            var pickedFileBytes = await _dialogService.ShowProfilePictureEditorAsync();
 
-            if (pickedFileBytes.Length == 0) return;
-
-            bool canSaveImage = false;
+            if (pickedFileBytes?.Length == 0) return;
 
             try
             {
-                canSaveImage = _profileDataManager.CanSaveImage(pickedFileBytes);
+                var finalImageData = _profileDataManager.GetValidAvatar(pickedFileBytes);
+
+                await _profileDataService.UpdateProfileImageAsync(_applicationStateService.ActiveProfile.UserAddress, finalImageData);
+                await _profileDataManager.SaveProfileImageAsync(finalImageData, _applicationStateService.ActiveProfile.UserAddress).ConfigureAwait(false);
+
+                WeakReferenceMessenger.Default.Send(new ProfileImageUpdated());
             }
             catch (Exception ex)
             {
-                canSaveImage = false;
-                await _dialogService.ShowMessageAsync("Error", ex.Message);
-            }
-
-            if (canSaveImage)
-            {
-                bool isProfileImageSaved = await _profileDataService.UpdateProfileImageAsync(_applicationStateService.ActiveProfile.UserAddress, pickedFileBytes);
-
-                if (!isProfileImageSaved)
-                {
-                    // TODO: Error.
-                }
+                _dialogService.ShowInfoBarMessage("Failed", $"Couldn't update profile picture.\n{ex.Message}", Domain.Models.Shell.InfoBarMessageSeverity.Error);
             }
         }
 
