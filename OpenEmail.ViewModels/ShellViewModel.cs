@@ -211,7 +211,7 @@ namespace OpenEmail.ViewModels
             }
             catch (Exception ex)
             {
-
+                _dialogService.ShowInfoBarMessage("Error", $"Failed to synchronize.\n{ex.Message}", InfoBarMessageSeverity.Error);
             }
             finally
             {
