@@ -13,43 +13,53 @@
     mc:Ignorable="d">
 
     <Grid RowSpacing="12">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <controls:ImageCropper
-            x:Name="cropper"
-            Width="400"
-            Height="400"
-            AspectRatio="1"
-            CropShape="Rectangular" />
+        <Grid VerticalAlignment="Center" RowSpacing="12">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="400" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Style="{StaticResource SubtitleTextBlockStyle}"
+                Text="Adjust Profile Image" />
 
-        <Grid Grid.Row="1" ColumnSpacing="12">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+            <controls:ImageCropper
+                x:Name="cropper"
+                Grid.Row="1"
+                Width="400"
+                Height="400"
+                AspectRatio="1"
+                CropShape="Rectangular" />
 
-            <Button
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                Click="SaveClicked"
-                Content="Save"
-                Style="{ThemeResource AccentButtonStyle}" />
-            <Button
-                Grid.Column="1"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                Click="ResetClicked"
-                Content="Reset" />
+            <Grid Grid.Row="2" ColumnSpacing="12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-            <Button
-                Grid.Column="2"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                Click="CancelClicked"
-                Content="Cancel" />
+                <Button
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Click="SaveClicked"
+                    Content="Save"
+                    Style="{ThemeResource AccentButtonStyle}" />
+                <Button
+                    Grid.Column="1"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Click="ResetClicked"
+                    Content="Reset" />
+
+                <Button
+                    Grid.Column="2"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Click="CancelClicked"
+                    Content="Cancel" />
+            </Grid>
         </Grid>
     </Grid>
 </UserControl>
