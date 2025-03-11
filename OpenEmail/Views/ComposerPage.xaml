@@ -243,7 +243,8 @@
                             LostFocus="ReaderLostFocus"
                             PlaceholderText="Type to add readers"
                             SuggestedItemTemplate="{StaticResource ReaderSuggestionContentTemplate}"
-                            SuggestedItemsSource="{x:Bind ViewModel.ContactViewModels}"
+                            SuggestedItemsSource="{x:Bind ViewModel.FilteredContacts}"
+                            Text="{x:Bind ViewModel.QueryText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             TokenDelimiter=","
                             TokenItemAdding="ReaderBeingAdded"
                             TokenItemTemplate="{StaticResource PickedReaderTemplate}" />
