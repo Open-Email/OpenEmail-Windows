@@ -13,6 +13,7 @@ using OpenEmail.Domain.Models.Shell;
 using OpenEmail.Domain.PubSubMessages;
 using OpenEmail.ViewModels.Data;
 using OpenEmail.ViewModels.Interfaces;
+using OpenEmail.ViewModels.Misc;
 
 namespace OpenEmail.ViewModels
 {
@@ -42,6 +43,15 @@ namespace OpenEmail.ViewModels
         private readonly IDialogService _dialogService;
         private readonly IApplicationStateService _applicationStateService;
         private readonly IMessagePreperationService _messagePreperationService;
+
+        private List<ContactViewModel> _allContacts = new List<ContactViewModel>();
+
+        [ObservableProperty]
+        public partial ObservableRangeCollection<ContactViewModel> FilteredContacts { get; set; } = new ObservableRangeCollection<ContactViewModel>();
+
+
+        [ObservableProperty]
+        public partial string QueryText { get; set; }
 
         [ObservableProperty]
         private MessageViewModel _draftMessageViewModel;
@@ -157,6 +167,22 @@ namespace OpenEmail.ViewModels
             DismissComposerWindow();
         }
 
+        partial void OnQueryTextChanging(string oldValue, string newValue)
+        {
+            if (oldValue?.Equals(newValue) ?? false) return;
+
+            if (string.IsNullOrWhiteSpace(newValue))
+            {
+                FilteredContacts.ReplaceRange(_allContacts);
+            }
+            else
+            {
+                var newMatch = _allContacts.Where(a => a.Contact.Name.Contains(newValue, StringComparison.OrdinalIgnoreCase) || a.Contact.Address.Contains(newValue, StringComparison.OrdinalIgnoreCase));
+
+                FilteredContacts.ReplaceRange(newMatch);
+            }
+        }
+
         private void ShowErrorMessage(string message) => ErrorMessage = message;
 
         private void HideError() => ErrorMessage = string.Empty;
@@ -238,7 +264,7 @@ namespace OpenEmail.ViewModels
             foreach (var contact in allContacts)
             {
                 var profileData = await _messagePreperationService.PrepareContactViewModel(contact.Address);
-                ContactViewModels.Add(profileData);
+                _allContacts.Add(profileData);
             }
 
             DraftMessageViewModel = _referencingMessage as MessageViewModel;
