@@ -18,6 +18,7 @@ namespace OpenEmail.ViewModels
 
             // Dialogs
             services.AddTransient<AddNewContactDialogViewModel>();
+            services.AddTransient<ContactProfileDisplayPopupDialogViewModel>();
         }
     }
 }

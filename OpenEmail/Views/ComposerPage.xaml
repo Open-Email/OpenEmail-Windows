@@ -33,24 +33,32 @@
 
         <!--  Picked Contact Template  -->
         <DataTemplate x:Key="PickedReaderTemplate" x:DataType="data:ContactViewModel">
-            <Grid Height="20" ColumnSpacing="8">
-                <ToolTipService.ToolTip>
-                    <ToolTip Content="{x:Bind Contact.Address}" />
-                </ToolTipService.ToolTip>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+            <Button
+                Height="20"
+                Padding="0"
+                Background="Transparent"
+                BorderThickness="0"
+                Command="{Binding ElementName=root, Path=ViewModel.DisplayContactPopupCommand}"
+                CommandParameter="{Binding}">
+                <Grid ColumnSpacing="8">
+                    <ToolTipService.ToolTip>
+                        <ToolTip Content="{x:Bind Contact.Address}" />
+                    </ToolTipService.ToolTip>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
-                <Viewbox>
-                    <PersonPicture DisplayName="{x:Bind ContactDisplayName}" ProfilePicture="{x:Bind ProfileThumbnailUrl}" />
-                </Viewbox>
+                    <Viewbox>
+                        <PersonPicture DisplayName="{x:Bind ContactDisplayName}" ProfilePicture="{x:Bind ProfileThumbnailUrl}" />
+                    </Viewbox>
 
-                <TextBlock
-                    Grid.Column="1"
-                    VerticalAlignment="Center"
-                    Text="{x:Bind ContactDisplayName}" />
-            </Grid>
+                    <TextBlock
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        Text="{x:Bind ContactDisplayName}" />
+                </Grid>
+            </Button>
         </DataTemplate>
 
         <!--  Suggestion Template  -->
@@ -202,6 +210,8 @@
                 </CommandBar.PrimaryCommands>
             </CommandBar>
         </Grid>
+
+        <!--  Content  -->
         <Grid
             Grid.Row="2"
             Padding="24,0,09,24"
@@ -242,6 +252,7 @@
                             ItemsSource="{x:Bind ViewModel.DraftMessageViewModel.ReaderViewModels, Mode=OneWay}"
                             LostFocus="ReaderLostFocus"
                             PlaceholderText="Type to add readers"
+                            SelectionMode="None"
                             SuggestedItemTemplate="{StaticResource ReaderSuggestionContentTemplate}"
                             SuggestedItemsSource="{x:Bind ViewModel.FilteredContacts}"
                             Text="{x:Bind ViewModel.QueryText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"

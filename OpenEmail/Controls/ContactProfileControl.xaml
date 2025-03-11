@@ -182,13 +182,6 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <!--<Rectangle
-                        Grid.Row="2"
-                        Height="1"
-                        HorizontalAlignment="Stretch"
-                        Fill="Gray"
-                        Visibility="{x:Bind BroadcastPanel.Visibility, Mode=OneWay}" />-->
-
                     <!--  Broadcast  -->
                     <Grid
                         x:Name="BroadcastPanel"
@@ -237,11 +230,31 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Visibility="Collapsed">
-            <StackPanel>
+
+            <!--  Loading  -->
+            <StackPanel x:Name="LoadingPanel" Spacing="12">
                 <TextBlock Text="Loading profile..." />
                 <ProgressRing />
             </StackPanel>
         </Grid>
+
+        <!--  Retry  -->
+        <StackPanel
+            x:Name="RetryGrid"
+            Spacing="12"
+            Visibility="Collapsed">
+            <TextBlock
+                HorizontalAlignment="Center"
+                Foreground="Red"
+                Text="Profile load failed." />
+            <Button
+                x:Name="RetryButton"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Click="RetryClicked"
+                Content="Retry" />
+        </StackPanel>
+
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="ProfileLoadingStates">
@@ -256,6 +269,15 @@
                     </VisualState.StateTriggers>
                 </VisualState>
 
+                <VisualState x:Name="ProfileLoadFailed">
+                    <VisualState.Setters>
+                        <Setter Target="LoadedGrid.Visibility" Value="Collapsed" />
+                        <Setter Target="RetryGrid.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                    <VisualState.StateTriggers>
+                        <StateTrigger IsActive="{x:Bind IsProfileLoadFailed, Mode=OneWay}" />
+                    </VisualState.StateTriggers>
+                </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
     </Grid>

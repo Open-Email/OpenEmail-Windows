@@ -28,13 +28,15 @@ namespace OpenEmail.ViewModels.Data
 
         [ObservableProperty]
         private AccountContact _contact;
-        private readonly bool _isSelf;
+
+        public bool IsSelf { get; set; }
+
 
         public string ContactDisplayName
         {
             get
             {
-                if (_isSelf) return "Me";
+                if (IsSelf) return "Me";
 
                 // Profile -> Contnact -> Address
                 if (!string.IsNullOrWhiteSpace(Profile?.Name)) return Profile.Name;
@@ -47,7 +49,7 @@ namespace OpenEmail.ViewModels.Data
 
         public ContactViewModel(AccountContact contact, ProfileData profileData, bool isSelf = false)
         {
-            _isSelf = isSelf;
+            IsSelf = isSelf;
 
             Contact = contact;
             Profile = profileData;

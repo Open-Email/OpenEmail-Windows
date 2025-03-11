@@ -8,9 +8,13 @@ using Microsoft.UI.Xaml.Controls;
 using OpenEmail.Contracts.Application;
 using OpenEmail.Controls;
 using OpenEmail.Dialogs;
+using OpenEmail.Domain.Entities;
+using OpenEmail.Domain.Models.Contacts;
+using OpenEmail.Domain.Models.Profile;
 using OpenEmail.Domain.Models.Shell;
 using OpenEmail.Domain.PubSubMessages;
 using OpenEmail.Helpers;
+using OpenEmail.ViewModels.Data;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
@@ -126,11 +130,22 @@ namespace OpenEmail.Services
             return await picker.PickSingleFileAsync();
         }
 
-        private async Task<ContentDialogResult> HandleDialogPresentationAsync(ContentDialog dialog)
+        public async Task<ContactPopupDialogResult> ShowContactDisplayControlPopupAsync(AccountContact contact, ProfileData profileData, bool isInContacts)
+        {
+            var contactViewModel = new ContactViewModel(contact, profileData);
+
+            var dialog = new ContactProfileDisplayPopupDialog(contactViewModel, isInContacts);
+
+            await HandleDialogPresentationAsync(dialog, WindowType.Composer);
+
+            return dialog.Result;
+        }
+
+        private async Task<ContentDialogResult> HandleDialogPresentationAsync(ContentDialog dialog, WindowType windowType = WindowType.Shell)
         {
             await dialogSemaphore.WaitAsync();
 
-            AssingXamlRoot(dialog);
+            AssingXamlRoot(dialog, windowType);
 
             try
             {

@@ -7,6 +7,7 @@ using OpenEmail.Contracts.Application;
 using OpenEmail.Contracts.Services;
 using OpenEmail.Domain.Entities;
 using OpenEmail.Domain.Models.Accounts;
+using OpenEmail.Domain.Models.Contacts;
 using OpenEmail.Domain.Models.Mail;
 using OpenEmail.Domain.Models.Navigation;
 using OpenEmail.Domain.Models.Shell;
@@ -186,6 +187,27 @@ namespace OpenEmail.ViewModels
         private void ShowErrorMessage(string message) => ErrorMessage = message;
 
         private void HideError() => ErrorMessage = string.Empty;
+
+        [RelayCommand]
+        private async Task DisplayContactPopupAsync(ContactViewModel contactViewModel)
+        {
+            if (contactViewModel == null || contactViewModel.IsSelf) return;
+
+            bool isInContacts = _allContacts.Any(a => a.Contact.Address == contactViewModel.Contact.Address);
+
+            var result = await _dialogService.ShowContactDisplayControlPopupAsync(profileData: contactViewModel.Profile, contact: contactViewModel.Contact, isInContacts: isInContacts);
+
+            if (result == ContactPopupDialogResult.RemoveReader)
+            {
+
+            }
+            else if (result == ContactPopupDialogResult.AddContact)
+            {
+                _allContacts.Add(contactViewModel);
+
+                // TODO: Add to contacts.
+            }
+        }
 
         [RelayCommand]
         private async Task RemoveAttachment(AttachmentViewModel attachmentViewModel)
