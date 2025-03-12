@@ -49,5 +49,10 @@ namespace OpenEmail.Dialogs
                 IsPrimaryButtonEnabled = true;
             }
         }
+
+        private void CloseClicked(object sender, RoutedEventArgs e)
+        {
+            Hide();
+        }
     }
 }

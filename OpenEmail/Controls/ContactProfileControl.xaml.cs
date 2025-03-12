@@ -41,7 +41,11 @@ namespace OpenEmail.Controls
             set { SetValue(IsLoadingProfileProperty, value); }
         }
 
-
+        public double DesiredMaxImageSize
+        {
+            get { return (double)GetValue(DesiredMaxImageSizeProperty); }
+            set { SetValue(DesiredMaxImageSizeProperty, value); }
+        }
 
         public bool IsProfileLoadFailed
         {
@@ -56,6 +60,7 @@ namespace OpenEmail.Controls
         public static readonly DependencyProperty BroadcastStateChangedCommandProperty = DependencyProperty.Register(nameof(BroadcastStateChangedCommand), typeof(ICommand), typeof(ContactProfileControl), new PropertyMetadata(null));
         public static readonly DependencyProperty IsClosePaneButtonVisibleProperty = DependencyProperty.Register(nameof(IsClosePaneButtonVisible), typeof(bool), typeof(ContactProfileControl), new PropertyMetadata(false));
         public static readonly DependencyProperty ClosePaneCommandProperty = DependencyProperty.Register(nameof(ClosePaneCommand), typeof(ICommand), typeof(ContactProfileControl), new PropertyMetadata(null));
+        public static readonly DependencyProperty DesiredMaxImageSizeProperty = DependencyProperty.Register(nameof(DesiredMaxImageSize), typeof(double), typeof(ContactProfileControl), new PropertyMetadata(400d));
 
         public bool IsClosePaneButtonVisible
         {
@@ -108,6 +113,7 @@ namespace OpenEmail.Controls
                     Contact.Profile = await ProfileDataService.GetProfileDataAsync(UserAddress.CreateFromAddress(Contact.Contact.Address));
 
                     ProfileLoadCompleted?.Invoke(this, true);
+                    IsLoadingProfile = false;
                 }
                 catch (Exception)
                 {

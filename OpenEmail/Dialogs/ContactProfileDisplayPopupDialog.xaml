@@ -9,7 +9,6 @@
     xmlns:helpers="using:OpenEmail.Helpers"
     xmlns:local="using:OpenEmail.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Margin="50"
     DefaultButton="Primary"
     PrimaryButtonClick="AddContactClicked"
     PrimaryButtonText="Add Contact"
@@ -20,11 +19,30 @@
 
     <ContentDialog.Resources>
         <Thickness x:Key="ContentDialogPadding">12</Thickness>
-        <x:Double x:Key="ContentDialogMaxWidth">0</x:Double>
+        <Thickness x:Key="ContentDialogMargin">12</Thickness>
+        <x:Double x:Key="ContentDialogMinHeight">0</x:Double>
+        <x:Double x:Key="ContentDialogMaxHeight">9999</x:Double>
+        <x:Double x:Key="ContentDialogMaxWidth">9999</x:Double>
     </ContentDialog.Resources>
 
     <Grid>
-        <controls1:ContactProfileControl x:Name="ContactControl" ProfileLoadCompleted="ProfileLoadCompleted" />
+
+        <controls1:ContactProfileControl
+            x:Name="ContactControl"
+            DesiredMaxImageSize="180"
+            ProfileLoadCompleted="ProfileLoadCompleted" />
+
+        <Button
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Click="CloseClicked">
+            <Viewbox Width="10" Height="10">
+                <PathIcon
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Data="F1 M 10 12.119141 L 2.558594 19.560547 C 2.421875 19.697266 2.260742 19.804688 2.075195 19.882812 C 1.889648 19.960938 1.699219 20 1.503906 20 C 1.295573 20 1.10026 19.960938 0.917969 19.882812 C 0.735677 19.804688 0.576172 19.697266 0.439453 19.560547 C 0.302734 19.423828 0.195312 19.264322 0.117188 19.082031 C 0.039062 18.89974 0 18.704428 0 18.496094 C 0 18.300781 0.039062 18.110352 0.117188 17.924805 C 0.195312 17.739258 0.302734 17.578125 0.439453 17.441406 L 7.880859 10 L 0.439453 2.558594 C 0.296224 2.415365 0.187174 2.250977 0.112305 2.06543 C 0.037435 1.879883 0 1.689453 0 1.494141 C 0 1.285809 0.039062 1.090496 0.117188 0.908203 C 0.195312 0.725912 0.302734 0.568035 0.439453 0.43457 C 0.576172 0.301107 0.735677 0.195312 0.917969 0.117188 C 1.10026 0.039062 1.295573 0 1.503906 0 C 1.699219 0 1.889648 0.039062 2.075195 0.117188 C 2.260742 0.195312 2.421875 0.302734 2.558594 0.439453 L 10 7.880859 L 17.441406 0.439453 C 17.734375 0.146484 18.089191 0 18.505859 0 C 18.707682 0 18.899738 0.039062 19.082031 0.117188 C 19.264322 0.195312 19.423828 0.302734 19.560547 0.439453 C 19.697266 0.576172 19.804688 0.735678 19.882812 0.917969 C 19.960938 1.100262 20 1.292318 20 1.494141 C 20 1.689453 19.962564 1.879883 19.887695 2.06543 C 19.812824 2.250977 19.703775 2.415365 19.560547 2.558594 L 12.119141 10 L 19.560547 17.441406 C 19.697266 17.578125 19.804688 17.739258 19.882812 17.924805 C 19.960938 18.110352 20 18.300781 20 18.496094 C 20 18.704428 19.960938 18.89974 19.882812 19.082031 C 19.804688 19.264322 19.697266 19.423828 19.560547 19.560547 C 19.423828 19.697266 19.264322 19.804688 19.082031 19.882812 C 18.899738 19.960938 18.704426 20 18.496094 20 C 18.300781 20 18.110352 19.960938 17.924805 19.882812 C 17.739258 19.804688 17.578125 19.697266 17.441406 19.560547 Z " />
+            </Viewbox>
+        </Button>
     </Grid>
 </local:ContactProfileDisplayPopupDialogAbstract>
 
