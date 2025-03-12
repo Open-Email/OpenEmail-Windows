@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
@@ -12,6 +13,8 @@ namespace OpenEmail.Controls
 {
     public sealed partial class ContactProfileControl : UserControl
     {
+        public event EventHandler<bool> ProfileLoadCompleted;
+
         protected IProfileDataService ProfileDataService { get; } = App.Current.Services.GetService<IProfileDataService>();
 
         public ContactViewModel Contact
@@ -38,12 +41,26 @@ namespace OpenEmail.Controls
             set { SetValue(IsLoadingProfileProperty, value); }
         }
 
+        public double DesiredMaxImageSize
+        {
+            get { return (double)GetValue(DesiredMaxImageSizeProperty); }
+            set { SetValue(DesiredMaxImageSizeProperty, value); }
+        }
+
+        public bool IsProfileLoadFailed
+        {
+            get { return (bool)GetValue(IsProfileLoadFailedProperty); }
+            set { SetValue(IsProfileLoadFailedProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsProfileLoadFailedProperty = DependencyProperty.Register(nameof(IsProfileLoadFailed), typeof(bool), typeof(ContactProfileControl), new PropertyMetadata(false));
         public static readonly DependencyProperty IsLoadingProfileProperty = DependencyProperty.Register(nameof(IsLoadingProfile), typeof(bool), typeof(ContactProfileControl), new PropertyMetadata(false));
         public static readonly DependencyProperty IsBroadcastOnProperty = DependencyProperty.Register(nameof(IsBroadcastOn), typeof(bool), typeof(ContactProfileControl), new PropertyMetadata(false, new PropertyChangedCallback(OnBroadcastStateChanged)));
         public static readonly DependencyProperty ContactProperty = DependencyProperty.Register(nameof(Contact), typeof(ContactViewModel), typeof(ContactProfileControl), new PropertyMetadata(null, new PropertyChangedCallback(OnContactChanged)));
         public static readonly DependencyProperty BroadcastStateChangedCommandProperty = DependencyProperty.Register(nameof(BroadcastStateChangedCommand), typeof(ICommand), typeof(ContactProfileControl), new PropertyMetadata(null));
         public static readonly DependencyProperty IsClosePaneButtonVisibleProperty = DependencyProperty.Register(nameof(IsClosePaneButtonVisible), typeof(bool), typeof(ContactProfileControl), new PropertyMetadata(false));
         public static readonly DependencyProperty ClosePaneCommandProperty = DependencyProperty.Register(nameof(ClosePaneCommand), typeof(ICommand), typeof(ContactProfileControl), new PropertyMetadata(null));
+        public static readonly DependencyProperty DesiredMaxImageSizeProperty = DependencyProperty.Register(nameof(DesiredMaxImageSize), typeof(double), typeof(ContactProfileControl), new PropertyMetadata(400d));
 
         public bool IsClosePaneButtonVisible
         {
@@ -71,7 +88,7 @@ namespace OpenEmail.Controls
         {
             if (d is ContactProfileControl control)
             {
-                control.UpdateContact();
+                _ = control.UpdateContactAsync();
             }
         }
 
@@ -80,10 +97,11 @@ namespace OpenEmail.Controls
             BroadcastStateChangedCommand?.Execute(IsBroadcastOn);
         }
 
-        private async void UpdateContact()
+        private async Task UpdateContactAsync()
         {
             if (Contact == null) return;
 
+            IsProfileLoadFailed = false;
             IsBroadcastOn = Contact.Contact.ReceiveBroadcasts;
 
             // Refresh profile if doesn't exists.
@@ -93,15 +111,28 @@ namespace OpenEmail.Controls
                 {
                     IsLoadingProfile = true;
                     Contact.Profile = await ProfileDataService.GetProfileDataAsync(UserAddress.CreateFromAddress(Contact.Contact.Address));
+
+                    ProfileLoadCompleted?.Invoke(this, true);
+                    IsLoadingProfile = false;
                 }
                 catch (Exception)
                 {
-                    // TODO: Failures
-                }
-                finally
-                {
                     IsLoadingProfile = false;
+                    IsProfileLoadFailed = true;
+                    ProfileLoadCompleted?.Invoke(this, false);
                 }
+            }
+        }
+
+        private async void RetryClicked(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button senderButton)
+            {
+                senderButton.IsEnabled = false;
+
+                await UpdateContactAsync();
+
+                senderButton.IsEnabled = true;
             }
         }
     }

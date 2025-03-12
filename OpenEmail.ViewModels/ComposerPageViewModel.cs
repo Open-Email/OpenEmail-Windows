@@ -7,6 +7,7 @@ using OpenEmail.Contracts.Application;
 using OpenEmail.Contracts.Services;
 using OpenEmail.Domain.Entities;
 using OpenEmail.Domain.Models.Accounts;
+using OpenEmail.Domain.Models.Contacts;
 using OpenEmail.Domain.Models.Mail;
 using OpenEmail.Domain.Models.Navigation;
 using OpenEmail.Domain.Models.Shell;
@@ -37,6 +38,7 @@ namespace OpenEmail.ViewModels
 
         private readonly IContactService _contactService;
         private readonly IFileService _fileService;
+        private readonly ILinksService _linksService;
         private readonly IMessagesService _messagesService;
         private readonly IAttachmentManager _attachmentManager;
         private readonly IProfileDataService _profileDataService;
@@ -58,6 +60,7 @@ namespace OpenEmail.ViewModels
 
         public ComposerPageViewModel(IContactService contactService,
                                      IFileService fileService,
+                                     ILinksService linksService,
                                      IMessagesService messagesService,
                                      IAttachmentManager attachmentManager,
                                      IProfileDataService profileDataService,
@@ -67,6 +70,7 @@ namespace OpenEmail.ViewModels
         {
             _contactService = contactService;
             _fileService = fileService;
+            _linksService = linksService;
             _messagesService = messagesService;
             _attachmentManager = attachmentManager;
             _profileDataService = profileDataService;
@@ -188,6 +192,74 @@ namespace OpenEmail.ViewModels
         private void HideError() => ErrorMessage = string.Empty;
 
         [RelayCommand]
+        private async Task DisplayContactPopupAsync(ContactViewModel contactViewModel)
+        {
+            if (contactViewModel == null || contactViewModel.IsSelf) return;
+
+            bool isInContacts = _allContacts.Any(a => a.Contact.Address == contactViewModel.Contact.Address);
+
+            var result = await _dialogService.ShowContactDisplayControlPopupAsync(profileData: contactViewModel.Profile, contact: contactViewModel.Contact, isInContacts: isInContacts);
+
+            if (result == ContactPopupDialogResult.RemoveReader)
+            {
+                DraftMessageViewModel.ReaderViewModels.Remove(contactViewModel);
+            }
+            else if (result == ContactPopupDialogResult.AddContact)
+            {
+                var contactAddress = contactViewModel.Contact.Address;
+
+                // Get the refreshed profile data.
+                var profileData = await _profileDataService.GetProfileDataAsync(UserAddress.CreateFromAddress(contactViewModel.Contact.Address));
+                var accountLink = AccountLink.Create(_applicationStateService.ActiveProfile.Account.Address, UserAddress.CreateFromAddress(contactAddress));
+                var contact = new AccountContact()
+                {
+                    UniqueId = Guid.NewGuid(),
+                    AccountId = _applicationStateService.ActiveProfile.Account.Id,
+                    Address = contactAddress,
+                    IsRequestAcccepted = false,
+                    CreatedAt = DateTimeOffset.Now,
+                    ReceiveBroadcasts = false,
+                    Link = accountLink.Link,
+                    Name = profileData.Name,
+                    Id = "n/a"
+                };
+
+                var createdContact = new ContactViewModel(contact, profileData);
+
+                // Remove the previous reader and add the new one.
+                DraftMessageViewModel.ReaderViewModels.Remove(contactViewModel);
+                DraftMessageViewModel.ReaderViewModels.Add(createdContact);
+
+                await AddToContactsAsync(createdContact);
+            }
+        }
+
+        private async Task AddToContactsAsync(ContactViewModel contactViewModel)
+        {
+            try
+            {
+                // Save this link on the server.
+                bool isLinkSaved = await _linksService.StoreLinkAsync(_applicationStateService.ActiveProfile,
+                                                                      UserAddress.CreateFromAddress(contactViewModel.Contact.Address));
+
+                if (isLinkSaved)
+                {
+                    _allContacts.Add(contactViewModel);
+
+                    contactViewModel.Contact.ReceiveBroadcasts = true;
+                    contactViewModel.Contact.IsRequestAcccepted = true;
+                    contactViewModel.Contact.CreatedAt = DateTimeOffset.Now;
+
+                    await _contactService.AddOrUpdateContactAsync(_applicationStateService.ActiveProfile, contactViewModel.Contact, contactViewModel.Profile);
+                }
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowInfoBarMessage("Error", $"Failed to add contact.\n{ex.Message}", InfoBarMessageSeverity.Error);
+            }
+        }
+
+        [RelayCommand]
         private async Task RemoveAttachment(AttachmentViewModel attachmentViewModel)
         {
             if (attachmentViewModel.AttachmentParts == null || !attachmentViewModel.AttachmentParts.Any()) return;
@@ -274,7 +346,21 @@ namespace OpenEmail.ViewModels
         }
 
         private async void ReadersUpdated(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        => await AutoSaveLocalDraftAsync();
+        {
+            await AutoSaveLocalDraftAsync();
+
+            if (e.NewItems != null && e.NewItems.Count > 0)
+            {
+                var addedContact = e.NewItems[0] as ContactViewModel;
+
+                bool isInContacts = _allContacts.Any(a => a.Contact.Address == addedContact.Contact.Address);
+
+                if (!isInContacts)
+                {
+                    await DisplayContactPopupAsync(addedContact);
+                }
+            }
+        }
 
         private async void AttachmentsUpdated(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
             => await AutoSaveLocalDraftAsync();
