@@ -35,7 +35,8 @@
         <Button
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
-            Click="CloseClicked">
+            Click="CloseClicked"
+            IsTabStop="False">
             <Viewbox Width="10" Height="10">
                 <PathIcon
                     HorizontalAlignment="Center"

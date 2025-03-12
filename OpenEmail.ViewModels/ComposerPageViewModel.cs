@@ -346,7 +346,21 @@ namespace OpenEmail.ViewModels
         }
 
         private async void ReadersUpdated(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        => await AutoSaveLocalDraftAsync();
+        {
+            await AutoSaveLocalDraftAsync();
+
+            if (e.NewItems != null && e.NewItems.Count > 0)
+            {
+                var addedContact = e.NewItems[0] as ContactViewModel;
+
+                bool isInContacts = _allContacts.Any(a => a.Contact.Address == addedContact.Contact.Address);
+
+                if (!isInContacts)
+                {
+                    await DisplayContactPopupAsync(addedContact);
+                }
+            }
+        }
 
         private async void AttachmentsUpdated(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
             => await AutoSaveLocalDraftAsync();
