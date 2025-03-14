@@ -6,7 +6,7 @@ namespace OpenEmail.Contracts.Services
 {
     public interface ILinksService
     {
-        Task<List<UserAddress>> GetProfileUserAddressLinksAsync(AccountProfile accountProfile);
+        Task<List<LinkResponse>> GetProfileUserAddressLinksAsync(AccountProfile accountProfile);
         Task<bool> StoreLinkAsync(AccountProfile profile, UserAddress toAddress);
         Task<bool> RemoveLinkAsync(UserAddress fromAddress, UserAddress toAddress);
         Task CreateNotificationAsync(AccountLink link, UserAddress toAddress, UserAddress fromAddress, ReaderUploadData readerUploadData);

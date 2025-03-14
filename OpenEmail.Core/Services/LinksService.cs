@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
 using OpenEmail.Contracts.Clients;
 using OpenEmail.Contracts.Services;
 using OpenEmail.Core.API.Refit;
@@ -27,17 +28,17 @@ namespace OpenEmail.Core.Services
             await linksClient.CreateNotificationAsync(toAddress, link, encodedEncryptedAdddress).ConfigureAwait(false);
         }
 
-        public async Task<List<UserAddress>> GetProfileUserAddressLinksAsync(AccountProfile accountProfile)
+        public async Task<List<LinkResponse>> GetProfileUserAddressLinksAsync(AccountProfile accountProfile)
         {
             var linksClient = _clientFactory.CreateProfileClient<ILinksClient>();
             var response = await linksClient.GetAddressLinksAsync(accountProfile.Account.Address);
             var content = await response.Content.ReadAsStringAsync();
 
-            // Format: LINK, ENCRYPTED ADDRESS
+            // Format: LINK, ENCRYPTED CONTENT
             if (string.IsNullOrEmpty(content)) return [];
 
             var links = content.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-            var userAddresses = new List<UserAddress>();
+            var linkResponses = new List<LinkResponse>();
 
             foreach (var link in links)
             {
@@ -50,13 +51,49 @@ namespace OpenEmail.Core.Services
 
                 try
                 {
+                    // Check if the encrypted content is an e-mail address or key-value pair.
                     // Decrypt the address.
-                    var encryptedAddress = linkParts[1];
-                    var decryptedAddressBytes = CryptoUtils.DecryptAnonymous(encryptedAddress, accountProfile.PrivateEncryptionKey, accountProfile.PublicEncryptionKey);
+                    var encryptedContent = linkParts[1];
+                    var decryptedContentBytes = CryptoUtils.DecryptAnonymous(encryptedContent, accountProfile.PrivateEncryptionKey, accountProfile.PublicEncryptionKey);
 
-                    var decryptedAddress = Encoding.ASCII.GetString(decryptedAddressBytes);
+                    var decryptedContent = Encoding.ASCII.GetString(decryptedContentBytes);
 
-                    userAddresses.Add(UserAddress.CreateFromAddress(decryptedAddress));
+                    // If there is no '=' sign, it's an e-mail address.
+
+                    LinkResponse linkUserAddress = null;
+
+                    if (!decryptedContent.Contains("="))
+                    {
+                        linkUserAddress = new LinkResponse(UserAddress.CreateFromAddress(decryptedContent));
+                    }
+                    else
+                    {
+                        // Semicolon separated key-value pair for attributes.
+                        var attributeStore = new KeyValueDataStore(decryptedContent, ';');
+
+                        // Invalid. address must be present.
+                        if (!attributeStore.HasKey("address"))
+                        {
+                            Debug.WriteLine($"Skipping link with invalid attributes: {decryptedContent}");
+                            continue;
+                        }
+
+                        var address = attributeStore.GetData<string>("address");
+                        var userAddress = UserAddress.CreateFromAddress(address);
+
+                        if (attributeStore.HasKey("broadcasts"))
+                        {
+                            var isBroadcastsEnabled = attributeStore.GetData<bool>("broadcasts");
+
+                            linkUserAddress = new LinkResponse(userAddress, isBroadcastsEnabled);
+                        }
+                        else
+                        {
+                            linkUserAddress = new LinkResponse(userAddress);
+                        }
+                    }
+
+                    linkResponses.Add(linkUserAddress);
                 }
                 catch (Exception)
                 {
@@ -64,7 +101,7 @@ namespace OpenEmail.Core.Services
                 }
             }
 
-            return userAddresses;
+            return linkResponses;
         }
 
         public async Task<bool> RemoveLinkAsync(UserAddress fromAddress, UserAddress toAddress)

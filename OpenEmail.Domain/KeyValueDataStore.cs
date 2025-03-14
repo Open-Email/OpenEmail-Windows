@@ -6,16 +6,18 @@ namespace OpenEmail.Domain
     [System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
     public class KeyValueDataStore
     {
+        private readonly char _seperator;
+
         private string DebuggerDisplay => ToString();
         public string DataStoreInput { get; }
 
         protected Dictionary<string, string> Data { get; private set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         // For download.
-        public KeyValueDataStore(string dataStoreInput, int maximumInputSize = 64000) : this(maximumInputSize)
+        public KeyValueDataStore(string dataStoreInput, int maximumInputSize = 64000, char seperator = ':') : this(maximumInputSize)
         {
             DataStoreInput = dataStoreInput;
-
+            _seperator = seperator;
             Guard.HasSizeLessThanOrEqualTo(DataStoreInput, maximumInputSize, nameof(DataStoreInput));
 
             ParseData();
@@ -39,11 +41,11 @@ namespace OpenEmail.Domain
 
             foreach (var line in lines)
             {
-                // Skip lines that do not contain a colon
-                if (!line.Contains(':'))
+                // Skip lines that do not contain the seperator.
+                if (!line.Contains(_seperator))
                     continue;
 
-                var splitIndex = line.IndexOf(':');
+                var splitIndex = line.IndexOf(_seperator);
                 var key = line.Substring(0, splitIndex).Trim();
                 var value = line.Substring(splitIndex + 1).Trim();
 
