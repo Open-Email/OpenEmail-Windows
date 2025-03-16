@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Text;
 using CommunityToolkit.Diagnostics;
 
 namespace OpenEmail.Domain
@@ -29,6 +30,11 @@ namespace OpenEmail.Domain
         public void Add(string key, string value)
         {
             Data[key] = value;
+        }
+
+        public void Add(string key, bool value)
+        {
+            Data[key] = value ? "Yes" : "No";
         }
 
         /// <summary>
@@ -175,6 +181,20 @@ namespace OpenEmail.Domain
         public void OrderKeys()
         {
             Data = Data.OrderBy(a => a.Key).ToDictionary(a => a.Key, a => a.Value);
+        }
+
+        /// <summary>
+        /// Serializes the key-value store data to a string.
+        /// </summary>
+        public string Serialize()
+        {
+            var sb = new StringBuilder();
+            foreach (var kvp in Data)
+            {
+                sb.AppendLine($"{kvp.Key}: {kvp.Value}");
+            }
+
+            return sb.ToString();
         }
     }
 }

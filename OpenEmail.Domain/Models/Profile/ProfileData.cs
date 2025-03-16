@@ -1,5 +1,4 @@
-﻿using System.Text;
-using CommunityToolkit.Diagnostics;
+﻿using CommunityToolkit.Diagnostics;
 using OpenEmail.Domain.Models.Mail;
 
 namespace OpenEmail.Domain.Models.Profile
@@ -70,20 +69,6 @@ namespace OpenEmail.Domain.Models.Profile
             {
                 Data.Add(key, value);
             }
-        }
-
-        /// <summary>
-        /// Serializes the profile data to a string.
-        /// </summary>
-        public string Serialize()
-        {
-            var sb = new StringBuilder();
-            foreach (var kvp in Data)
-            {
-                sb.AppendLine($"{kvp.Key}: {kvp.Value}");
-            }
-
-            return sb.ToString();
         }
 
         // Address is not stored in profile data.

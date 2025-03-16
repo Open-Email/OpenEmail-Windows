@@ -240,7 +240,7 @@ namespace OpenEmail.ViewModels
             {
                 // Save this link on the server.
                 bool isLinkSaved = await _linksService.StoreLinkAsync(_applicationStateService.ActiveProfile,
-                                                                      UserAddress.CreateFromAddress(contactViewModel.Contact.Address));
+                                                                      contactViewModel.Contact);
 
                 if (isLinkSaved)
                 {

@@ -4,7 +4,9 @@ using OpenEmail.Contracts.Clients;
 using OpenEmail.Contracts.Services;
 using OpenEmail.Core.API.Refit;
 using OpenEmail.Domain;
+using OpenEmail.Domain.Entities;
 using OpenEmail.Domain.Models.Accounts;
+using OpenEmail.Domain.Models.Contacts;
 using OpenEmail.Domain.Models.Mail;
 using OpenEmail.Domain.Models.Profile;
 
@@ -112,17 +114,21 @@ namespace OpenEmail.Core.Services
             return response.IsSuccessStatusCode;
         }
 
-        public async Task<bool> StoreLinkAsync(AccountProfile profile, UserAddress toAddress)
+        public async Task<bool> StoreLinkAsync(AccountProfile profile, AccountContact contact)
         {
             var linksClient = _clientFactory.CreateProfileClient<ILinksClient>();
 
-            // Encrypt toAddress.
+            // Create attribute form.
+            var store = new CreateLinkRequestAttributes();
+            store.Add("address", profile.UserAddress.FullAddress);
+            store.Add("broadcasts", contact.ReceiveBroadcasts);
 
-            var fromAddress = profile.UserAddress;
+            var serializedAttributes = store.Serialize();
+            var link = AccountLink.Create(profile.UserAddress, UserAddress.CreateFromAddress(contact.Address));
 
-            var encryptedAddress = CryptoUtils.EncryptAnonymous(Encoding.UTF8.GetBytes(toAddress.FullAddress), profile.PublicEncryptionKey);
+            var encryptedAddress = CryptoUtils.EncryptAnonymous(Encoding.UTF8.GetBytes(serializedAttributes), profile.PublicEncryptionKey);
             var encryptedAddressBase64 = Convert.ToBase64String(encryptedAddress);
-            var response = await linksClient.StoreLinkAsync(fromAddress, AccountLink.Create(fromAddress, toAddress), encryptedAddressBase64);
+            var response = await linksClient.StoreLinkAsync(profile.UserAddress, link, encryptedAddressBase64);
 
             return response.IsSuccessStatusCode;
         }
