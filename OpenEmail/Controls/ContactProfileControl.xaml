@@ -183,10 +183,7 @@
                     </Grid.RowDefinitions>
 
                     <!--  Broadcast  -->
-                    <Grid
-                        x:Name="BroadcastPanel"
-                        Grid.Row="3"
-                        Visibility="{x:Bind Contact.Contact.IsRequestAcccepted, Mode=OneWay}">
+                    <Grid x:Name="BroadcastPanel" Grid.Row="3">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
