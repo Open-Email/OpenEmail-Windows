@@ -162,9 +162,16 @@ namespace OpenEmail.ViewModels
         {
             if (value == null) return;
 
-            var message = new ProfileDisplayRequested(value.Contact);
-
-            Messenger.Send(message);
+            if (value == null)
+            {
+                var message = new ProfileDisplayPaneDismissedMessage();
+                Messenger.Send(message);
+            }
+            else
+            {
+                var message = new ProfileDisplayRequested(value.Contact);
+                Messenger.Send(message);
+            }
         }
 
         private async Task ReloadRequestsAsync(CancellationToken cancellationToken = default)
