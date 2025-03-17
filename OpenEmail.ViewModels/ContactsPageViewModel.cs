@@ -65,8 +65,10 @@ namespace OpenEmail.ViewModels
         {
             if (SelectedContactViewModel == null) return;
 
-            var contactAddress = UserAddress.CreateFromAddress(SelectedContactViewModel.Contact.Address);
-            bool isStored = await _linksService.StoreLinkAsync(_applicationStateService.ActiveProfile, contactAddress);
+            // Automatically enable broadcasts.
+            SelectedContactViewModel.Contact.ReceiveBroadcasts = true;
+
+            bool isStored = await _linksService.StoreLinkAsync(_applicationStateService.ActiveProfile, SelectedContactViewModel.Contact);
 
             if (isStored)
             {
@@ -97,6 +99,9 @@ namespace OpenEmail.ViewModels
                 if (isRemoved)
                 {
                     await _contactService.DeleteContactAsync(SelectedContactViewModel.Contact);
+
+                    // Dismiss popup as well.
+                    SelectedContactViewModel = null;
                 }
             }
         }
@@ -157,9 +162,16 @@ namespace OpenEmail.ViewModels
         {
             if (value == null) return;
 
-            var message = new ProfileDisplayRequested(value.Contact);
-
-            Messenger.Send(message);
+            if (value == null)
+            {
+                var message = new ProfileDisplayPaneDismissedMessage();
+                Messenger.Send(message);
+            }
+            else
+            {
+                var message = new ProfileDisplayRequested(value.Contact);
+                Messenger.Send(message);
+            }
         }
 
         private async Task ReloadRequestsAsync(CancellationToken cancellationToken = default)

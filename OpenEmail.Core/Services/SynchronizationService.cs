@@ -102,25 +102,23 @@ namespace OpenEmail.Core.Services
         /// <param name="accountProfile">Profile account to sync links for.</param>
         private async Task HandleLinksAsync(AccountProfile accountProfile)
         {
-            var links = await _linksService.GetProfileUserAddressLinksAsync(accountProfile);
+            var linkResponses = await _linksService.GetProfileUserAddressLinksAsync(accountProfile);
 
-            foreach (var link in links)
+            foreach (var link in linkResponses)
             {
-                var address = UserAddress.CreateFromAddress(link.FullAddress);
-
                 // Check whether this link is already in the contacts.
-                var contactModel = await _contactService.GetContactAsync(accountProfile.Account.Id, link.FullAddress).ConfigureAwait(false);
+                var contactModel = await _contactService.GetContactAsync(accountProfile.Account.Id, link.Address.FullAddress).ConfigureAwait(false);
 
                 if (contactModel == null)
                 {
                     // Create new approved contact for the account.
 
-                    var contactProfileData = await GetContactProfileDataAsync(address);
-                    await _contactService.CreateNewContactRequestAsync(accountProfile, contactProfileData, address.FullAddress, true).ConfigureAwait(false);
+                    var contactProfileData = await GetContactProfileDataAsync(link.Address);
+                    await _contactService.CreateNewContactRequestAsync(accountProfile, contactProfileData, link.Address.FullAddress, true).ConfigureAwait(false);
                 }
                 else if (contactModel.IsRequestAcccepted)
                 {
-                    // User either accepted the request before.
+                    // User accepted the request before.
                     // In this case we don't need to do anything.
                 }
                 else if (!contactModel.IsRequestAcccepted)
@@ -130,6 +128,13 @@ namespace OpenEmail.Core.Services
                     // Profile data is already synced since the contact exists locally.
 
                     await _contactService.AcceptContactRequestAsync(contactModel.UniqueId).ConfigureAwait(false);
+                }
+
+                // Update broadcast info if available.
+                if (link.IsBroadcastEnabled != null)
+                {
+                    contactModel.ReceiveBroadcasts = link.IsBroadcastEnabled.Value;
+                    await _contactService.UpdateContactAsync(contactModel).ConfigureAwait(false);
                 }
             }
         }

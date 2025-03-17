@@ -88,8 +88,7 @@ namespace OpenEmail.ViewModels.Dialogs
         private async Task SaveContactAsync()
         {
             // Save this link on the server.
-            bool isLinkSaved = await _linksService.StoreLinkAsync(_applicationStateService.ActiveProfile,
-                                                                  UserAddress.CreateFromAddress(FoundContact.Contact.Address));
+            bool isLinkSaved = await _linksService.StoreLinkAsync(_applicationStateService.ActiveProfile, FoundContact.Contact);
 
             if (isLinkSaved)
             {
