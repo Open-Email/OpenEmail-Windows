@@ -64,7 +64,7 @@ namespace OpenEmail.Core.Services
 
                     LinkResponse linkUserAddress = null;
 
-                    if (!decryptedContent.Contains("="))
+                    if (!decryptedContent.Contains('\n'))
                     {
                         linkUserAddress = new LinkResponse(UserAddress.CreateFromAddress(decryptedContent));
                     }
