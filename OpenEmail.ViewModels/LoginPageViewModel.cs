@@ -48,7 +48,7 @@ namespace OpenEmail.ViewModels
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsValidAddress))]
         [NotifyCanExecuteChangedFor(nameof(LoginCommand))]
-        private string _loggingInAddress;
+        private string _loggingInAddress = "burakwindows@open.email";
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsNameValidationVisible))]
@@ -130,9 +130,9 @@ namespace OpenEmail.ViewModels
         {
             try
             {
-                var authenticatedAccount = await _loginService.AuthenticateAsync(UserAddress.CreateFromAddress(LoggingInAddress), PrivateEncryptionKey, PrivateSigningKey);
+                // var authenticatedAccount = await _loginService.AuthenticateAsync(UserAddress.CreateFromAddress(LoggingInAddress), PrivateEncryptionKey, PrivateSigningKey);
 
-                await _windowService.RestartApplicationAsync();
+                _windowService.StartShellApplication();
             }
             catch (Exception ex)
             {
@@ -194,7 +194,7 @@ namespace OpenEmail.ViewModels
                     // Get the profile for the account and restart the app.
 
                     await _profileDataService.RefreshProfileDataAsync(createdAccount.Address);
-                    await _windowService.RestartApplicationAsync();
+                    _windowService.StartShellApplication();
                 }
             }
             catch (Exception exception)
