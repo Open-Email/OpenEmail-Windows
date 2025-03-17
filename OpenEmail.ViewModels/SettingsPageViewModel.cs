@@ -115,7 +115,8 @@ namespace OpenEmail.ViewModels
 
             WeakReferenceMessenger.Default.Send(new DisposeViewModels());
 
-            await _windowService.RestartApplicationAsync();
+            _windowService.GoBackLogin();
+            // await _windowService.RestartApplicationAsync();
         }
 
         public override void OnNavigatedTo(FrameNavigationMode navigationMode, object parameter)

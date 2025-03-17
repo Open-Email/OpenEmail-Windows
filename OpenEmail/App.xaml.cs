@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Windowing;
@@ -23,7 +22,7 @@ namespace OpenEmail
         public IServiceProvider Services { get; }
         public new static App Current => (App)Application.Current;
 
-        public static WindowEx MainWindow { get; set; }
+        // public static WindowEx MainWindow { get; set; }
         public static bool HandleClosedEvents { get; set; } = true;
 
         public App()
@@ -47,19 +46,32 @@ namespace OpenEmail
         protected override async void OnLaunched(LaunchActivatedEventArgs args)
         {
             await InitializeServicesAsync();
-            await StartApplicationAsync();
-        }
-
-        public async Task StartApplicationAsync()
-        {
-            await InitializeServicesAsync();
 
             var accountService = Services.GetService<IAccountService>();
             var appStateService = Services.GetService<IApplicationStateService>();
 
             appStateService.ActiveProfile = await accountService.GetStartAccountProfileAsync();
 
-            CreateWindow(appStateService.ActiveProfile != null);
+            LoadLoginPage();
+
+            // bool hasProfileData = appStateService.ActiveProfile != null;
+
+            //if (hasProfileData)
+            //{
+            //    LoadShell();
+            //}
+            //else
+            //{
+            //    LoadLoginPage();
+            //}
+        }
+
+        public void LoadShell()
+        {
+            var shellWindow = WindowHelper.CreateWindow();
+            SetupMainWindow(shellWindow);
+
+            shellWindow.Activate();
         }
 
         private Task InitializeServicesAsync()
@@ -68,49 +80,74 @@ namespace OpenEmail
             return databaseService.InitializeAsync();
         }
 
+        private void SetupMainWindow(Window window)
+        {
+            window.Title = "Open Email";
+            WindowingFunctions.SetWindowIcon("Assets/appicon.ico", window);
+
+            var manager = WindowManager.Get(window);
+            manager.AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+
+            manager.MinWidth = 800;
+            manager.MinHeight = 600;
+
+            (window.Content as Frame).Navigate(typeof(ShellPage));
+        }
+
         private void SetupLoginWindow(Window window)
         {
             window.AppWindow.Resize(new Windows.Graphics.SizeInt32(700, 900));
 
             WindowingFunctions.DisableMinimizeMaximizeButtons(window);
             WindowingFunctions.CenterWindowOnScreen(window);
+            WindowingFunctions.SetWindowIcon("Assets/appicon.ico", window);
+
+            (window.Content as Frame).Navigate(typeof(LoginPage));
+        }
+
+        public void LoadLoginPage()
+        {
+            var loginWindow = WindowHelper.CreateWindow();
+            SetupLoginWindow(loginWindow);
+
+            loginWindow.Activate();
         }
 
         private void CreateWindow(bool isProfileLoaded)
         {
-            if (MainWindow != null)
-            {
-                MainWindow.AppWindow.Closing -= AppWindowClosing;
-                MainWindow.Close();
-                MainWindow = null;
-            }
+            //if (MainWindow != null)
+            //{
+            //    MainWindow.AppWindow.Closing -= AppWindowClosing;
+            //    MainWindow.Close();
+            //    MainWindow = null;
+            //}
 
-            MainWindow = WindowHelper.CreateWindow();
-            MainWindow.AppWindow.Closing += AppWindowClosing;
+            //MainWindow = WindowHelper.CreateWindow();
+            //MainWindow.AppWindow.Closing += AppWindowClosing;
 
-            MainWindow.Title = "Open Email";
+            //MainWindow.Title = "Open Email";
 
-            WindowingFunctions.SetWindowIcon("Assets/appicon.ico", MainWindow);
+            //WindowingFunctions.SetWindowIcon("Assets/appicon.ico", MainWindow);
 
-            if (isProfileLoaded)
-            {
-                SetupMainWindow(MainWindow);
-                (MainWindow.Content as Frame).Navigate(typeof(ShellPage));
-            }
-            else
-            {
-                SetupLoginWindow(MainWindow);
-                (MainWindow.Content as Frame).Navigate(typeof(LoginPage));
-            }
+            //if (isProfileLoaded)
+            //{
+            //    SetupMainWindow(MainWindow);
+            //    (MainWindow.Content as Frame).Navigate(typeof(ShellPage));
+            //}
+            //else
+            //{
+            //    SetupLoginWindow(MainWindow);
+            //    (MainWindow.Content as Frame).Navigate(typeof(LoginPage));
+            //}
 
-            MainWindow.Activate();
+            //MainWindow.Activate();
 
-            var otherWindows = WindowHelper.ActiveWindows.Where(a => a != MainWindow).ToList();
+            //var otherWindows = WindowHelper.ActiveWindows.Where(a => a != MainWindow).ToList();
 
-            foreach (var item in otherWindows)
-            {
-                item.Close();
-            }
+            //foreach (var item in otherWindows)
+            //{
+            //    item.Close();
+            //}
 
         }
 
@@ -121,17 +158,7 @@ namespace OpenEmail
             sender.Hide();
         }
 
-        private void SetupMainWindow(Window window)
-        {
-            // Configure title bar.
-            window.AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
 
-            if (window is WindowEx windowEx)
-            {
-                windowEx.MinWidth = 800;
-                windowEx.MinHeight = 600;
-            }
-        }
 
         public void TerminateApplication()
         {
@@ -139,8 +166,6 @@ namespace OpenEmail
 
             foreach (var window in WindowHelper.ActiveWindows)
             {
-                if (window == MainWindow) continue;
-
                 window.Close();
             }
 

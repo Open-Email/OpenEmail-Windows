@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using OpenEmail.Domain.Models.Mail;
 using OpenEmail.Domain.Models.Navigation;
@@ -144,7 +145,7 @@ namespace OpenEmail.Views
             };
         }
 
-        private void ProfileMenuClicked(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        private void ProfileMenuClicked(object sender, RoutedEventArgs e)
         {
             ProfileFlyout.Hide();
 
@@ -221,24 +222,25 @@ namespace OpenEmail.Views
             });
         }
 
-        private void ExitClicked(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        private void ExitClicked(object sender, RoutedEventArgs e)
         {
             App.Current.TerminateApplication();
         }
 
-        private void LaunchClicked(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        private void LaunchClicked(object sender, RoutedEventArgs e)
         {
-            if (App.MainWindow == null) return;
-
-            App.MainWindow.Activate();
+            foreach (var window in WindowHelper.ActiveWindows)
+            {
+                window.Activate();
+            }
         }
 
-        private void NavigationPaneButtonClicked(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        private void NavigationPaneButtonClicked(object sender, RoutedEventArgs e)
         {
             MainNavigationView.IsPaneOpen = !MainNavigationView.IsPaneOpen;
         }
 
-        private void NewMailShortcutInvoked(Microsoft.UI.Xaml.Input.KeyboardAccelerator sender, Microsoft.UI.Xaml.Input.KeyboardAcceleratorInvokedEventArgs args)
+        private void NewMailShortcutInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
         {
             ViewModel.NewMessageCommand.Execute(null);
         }

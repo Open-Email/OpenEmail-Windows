@@ -23,7 +23,7 @@ namespace OpenEmail.Core.Services
         public async Task<DiscoveryHost> GetDiscoveryHostAsync(string hostPart)
         {
             // Check if the host is cached before and valid.
-            var cachedHost = cachedHosts.Find(a => a != null && a.AgentUrl == hostPart && !a.IsExpired());
+            var cachedHost = cachedHosts.Find(a => a != null && (a.AgentUrl == hostPart || a.HostPart == hostPart) && !a.IsExpired());
 
             if (cachedHost != null) return cachedHost;
 

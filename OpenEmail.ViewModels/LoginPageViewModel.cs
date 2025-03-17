@@ -23,12 +23,12 @@ namespace OpenEmail.ViewModels
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(CanAuthenticate))]
         [NotifyCanExecuteChangedFor(nameof(AuthenticateCommand))]
-        private string _privateEncryptionKey = "oKFDkqLP31CaiyZl+fkVx3MprymuTWZTIKU9/xkjcxs=";
+        private string _privateEncryptionKey;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(CanAuthenticate))]
         [NotifyCanExecuteChangedFor(nameof(AuthenticateCommand))]
-        private string _privateSigningKey = "RWXVx+wI7Z4WRpu6yKMyzkoET4mO5SggrSrTtVnSc/hJxmSbu9WPeDg3jHEF9uMMoalTlu7jxT0YNTG2rmZlmA==";
+        private string _privateSigningKey;
 
         public bool CanAuthenticate
 
@@ -130,9 +130,9 @@ namespace OpenEmail.ViewModels
         {
             try
             {
-                var authenticatedAccount = await _loginService.AuthenticateAsync(UserAddress.CreateFromAddress(LoggingInAddress), PrivateEncryptionKey, PrivateSigningKey);
+                // var authenticatedAccount = await _loginService.AuthenticateAsync(UserAddress.CreateFromAddress(LoggingInAddress), PrivateEncryptionKey, PrivateSigningKey);
 
-                await _windowService.RestartApplicationAsync();
+                _windowService.StartShellApplication();
             }
             catch (Exception ex)
             {
@@ -194,7 +194,7 @@ namespace OpenEmail.ViewModels
                     // Get the profile for the account and restart the app.
 
                     await _profileDataService.RefreshProfileDataAsync(createdAccount.Address);
-                    await _windowService.RestartApplicationAsync();
+                    _windowService.StartShellApplication();
                 }
             }
             catch (Exception exception)
