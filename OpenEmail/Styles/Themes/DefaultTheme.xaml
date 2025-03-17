@@ -16,6 +16,7 @@
             <SolidColorBrush x:Key="ReaderDeliveredForegroundBrush">#1abc9c</SolidColorBrush>
 
             <ImageSource x:Key="LogoImageSource">/Assets/LogoLight.png</ImageSource>
+            <ImageSource x:Key="LogoImageSourceReverted">/Assets/LogoDark.png</ImageSource>
             <Thickness x:Key="AutoSuggestBoxBorderThicknes">1</Thickness>
         </ResourceDictionary>
 
@@ -27,6 +28,7 @@
             <SolidColorBrush x:Key="ReaderDeliveredForegroundBrush">#78e08f</SolidColorBrush>
 
             <ImageSource x:Key="LogoImageSource">/Assets/LogoLight.png</ImageSource>
+            <ImageSource x:Key="LogoImageSourceReverted">/Assets/LogoLight.png</ImageSource>
             <Thickness x:Key="AutoSuggestBoxBorderThicknes">0</Thickness>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>

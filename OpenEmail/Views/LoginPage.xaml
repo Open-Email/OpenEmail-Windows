@@ -6,7 +6,6 @@
     xmlns:helpers="using:OpenEmail.Helpers"
     xmlns:local="using:OpenEmail.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    RequestedTheme="Light"
     mc:Ignorable="d">
     <Grid Padding="36" RowSpacing="6">
         <Grid.RowDefinitions>
@@ -19,7 +18,7 @@
             Height="40"
             Margin="-5,0,0,20"
             HorizontalAlignment="Left"
-            Source="{ThemeResource LogoImageSource}" />
+            Source="{ThemeResource LogoImageSourceReverted}" />
 
         <!--  Welcome screen  -->
         <Grid Grid.Row="1" Visibility="{x:Bind ViewModel.IsLoginSectionVisible, Mode=OneWay}">
