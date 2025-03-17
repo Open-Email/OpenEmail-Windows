@@ -31,7 +31,7 @@ namespace OpenEmail.Core.DataServices
             WeakReferenceMessenger.Default.Send(new ContactDeleted(contact));
         }
 
-        public Task CreateNewContactRequestAsync(AccountProfile profile, ProfileData contactProfileData, string contactAddress, bool isApproved)
+        public async Task<AccountContact> CreateNewContactRequestAsync(AccountProfile profile, ProfileData contactProfileData, string contactAddress, bool isApproved)
         {
             // Create new link for the contact with the profile.
 
@@ -50,7 +50,9 @@ namespace OpenEmail.Core.DataServices
                 Id = "n/a"
             };
 
-            return AddOrUpdateContactAsync(profile, contact, contactProfileData);
+            await AddOrUpdateContactAsync(profile, contact, contactProfileData);
+
+            return contact;
         }
 
         public async Task<bool> AddOrUpdateContactAsync(AccountProfile profile, AccountContact contact, ProfileData contactProfile)

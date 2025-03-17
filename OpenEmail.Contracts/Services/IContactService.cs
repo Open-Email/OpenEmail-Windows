@@ -12,7 +12,7 @@ namespace OpenEmail.Contracts.Services
         /// <param name="profile">Account profile to create this contact for.</param>
         /// <param name="contactProfileData">Profile of the contact.</param>
         /// <param name="contactAddress">Address of the contact.</param>
-        Task CreateNewContactRequestAsync(AccountProfile profile, ProfileData contactProfileData, string contactAddress, bool isApproved);
+        Task<AccountContact> CreateNewContactRequestAsync(AccountProfile profile, ProfileData contactProfileData, string contactAddress, bool isApproved);
 
         /// <summary>
         /// Adds a new contact request for the given account.

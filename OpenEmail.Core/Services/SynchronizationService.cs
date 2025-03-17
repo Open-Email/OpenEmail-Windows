@@ -114,7 +114,7 @@ namespace OpenEmail.Core.Services
                     // Create new approved contact for the account.
 
                     var contactProfileData = await GetContactProfileDataAsync(link.Address);
-                    await _contactService.CreateNewContactRequestAsync(accountProfile, contactProfileData, link.Address.FullAddress, true).ConfigureAwait(false);
+                    contactModel = await _contactService.CreateNewContactRequestAsync(accountProfile, contactProfileData, link.Address.FullAddress, true).ConfigureAwait(false);
                 }
                 else if (contactModel.IsRequestAcccepted)
                 {
@@ -131,7 +131,7 @@ namespace OpenEmail.Core.Services
                 }
 
                 // Update broadcast info if available.
-                if (link.IsBroadcastEnabled != null)
+                if (contactModel != null && link.IsBroadcastEnabled != null)
                 {
                     contactModel.ReceiveBroadcasts = link.IsBroadcastEnabled.Value;
                     await _contactService.UpdateContactAsync(contactModel).ConfigureAwait(false);
