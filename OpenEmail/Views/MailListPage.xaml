@@ -314,7 +314,7 @@
                                     VerticalAlignment="Bottom"
                                     ItemsSource="{x:Bind ViewModel.SelectedSingleMessage.ReaderViewModels, Mode=OneWay}">
                                     <ItemsRepeater.Layout>
-                                        <UniformGridLayout Orientation="Horizontal" />
+                                        <controls:WrapLayout Orientation="Horizontal" />
                                     </ItemsRepeater.Layout>
                                     <ItemsRepeater.ItemTemplate>
                                         <DataTemplate x:DataType="data:ContactViewModel">
