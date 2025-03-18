@@ -22,8 +22,9 @@
 	<GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
 	<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
 	<GenerateTestArtifacts>True</GenerateTestArtifacts>
-	<AppxBundle>Never</AppxBundle>
+	<AppxBundle>Always</AppxBundle>
 	<PackageCertificateKeyFile>OpenEmail_TemporaryKey.pfx</PackageCertificateKeyFile>
+	<AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Assets\appicon.ico" />
