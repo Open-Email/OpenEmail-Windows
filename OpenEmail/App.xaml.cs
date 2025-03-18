@@ -111,6 +111,8 @@ namespace OpenEmail
             window.IsMinimizable = false;
             window.SetIcon("Assets/appicon.ico");
             window.CenterOnScreen();
+            window.MinHeight = 600;
+            window.MinWidth = 600;
 
             (window.Content as Frame).Navigate(typeof(LoginPage));
         }
