@@ -23,12 +23,12 @@ namespace OpenEmail.ViewModels
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(CanAuthenticate))]
         [NotifyCanExecuteChangedFor(nameof(AuthenticateCommand))]
-        private string _privateEncryptionKey;
+        private string _privateEncryptionKey = "oKFDkqLP31CaiyZl+fkVx3MprymuTWZTIKU9/xkjcxs=";
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(CanAuthenticate))]
         [NotifyCanExecuteChangedFor(nameof(AuthenticateCommand))]
-        private string _privateSigningKey;
+        private string _privateSigningKey = "RWXVx+wI7Z4WRpu6yKMyzkoET4mO5SggrSrTtVnSc/hJxmSbu9WPeDg3jHEF9uMMoalTlu7jxT0YNTG2rmZlmA==";
 
         public bool CanAuthenticate
 
@@ -48,7 +48,7 @@ namespace OpenEmail.ViewModels
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsValidAddress))]
         [NotifyCanExecuteChangedFor(nameof(LoginCommand))]
-        private string _loggingInAddress;
+        private string _loggingInAddress = "burakwindows@open.email";
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsNameValidationVisible))]
@@ -134,7 +134,7 @@ namespace OpenEmail.ViewModels
 
                 if (authenticatedAccount != null)
                 {
-                    _windowService.StartShellApplication();
+                    await _windowService.StartShellApplicationAsync();
                 }
             }
             catch (Exception ex)
@@ -196,16 +196,17 @@ namespace OpenEmail.ViewModels
                     // Account is created. Ready to load the account.
                     // Get the profile for the account and restart the app.
 
+                    IsLoading = false;
+
                     await _profileDataService.RefreshProfileDataAsync(createdAccount.Address);
-                    _windowService.StartShellApplication();
+                    await _windowService.StartShellApplicationAsync();
                 }
             }
             catch (Exception exception)
             {
                 ErrorMessage = exception.Message;
+                IsLoading = false;
             }
-
-            IsLoading = false;
         }
 
         private void UpdateSectionVisibilities()

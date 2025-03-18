@@ -10,6 +10,7 @@
     <RuntimeIdentifiers Condition="$([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')) &gt;= 8">win-x86;win-x64;win-arm64</RuntimeIdentifiers>
     <RuntimeIdentifiers Condition="$([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')) &lt; 8">win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
 	<PublishProfile>win-$(Platform).pubxml</PublishProfile>
+	<PublishTrimmed>false</PublishTrimmed>
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -24,8 +25,12 @@
 	<GenerateTestArtifacts>True</GenerateTestArtifacts>
 	<AppxBundle>Always</AppxBundle>
 	<PackageCertificateKeyFile>OpenEmail_TemporaryKey.pfx</PackageCertificateKeyFile>
-	<AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
+	<AppxBundlePlatforms>x64</AppxBundlePlatforms>
   </PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+		<DebugType>full</DebugType>
+	</PropertyGroup>
   <ItemGroup>
     <None Remove="Assets\appicon.ico" />
     <None Remove="Assets\archive.png" />

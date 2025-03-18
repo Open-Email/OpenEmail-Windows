@@ -1,33 +1,30 @@
 ﻿using System.Threading.Tasks;
 using OpenEmail.Contracts.Services;
-using OpenEmail.Helpers;
 
 namespace OpenEmail.Services
 {
     public class WindowService : IWindowService
     {
-        public void GoBackLogin()
+        public async Task GoBackLoginAsync()
         {
-            App.Current.LoadLoginPage();
+            await App.Current.LoadLoginPageAsync();
 
             CloseOlderWindows();
         }
 
-        public void StartShellApplication()
+        public async Task StartShellApplicationAsync()
         {
-            App.Current.LoadShell();
+            await App.Current.LoadShellAsync();
 
             CloseOlderWindows();
         }
 
-        private async void CloseOlderWindows()
+        private void CloseOlderWindows()
         {
-            await Task.Delay(100);
-
-            while (WindowHelper.ActiveWindows.Count > 1)
-            {
-                WindowHelper.ActiveWindows[0].Close();
-            }
+            //while (WindowHelper.ActiveWindows.Count > 1)
+            //{
+            //    WindowHelper.ActiveWindows[0].Close();
+            //}
         }
     }
 }

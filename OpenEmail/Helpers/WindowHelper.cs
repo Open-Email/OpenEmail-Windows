@@ -17,7 +17,7 @@ namespace OpenEmail.Helpers
                 };
             }
 
-            TrackWindow(createdWindow);
+            // TrackWindow(createdWindow);
 
             return createdWindow;
         }

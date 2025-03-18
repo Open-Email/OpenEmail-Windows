@@ -20,16 +20,14 @@ namespace OpenEmail
     public partial class App : Application
     {
         private bool isGoingBackLogin = false;
-
         public IServiceProvider Services { get; }
         public new static App Current => (App)Application.Current;
-
-        // public static WindowEx MainWindow { get; set; }
         public static bool HandleClosedEvents { get; set; } = true;
 
         public App()
         {
             InitializeComponent();
+
             Services = ConfigureServices();
         }
 
@@ -47,6 +45,8 @@ namespace OpenEmail
 
         private async Task<bool> TryLoadProfileAsync()
         {
+            await InitializeServicesAsync();
+
             var accountService = Services.GetService<IAccountService>();
             var appStateService = Services.GetService<IApplicationStateService>();
 
@@ -63,16 +63,17 @@ namespace OpenEmail
 
             if (hasProfileData)
             {
-                LoadShell();
+                await LoadShellAsync();
             }
             else
             {
-                LoadLoginPage();
+                await LoadLoginPageAsync();
             }
         }
 
-        public async void LoadShell()
+        public async Task LoadShellAsync()
         {
+            await InitializeServicesAsync();
             await TryLoadProfileAsync();
 
             isGoingBackLogin = false;
@@ -107,18 +108,28 @@ namespace OpenEmail
         {
             window.AppWindow.Resize(new Windows.Graphics.SizeInt32(700, 900));
 
-            WindowingFunctions.DisableMinimizeMaximizeButtons(window);
-            WindowingFunctions.CenterWindowOnScreen(window);
-            WindowingFunctions.SetWindowIcon("Assets/appicon.ico", window);
+            //WindowingFunctions.DisableMinimizeMaximizeButtons(window);
+            //WindowingFunctions.CenterWindowOnScreen(window);
+            //WindowingFunctions.SetWindowIcon("Assets/appicon.ico", window);
 
-            (window.Content as Frame).Navigate(typeof(LoginPage));
+            (window.Content as Frame).Navigate(typeof(Page));
+
+            // (window.Content as Frame).Navigate(typeof(LoginPage));
         }
 
-        public void LoadLoginPage()
+        public async Task LoadLoginPageAsync()
         {
+            await InitializeServicesAsync();
+
             isGoingBackLogin = true;
 
-            var loginWindow = WindowHelper.CreateWindow();
+            //WindowHelper.CreateWindow();
+            var loginWindow = new Window()
+            {
+                Content = new Frame(),
+                Title = "Open Email"
+            };
+
             SetupLoginWindow(loginWindow);
 
             loginWindow.Activate();

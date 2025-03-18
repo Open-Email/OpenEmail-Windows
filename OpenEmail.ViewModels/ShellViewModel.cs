@@ -223,8 +223,6 @@ namespace OpenEmail.ViewModels
             }
         }
 
-
-
         [RelayCommand]
         private async Task BroadcastStateChangedAsync(bool isBroadcastOn)
         {

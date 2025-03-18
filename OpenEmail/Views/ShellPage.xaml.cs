@@ -9,7 +9,6 @@ using OpenEmail.Domain.Models.Mail;
 using OpenEmail.Domain.Models.Navigation;
 using OpenEmail.Domain.Models.Shell;
 using OpenEmail.Domain.PubSubMessages;
-using OpenEmail.Helpers;
 using OpenEmail.ViewModels;
 
 namespace OpenEmail.Views
@@ -30,8 +29,6 @@ namespace OpenEmail.Views
         IRecipient<DraftComposeArgs>,
         IRecipient<DisplayInfoMessage>
     {
-
-
         public ShellPage()
         {
             InitializeComponent();
@@ -172,7 +169,7 @@ namespace OpenEmail.Views
 
         public void Receive(DraftComposeArgs message)
         {
-            var window = WindowHelper.CreateWindow(new ComposeWindow(message));
+            var window = new ComposeWindow(message);
 
             window.Activate();
         }
@@ -229,10 +226,10 @@ namespace OpenEmail.Views
 
         private void LaunchClicked(object sender, RoutedEventArgs e)
         {
-            foreach (var window in WindowHelper.ActiveWindows)
-            {
-                window.Activate();
-            }
+            //foreach (var window in WindowHelper.ActiveWindows)
+            //{
+            //    window.Activate();
+            //}
         }
 
         private void NavigationPaneButtonClicked(object sender, RoutedEventArgs e)

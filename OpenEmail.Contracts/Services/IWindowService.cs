@@ -5,11 +5,11 @@
         /// <summary>
         /// Closes login window and opens a new window with shell.
         /// </summary>
-        void StartShellApplication();
+        Task StartShellApplicationAsync();
 
         /// <summary>
         /// Closes shell window and opens login window.
         /// </summary>
-        void GoBackLogin();
+        Task GoBackLoginAsync();
     }
 }

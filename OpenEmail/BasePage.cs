@@ -15,7 +15,10 @@ namespace OpenEmail
     {
         public void Receive(DisposeViewModels message) => OnDisposeRequested();
 
-        public virtual void OnDisposeRequested() { }
+        public virtual void OnDisposeRequested()
+        {
+            WeakReferenceMessenger.Default.UnregisterAll(this);
+        }
     }
 
     public abstract class BasePage<T> : BasePage where T : BaseViewModel
@@ -25,6 +28,13 @@ namespace OpenEmail
         protected BasePage()
         {
             ViewModel.Dispatcher = new WinUIDispatcher(DispatcherQueue);
+        }
+
+        public override void OnDisposeRequested()
+        {
+            base.OnDisposeRequested();
+
+            ViewModel.Dispatcher = null;
         }
 
         ~BasePage()
