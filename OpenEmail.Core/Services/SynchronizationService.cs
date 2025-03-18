@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Diagnostics;
+﻿using System.Diagnostics;
+using CommunityToolkit.Diagnostics;
 using OpenEmail.Contracts.Application;
 using OpenEmail.Contracts.Services;
 using OpenEmail.Domain.Entities;
@@ -84,8 +85,12 @@ namespace OpenEmail.Core.Services
             }
             catch (Exception ex)
             {
+                Debug.WriteLine("Synchronization failed: " + ex.Message);
 
-                throw;
+                if (!string.IsNullOrEmpty(ex.StackTrace))
+                {
+                    Debug.WriteLine(ex.StackTrace);
+                }
             }
             finally
             {

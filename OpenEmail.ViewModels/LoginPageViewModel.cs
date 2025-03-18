@@ -130,9 +130,12 @@ namespace OpenEmail.ViewModels
         {
             try
             {
-                // var authenticatedAccount = await _loginService.AuthenticateAsync(UserAddress.CreateFromAddress(LoggingInAddress), PrivateEncryptionKey, PrivateSigningKey);
+                var authenticatedAccount = await _loginService.AuthenticateAsync(UserAddress.CreateFromAddress(LoggingInAddress), PrivateEncryptionKey, PrivateSigningKey);
 
-                _windowService.StartShellApplication();
+                if (authenticatedAccount != null)
+                {
+                    _windowService.StartShellApplication();
+                }
             }
             catch (Exception ex)
             {

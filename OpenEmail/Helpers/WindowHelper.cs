@@ -12,7 +12,8 @@ namespace OpenEmail.Helpers
             {
                 createdWindow = new WindowEx
                 {
-                    Content = new Frame()
+                    Content = new Frame(),
+                    Title = "Open Email"
                 };
             }
 

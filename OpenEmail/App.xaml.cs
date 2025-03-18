@@ -19,6 +19,8 @@ namespace OpenEmail
 {
     public partial class App : Application
     {
+        private bool isGoingBackLogin = false;
+
         public IServiceProvider Services { get; }
         public new static App Current => (App)Application.Current;
 
@@ -43,31 +45,38 @@ namespace OpenEmail
             return services.BuildServiceProvider();
         }
 
-        protected override async void OnLaunched(LaunchActivatedEventArgs args)
+        private async Task<bool> TryLoadProfileAsync()
         {
-            await InitializeServicesAsync();
-
             var accountService = Services.GetService<IAccountService>();
             var appStateService = Services.GetService<IApplicationStateService>();
 
             appStateService.ActiveProfile = await accountService.GetStartAccountProfileAsync();
 
-            LoadLoginPage();
-
-            // bool hasProfileData = appStateService.ActiveProfile != null;
-
-            //if (hasProfileData)
-            //{
-            //    LoadShell();
-            //}
-            //else
-            //{
-            //    LoadLoginPage();
-            //}
+            return appStateService.ActiveProfile != null;
         }
 
-        public void LoadShell()
+        protected override async void OnLaunched(LaunchActivatedEventArgs args)
         {
+            await InitializeServicesAsync();
+
+            bool hasProfileData = await TryLoadProfileAsync();
+
+            if (hasProfileData)
+            {
+                LoadShell();
+            }
+            else
+            {
+                LoadLoginPage();
+            }
+        }
+
+        public async void LoadShell()
+        {
+            await TryLoadProfileAsync();
+
+            isGoingBackLogin = false;
+
             var shellWindow = WindowHelper.CreateWindow();
             SetupMainWindow(shellWindow);
 
@@ -107,58 +116,23 @@ namespace OpenEmail
 
         public void LoadLoginPage()
         {
+            isGoingBackLogin = true;
+
             var loginWindow = WindowHelper.CreateWindow();
             SetupLoginWindow(loginWindow);
 
             loginWindow.Activate();
         }
 
-        private void CreateWindow(bool isProfileLoaded)
-        {
-            //if (MainWindow != null)
-            //{
-            //    MainWindow.AppWindow.Closing -= AppWindowClosing;
-            //    MainWindow.Close();
-            //    MainWindow = null;
-            //}
-
-            //MainWindow = WindowHelper.CreateWindow();
-            //MainWindow.AppWindow.Closing += AppWindowClosing;
-
-            //MainWindow.Title = "Open Email";
-
-            //WindowingFunctions.SetWindowIcon("Assets/appicon.ico", MainWindow);
-
-            //if (isProfileLoaded)
-            //{
-            //    SetupMainWindow(MainWindow);
-            //    (MainWindow.Content as Frame).Navigate(typeof(ShellPage));
-            //}
-            //else
-            //{
-            //    SetupLoginWindow(MainWindow);
-            //    (MainWindow.Content as Frame).Navigate(typeof(LoginPage));
-            //}
-
-            //MainWindow.Activate();
-
-            //var otherWindows = WindowHelper.ActiveWindows.Where(a => a != MainWindow).ToList();
-
-            //foreach (var item in otherWindows)
-            //{
-            //    item.Close();
-            //}
-
-        }
-
         private void AppWindowClosing(AppWindow sender, AppWindowClosingEventArgs args)
         {
-            args.Cancel = true;
+            if (!isGoingBackLogin)
+            {
+                args.Cancel = true;
 
-            sender.Hide();
+                sender.Hide();
+            }
         }
-
-
 
         public void TerminateApplication()
         {
