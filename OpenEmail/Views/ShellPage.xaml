@@ -117,7 +117,7 @@
             Background="{ThemeResource TitleBarBackgroundBrush}"
             IsPaneToggleButtonVisible="False"
             PaneToggleRequested="PaneButtonClicked">
-            <TitleBar.Header>
+            <TitleBar.LeftHeader>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -151,8 +151,8 @@
                         VerticalAlignment="Center"
                         Source="{ThemeResource LogoImageSource}" />
                 </Grid>
-            </TitleBar.Header>
-            <TitleBar.Footer>
+            </TitleBar.LeftHeader>
+            <TitleBar.RightHeader>
                 <StackPanel
                     VerticalAlignment="Center"
                     Orientation="Horizontal"
@@ -315,7 +315,7 @@
                             ProfilePicture="{x:Bind ViewModel.ProfileImageUrl, Mode=OneWay, Converter={StaticResource ProfileImageConverter}}" />
                     </Button>
                 </StackPanel>
-            </TitleBar.Footer>
+            </TitleBar.RightHeader>
         </TitleBar>
 
         <controls1:CustomNavigationView
