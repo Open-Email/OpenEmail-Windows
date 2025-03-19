@@ -8,15 +8,15 @@
   IgnorableNamespaces="uap rescap">
 
   <Identity
-    Name="b5b441d5-a0f7-47d3-9d8a-02158643708f"
-    Publisher="CN=bkaan"
-    Version="1.0.0.0" />
+    Name="Mercata.OpenEmail"
+    Publisher="CN=openemail"
+    Version="1.0.3.0" />
 
-  <mp:PhoneIdentity PhoneProductId="b5b441d5-a0f7-47d3-9d8a-02158643708f" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="3e5846f2-6d8f-4bb4-92b3-ad2d0e7f38c9" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>OpenEmail</DisplayName>
-    <PublisherDisplayName>bkaan</PublisherDisplayName>
+    <PublisherDisplayName>Mercata</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
