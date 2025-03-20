@@ -181,7 +181,7 @@ namespace OpenEmail.ViewModels
             }
             else
             {
-                var newMatch = _allContacts.Where(a => a.Contact.Name.Contains(newValue, StringComparison.OrdinalIgnoreCase) || a.Contact.Address.Contains(newValue, StringComparison.OrdinalIgnoreCase));
+                var newMatch = _allContacts.Where(a => a.Contact?.Name != null && a.Contact.Name.Contains(newValue, StringComparison.OrdinalIgnoreCase) || a.Contact.Address.Contains(newValue, StringComparison.OrdinalIgnoreCase));
 
                 FilteredContacts.ReplaceRange(newMatch);
             }
