@@ -15,5 +15,6 @@ namespace OpenEmail.Core.DataServices
         }
 
         public Task DisposeConnectionAsync() => _databaseService.CloseAndDeleteAsync();
+        public Task InitializeConnectionAsync() => _databaseService.InitializeAsync();
     }
 }

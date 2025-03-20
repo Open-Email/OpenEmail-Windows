@@ -32,6 +32,7 @@ namespace OpenEmail.ViewModels
 
         public void ExecuteUIThread(Action action) => Dispatcher?.ExecuteOnDispatcher(action);
         protected virtual void OnDispatcherAssigned() { }
+        protected virtual void OnDisposeRequested() { }
 
         public virtual void OnNavigatedFrom(FrameNavigationMode navigationMode, object parameter)
         {
@@ -45,6 +46,8 @@ namespace OpenEmail.ViewModels
 
         public void Receive(DisposeViewModels message)
         {
+            OnDisposeRequested();
+
             Messenger.UnregisterAll(this);
             Dispatcher = null;
         }

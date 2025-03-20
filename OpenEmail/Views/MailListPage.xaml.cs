@@ -21,7 +21,7 @@ namespace OpenEmail.Views
             InitializeComponent();
         }
 
-        private void PageSizeChanged(object sender, Microsoft.UI.Xaml.SizeChangedEventArgs e)
+        private void PageSizeChanged(object sender, SizeChangedEventArgs e)
         {
             UpdateAdaptiveness();
         }

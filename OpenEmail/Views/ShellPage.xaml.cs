@@ -30,8 +30,6 @@ namespace OpenEmail.Views
         IRecipient<DraftComposeArgs>,
         IRecipient<DisplayInfoMessage>
     {
-
-
         public ShellPage()
         {
             InitializeComponent();
@@ -103,7 +101,7 @@ namespace OpenEmail.Views
             else
             {
                 // Mail list page.
-                LeftFrame.Navigate(typeof(MailListPage), additionalArgs == null ? (MailFolder)pageType : additionalArgs, defaultTransition);
+                LeftFrame.Navigate(typeof(MailListPage), additionalArgs ?? (MailFolder)pageType, defaultTransition);
             }
         }
 

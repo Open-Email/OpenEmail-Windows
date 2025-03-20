@@ -46,8 +46,9 @@ namespace OpenEmail.Core.DataServices
             var account = await Connection.FindAsync<Account>(a => a.Id == accountId)
                 ?? throw new AccountLoadException("Account not found.");
 
-            // Delete database.
+            // Delete database and create new one.
             await DisposeConnectionAsync();
+            await InitializeConnectionAsync();
 
             // Delete private keys
             var userAddress = new UserAddress(account.LocalPart, account.HostPart);

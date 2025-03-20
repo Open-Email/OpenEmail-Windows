@@ -129,6 +129,14 @@ namespace OpenEmail.ViewModels
             }
         }
 
+        protected override void OnDisposeRequested()
+        {
+            base.OnDisposeRequested();
+
+            _syncIntervalTimer.Stop();
+            _syncIntervalTimer.Dispose();
+        }
+
         protected override void OnDispatcherAssigned()
         {
             base.OnDispatcherAssigned();

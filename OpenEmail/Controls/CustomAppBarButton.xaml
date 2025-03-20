@@ -16,9 +16,8 @@
         HorizontalAlignment="Stretch"
         VerticalAlignment="Stretch"
         Command="{x:Bind Command, Mode=OneWay}"
-        CornerRadius="4"
-        Style="{StaticResource AppBarButtonRevealStyle}">
-        <StackPanel Orientation="Horizontal" Spacing="                     4">
+        CornerRadius="4">
+        <StackPanel Orientation="Horizontal" Spacing="6">
             <ContentPresenter x:Name="IconPresenter" Content="{x:Bind Icon, Mode=OneWay}" />
             <TextBlock x:Name="LabelTextblock" Text="{x:Bind Label, Mode=OneWay}" />
         </StackPanel>

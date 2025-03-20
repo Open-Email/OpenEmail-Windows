@@ -45,7 +45,7 @@ namespace OpenEmail.Controls
 
         private void OnIsCompactChanged()
         {
-            LabelTextblock.Visibility = IsCompact ? Visibility.Collapsed : Visibility.Visible;
+            // LabelTextblock.Visibility = IsCompact ? Visibility.Collapsed : Visibility.Visible;
         }
 
         public CustomAppBarButton()
