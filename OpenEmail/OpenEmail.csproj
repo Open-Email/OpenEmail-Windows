@@ -17,14 +17,12 @@
 	<AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
 	<AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
 	<GenerateAppInstallerFile>False</GenerateAppInstallerFile>
-	<AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+	<AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
 	<AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
-	<GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
 	<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
 	<GenerateTestArtifacts>True</GenerateTestArtifacts>
 	<AppxBundle>Always</AppxBundle>
-	<PackageCertificateKeyFile>OpenEmail_TemporaryKey.pfx</PackageCertificateKeyFile>
-	<AppxBundlePlatforms>x64</AppxBundlePlatforms>
+	<AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Assets\appicon.ico" />
