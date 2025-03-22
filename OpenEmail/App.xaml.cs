@@ -103,13 +103,14 @@ namespace OpenEmail
             (window.Content as Frame).Navigate(typeof(ShellPage));
         }
 
-        private void SetupLoginWindow(Window window)
+        private void SetupLoginWindow(WindowEx window)
         {
-            window.AppWindow.Resize(new Windows.Graphics.SizeInt32(700, 900));
+            window.AppWindow.Resize(new Windows.Graphics.SizeInt32(700, 700));
 
-            WindowingFunctions.DisableMinimizeMaximizeButtons(window);
-            WindowingFunctions.CenterWindowOnScreen(window);
-            WindowingFunctions.SetWindowIcon("Assets/appicon.ico", window);
+            window.IsMaximizable = false;
+            window.IsMinimizable = false;
+            window.SetIcon("Assets/appicon.ico");
+            window.CenterOnScreen();
 
             (window.Content as Frame).Navigate(typeof(LoginPage));
         }
