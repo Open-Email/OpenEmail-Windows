@@ -69,6 +69,7 @@ namespace OpenEmail.ViewModels
         private readonly ILoginService _loginService;
         private readonly IFileService _fileService;
         private readonly IContactService _contactService;
+        private readonly IConfigurationService _configurationService;
         private readonly IMessagesService _messagesService;
         private readonly IWindowService _windowService;
         private readonly IDialogService _dialogService;
@@ -80,6 +81,7 @@ namespace OpenEmail.ViewModels
                               ILoginService loginService,
                               IFileService fileService,
                               IContactService contactService,
+                              IConfigurationService configurationService,
                               IMessagesService messagesService,
                               IWindowService windowService,
                               IDialogService dialogService,
@@ -96,6 +98,7 @@ namespace OpenEmail.ViewModels
             _loginService = loginService;
             _fileService = fileService;
             _contactService = contactService;
+            _configurationService = configurationService;
             _messagesService = messagesService;
             _windowService = windowService;
             _dialogService = dialogService;
@@ -223,6 +226,8 @@ namespace OpenEmail.ViewModels
             }
             finally
             {
+                _configurationService.Set("IsFirstSynchronizationCompleted", true);
+
                 latestSynchronizationTime = DateTime.Now;
                 remainingSyncIntervalMinutes = PreferencesService.SyncIntervalInMinutes;
                 UpdateSynchronizationIntervalText();
@@ -256,6 +261,13 @@ namespace OpenEmail.ViewModels
 
             // Automatically navigate to Inbox.
             SelectedMenuItemIndex = 1;
+
+            bool isFirstSyncCompleted = _configurationService.Get<bool>("IsFirstSynchronizationCompleted");
+
+            if (!isFirstSyncCompleted)
+            {
+                await SynchronizeCommand.ExecuteAsync(null);
+            }
         }
 
         public async void Receive(StartAttachmentDownload message)

@@ -14,6 +14,7 @@ namespace OpenEmail.ViewModels
     {
         private readonly IApplicationStateService _applicationStateService;
         private readonly IDialogService _dialogService;
+        private readonly IConfigurationService _configurationService;
         private readonly ILoginService _loginService;
         private readonly IWindowService _windowService;
         private readonly IQrService _qrService;
@@ -87,6 +88,7 @@ namespace OpenEmail.ViewModels
         public SettingsPageViewModel(IApplicationStateService applicationStateService,
                                      IPreferencesService preferencesService,
                                      IDialogService dialogService,
+                                     IConfigurationService configurationService,
                                      ILoginService loginService,
                                      IWindowService windowService,
                                      IQrService qrService)
@@ -96,6 +98,7 @@ namespace OpenEmail.ViewModels
 
             PreferencesService = preferencesService;
             _dialogService = dialogService;
+            _configurationService = configurationService;
             _loginService = loginService;
             _windowService = windowService;
         }
@@ -110,6 +113,9 @@ namespace OpenEmail.ViewModels
             if (!isConfirmed) return;
 
             await _loginService.LogoutAsync(_applicationStateService.ActiveProfile);
+
+            // Reset first sync state.
+            _configurationService.Set("IsFirstSynchronizationCompleted", false);
 
             // TODO: Cancel existing synchronizations.
 
