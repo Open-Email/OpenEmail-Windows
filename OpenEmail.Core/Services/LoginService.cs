@@ -42,7 +42,7 @@ namespace OpenEmail.Core.Services
             var publicEncryptionKey = Convert.FromBase64String(profileData.EncryptionKey);
             var publicSigningKey = Convert.FromBase64String(profileData.SigningKey);
 
-            var localUser = new LocalUser(profileData.Name, address, privateEncryptionKey, profileData.EncryptionKey, profileData.EncryptionKeyId, privateSigningKey, profileData.SigningKey);
+            var localUser = new LocalUser(profileData.Name, address, privateEncryptionKey.Trim(), profileData.EncryptionKey, profileData.EncryptionKeyId, privateSigningKey.Trim(), profileData.SigningKey);
 
             var nonce = new Nonce(localUser, host);
 
