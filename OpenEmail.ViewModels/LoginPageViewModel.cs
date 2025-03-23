@@ -2,10 +2,12 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EmailValidation;
+using OpenEmail.Contracts.Application;
 using OpenEmail.Contracts.Services;
 using OpenEmail.Domain.Exceptions;
 using OpenEmail.Domain.Models.Accounts;
 using OpenEmail.Domain.Models.Discovery;
+using OpenEmail.Domain.Models.Profile;
 
 namespace OpenEmail.ViewModels
 {
@@ -16,7 +18,9 @@ namespace OpenEmail.ViewModels
 
         private readonly IAccountService _accountService;
         private readonly IDiscoveryService _discoveryService;
+        private readonly IPublicClientService _publicClientService;
         private readonly ILoginService _loginService;
+        private readonly IDialogService _dialogService;
         private readonly IWindowService _windowService;
         private readonly IProfileDataService _profileDataService;
 
@@ -29,6 +33,12 @@ namespace OpenEmail.ViewModels
         [NotifyPropertyChangedFor(nameof(CanAuthenticate))]
         [NotifyCanExecuteChangedFor(nameof(AuthenticateCommand))]
         private string _privateSigningKey;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(ProfileThumbnailUrl))]
+        public partial ProfileData LoadedProfile { get; set; }
+
+        public string ProfileThumbnailUrl => $"{LoggingInAddress}_thumbnail.png";
 
         public bool CanAuthenticate
 
@@ -111,13 +121,17 @@ namespace OpenEmail.ViewModels
 
         public LoginPageViewModel(IAccountService accountService,
                                   IDiscoveryService discoveryService,
+                                  IPublicClientService publicClientService,
                                   ILoginService loginService,
+                                  IDialogService dialogService,
                                   IWindowService windowService,
                                   IProfileDataService profileDataService)
         {
             _accountService = accountService;
             _discoveryService = discoveryService;
+            _publicClientService = publicClientService;
             _loginService = loginService;
+            _dialogService = dialogService;
             _windowService = windowService;
             _profileDataService = profileDataService;
 
@@ -144,9 +158,25 @@ namespace OpenEmail.ViewModels
         }
 
         [RelayCommand(CanExecute = nameof(IsValidAddress))]
-        private void Login()
+        private async Task LoginAsync()
         {
             if (!IsValidAddress) return;
+
+            // Get profile data.
+            try
+            {
+                LoadedProfile = null;
+                LoadedProfile = await _profileDataService.RefreshProfileDataAsync(UserAddress.CreateFromAddress(LoggingInAddress));
+            }
+            catch (Exception ex)
+            {
+                await _dialogService.ShowMessageAsync("Error", ex.Message);
+            }
+
+            if (LoadedProfile == null)
+            {
+                return;
+            }
 
             _isLoginInitiated = true;
 
