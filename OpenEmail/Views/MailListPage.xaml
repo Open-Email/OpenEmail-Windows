@@ -321,6 +321,7 @@
                                             <HyperlinkButton
                                                 Margin="2,0"
                                                 Padding="4,0"
+                                                Command="{x:Bind RaiseDisplayContactCommand}"
                                                 Foreground="{ThemeResource DetailForegroundBrush}">
                                                 <StackPanel Orientation="Horizontal" Spacing="4">
                                                     <TextBlock
