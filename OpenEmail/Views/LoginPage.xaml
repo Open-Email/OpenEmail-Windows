@@ -82,19 +82,33 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <TextBlock
-                FontSize="20"
-                FontWeight="SemiBold"
-                Text="{x:Bind ViewModel.LoggingInAddress, Mode=OneWay}" />
+            <StackPanel
+                Margin="0,0,0,50"
+                HorizontalAlignment="Center"
+                Orientation="Horizontal"
+                Spacing="12">
+                <PersonPicture
+                    Width="44"
+                    DisplayName="{x:Bind ViewModel.LoadedProfile.Name, Mode=OneWay}"
+                    ProfilePicture="{x:Bind ViewModel.ProfileThumbnailUrl, Converter={StaticResource ProfileImageConverter}, Mode=OneWay}" />
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        FontSize="18"
+                        FontWeight="Bold"
+                        Text="{x:Bind ViewModel.LoadedProfile.Name, Mode=OneWay}" />
+                    <TextBlock FontWeight="SemiBold" Text="{x:Bind ViewModel.LoggingInAddress, Mode=OneWay}" />
+                </StackPanel>
+            </StackPanel>
 
             <TextBlock
                 Grid.Row="1"
-                FontSize="14"
+                FontSize="16"
+                FontWeight="SemiBold"
                 Text="Enter your private keys" />
 
             <TextBox
                 Grid.Row="2"
-                Margin="0,12"
                 Header="Private Encryption Key"
                 Text="{x:Bind ViewModel.PrivateEncryptionKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBox
