@@ -227,8 +227,6 @@ Forwarded message from: {0}
                 // Assign referencing message properties.
                 if (args.ReferencingMessage != null)
                 {
-                    // IsBroadcastVisible = false;
-
                     // Reply: Add the author as reader.
 
                     if (args.Type == MailActionType.Reply)
@@ -251,6 +249,24 @@ Forwarded message from: {0}
                     else if (args.Type == MailActionType.Forward)
                     {
                         message.Body = GetInitialForwardMessageFormat(args.ReferencingMessage.Author, args.ReferencingMessage.Body);
+
+                        if (args.ReferencingMessage is MessageViewModel messageViewModel && messageViewModel.HasAttachments)
+                        {
+                            // Create the attachments for forwarding message.
+                            foreach (var attachment in messageViewModel.AttachmentViewModels)
+                            {
+                                var attachmentParts = _messagesService.CreateMessageAttachmentMetadata(message, attachment.LocalFilePath);
+
+                                if (attachmentParts != null)
+                                {
+                                    foreach (var part in attachmentParts)
+                                    {
+                                        // Save them to the disk.
+                                        await _messagesService.SaveMessageAttachmentAsync(part);
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     // Apply subject-id.
