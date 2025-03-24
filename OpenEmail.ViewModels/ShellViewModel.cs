@@ -301,6 +301,9 @@ namespace OpenEmail.ViewModels
         {
             if (contact == null) return;
 
+            // Don't load the same profile.
+            if (DisplayingContactInformation?.Contact?.Address == contact.Address) return;
+
             Dispatcher.ExecuteOnDispatcher(() => IsLoadingContactInformation = true);
 
             if (_contactInfoLoadCancellationTokenSource != null)
