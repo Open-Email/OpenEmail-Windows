@@ -21,6 +21,14 @@ namespace OpenEmail.ViewModels
     public partial class ComposerPageViewModel : BaseViewModel
     {
         public event EventHandler DismissWindow;
+        public event EventHandler<string> RenderMessage;
+
+        /// <summary>
+        /// A delegate that returns a string message for a rich text box. It allows for dynamic retrieval of the message with
+        /// rich formatting.
+        /// content.
+        /// </summary>
+        public Func<string> GetRichTextboxMessageFunc { get; set; }
 
         private SemaphoreSlim _draftUpdateSemaphore = new(1);
 
@@ -343,6 +351,15 @@ namespace OpenEmail.ViewModels
 
             DraftMessageViewModel.AttachmentViewModels.CollectionChanged += AttachmentsUpdated;
             DraftMessageViewModel.ReaderViewModels.CollectionChanged += ReadersUpdated;
+
+            RenderMessageBody();
+        }
+
+        private void RenderMessageBody()
+        {
+            if (DraftMessageViewModel == null) return;
+
+            RenderMessage?.Invoke(this, DraftMessageViewModel.Body);
         }
 
         private async void ReadersUpdated(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -395,6 +412,8 @@ namespace OpenEmail.ViewModels
             {
                 await _draftUpdateSemaphore.WaitAsync();
 
+                // Get the latest body message
+                DraftMessageViewModel.Body = GetRichTextboxMessageFunc();
                 DraftMessageViewModel.Size = DraftMessageViewModel.Body.Length;
                 DraftMessageViewModel.Category = "personal";
                 DraftMessageViewModel.ReceivedAt = DateTimeOffset.Now;

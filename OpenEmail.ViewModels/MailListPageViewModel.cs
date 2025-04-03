@@ -37,6 +37,8 @@ Forwarded message from: {0}
             + "On {0}, {1} wrote: \n\n"
             + "{2}";
 
+        public event EventHandler<string> RenderMessage;
+
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsTrashFolder))]
         [NotifyPropertyChangedFor(nameof(IsOutboxFolder))]
@@ -115,6 +117,11 @@ Forwarded message from: {0}
                     await _messagesService.MarkMessageReadAsync(message.Message.Id).ConfigureAwait(false);
                     Dispatcher.ExecuteOnDispatcher(() => message.IsRead = true);
                 }
+            }
+
+            if (HasSelectedSingleMessage)
+            {
+                RenderMessage?.Invoke(this, SelectedSingleMessage.Message.Body);
             }
         }
 

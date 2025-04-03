@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:OpenEmail.Controls"
     xmlns:local="using:OpenEmail.Styles">
 
     <!--  Project's icon font.  -->
@@ -17,4 +18,21 @@
         <Setter Property="Background" Value="{ThemeResource ContentBackgroundBrush}" />
     </Style>
 
+    <!--  Style for FormattingRichTextblock  -->
+    <Style TargetType="controls:FormattingRichTextblock">
+        <Style.Setters>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="controls:FormattingRichTextblock">
+                        <RichTextBlock
+                            x:Name="PART_RichTextBlock"
+                            IsTextSelectionEnabled="{TemplateBinding IsTextSelectionEnabled}"
+                            MaxLines="{TemplateBinding MaxLines}"
+                            TextTrimming="{TemplateBinding TextTrimming}"
+                            TextWrapping="{TemplateBinding TextWrapping}" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style.Setters>
+    </Style>
 </ResourceDictionary>

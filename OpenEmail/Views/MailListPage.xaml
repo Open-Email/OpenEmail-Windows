@@ -105,8 +105,10 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock
+
+                        <controls1:FormattingRichTextblock
                             Grid.Row="2"
+                            IsTextSelectionEnabled="False"
                             MaxLines="1"
                             Text="{x:Bind helpers:XamlHelpers.EmptyTextConverter(Body,'(no message)'), Mode=OneWay}"
                             TextTrimming="CharacterEllipsis"
@@ -487,10 +489,11 @@
                 Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
                 CornerRadius="{ThemeResource ControlCornerRadius}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <TextBlock
+                    <controls1:FormattingRichTextblock Text="{x:Bind ViewModel.SelectedSingleMessage.Body, Mode=OneWay}" />
+                    <!--<TextBlock
                         IsTextSelectionEnabled="True"
                         Text="{x:Bind ViewModel.SelectedSingleMessage.Body, Mode=OneWay}"
-                        TextWrapping="Wrap" />
+                        TextWrapping="Wrap" />-->
                 </ScrollViewer>
             </Grid>
         </Grid>

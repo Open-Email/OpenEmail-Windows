@@ -3,6 +3,7 @@ using CommunityToolkit.WinUI.Controls;
 using EmailValidation;
 using Microsoft.UI.Xaml;
 using OpenEmail.Domain.Models.Navigation;
+using OpenEmail.Misc;
 using OpenEmail.ViewModels;
 
 
@@ -20,19 +21,27 @@ namespace OpenEmail.Views
         public ComposerPage()
         {
             InitializeComponent();
+
+            ViewModel.RenderMessage += RenderMessageRequested;
+            ViewModel.GetRichTextboxMessageFunc = () => RichTextFormatter.GetMarkdownFromRichEditBox(EditBox);
         }
+
+        // Format the plain text message according to the RichEditBox format.
+        private void RenderMessageRequested(object sender, string e)
+            => RichTextFormatter.ApplyMarkdownToRichEditBox(EditBox, e);
 
         public override void OnDisposeRequested()
         {
             base.OnDisposeRequested();
 
+            ViewModel.RenderMessage -= RenderMessageRequested;
             ViewModel.OnNavigatedFrom(FrameNavigationMode.Back, null);
             ViewModel.Dispatcher = null;
         }
 
         public void DisposePage() => OnDisposeRequested();
 
-        private async void AttachmentDropped(object sender, Microsoft.UI.Xaml.DragEventArgs e)
+        private async void AttachmentDropped(object sender, DragEventArgs e)
         {
             if (e.AcceptedOperation == Windows.ApplicationModel.DataTransfer.DataPackageOperation.Copy)
             {
