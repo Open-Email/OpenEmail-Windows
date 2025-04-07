@@ -304,7 +304,7 @@
 
                     <!--  Message  -->
                     <Grid Grid.Row="6">
-                        <RichEditBox
+                        <controls1:FormattingRichEditBox
                             x:Name="EditBox"
                             Margin="0,0,0,20"
                             AcceptsReturn="True"
